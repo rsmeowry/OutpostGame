@@ -46,9 +46,23 @@ namespace Game.Controllers
 
         private void LateUpdate()
         {
+            ClickHandler();
             MouseMovement();
             KeyboardMovement();
             CommitMovement();
+        }
+
+        private void ClickHandler()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                var ray = Camera.main!.ScreenPointToRay(Input.mousePosition);
+                var h = Physics.SphereCast(ray, 0.3f, out var hit);
+                if (h && hit.transform.TryGetComponent<ICameraClickable>(out var clickable))
+                {
+                    clickable.OnClick();
+                }
+            }
         }
 
         private void MouseMovement()

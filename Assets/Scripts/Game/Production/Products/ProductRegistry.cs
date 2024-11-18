@@ -22,6 +22,7 @@ namespace Game.Production.Products
         public static StateKey IronPlate = Reg("iron_plate", new ProductData());
         public static StateKey CopperWires = Reg("copper_wires", new ProductData());
         public static StateKey GoldOre = Reg("gold_ore", new ProductData());
+        public static StateKey Stone = Reg("stone", new ProductData());
         
         public void Awake()
         {

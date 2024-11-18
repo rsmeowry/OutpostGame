@@ -76,8 +76,7 @@ namespace Game.Citizens
             "Дон"
         };
 
-        private static string[] MascLastNames = new[]
-        {
+        private static string[] MascLastNames = {
             "Сатин",
             "Ковалев",
             "Смирнов",
