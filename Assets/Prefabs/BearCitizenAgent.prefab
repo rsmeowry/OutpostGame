@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6675554229696109729}
   - component: {fileID: 8670457670876328244}
-  - component: {fileID: 3915599369964454686}
   - component: {fileID: 9004347422557056445}
   - component: {fileID: 2155525623296943858}
+  - component: {fileID: 678471201695674057}
   m_Layer: 0
   m_Name: BearCitizenAgent
   m_TagString: Untagged
@@ -58,23 +58,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 3
---- !u!114 &3915599369964454686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5257783737041559280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dd6a1466bac402fa03c822f0ec8b4fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  navMeshAgent: {fileID: 0}
-  citizenId: 0
-  inventoryCapacity: 3
-  wanderAnchor: {x: 0, y: 0, z: 0}
-  wanderRange: 5
 --- !u!136 &9004347422557056445
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -125,6 +108,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &678471201695674057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5257783737041559280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98c04c803559aa14a898d0c80b8c9592, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  navMeshAgent: {fileID: 0}
+  citizenId: 0
+  inventoryCapacity: 3
+  wanderAnchor: {x: 0, y: 0, z: 0}
+  wanderRange: 5
 --- !u!1001 &6781745170480111030
 PrefabInstance:
   m_ObjectHideFlags: 0

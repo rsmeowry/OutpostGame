@@ -16,11 +16,14 @@ namespace Game.Production.POI
         public string citizenAnimation;
         public int capacity;
         public QueuePosition entrancePos;
+        public List<CitizenCaste> acceptedProfessions;
         
         private int _lastFreePos;
         private bool _isFull;
 
-        private List<CitizenAgent> _citizens = new();
+        public List<CitizenAgent> AssignedAgents = new();
+
+        private List<CitizenAgent> _citizensInside = new();
         private Dictionary<int, int> _citizenPos = new();
         private List<bool> _positions;
 
@@ -54,13 +57,28 @@ namespace Game.Production.POI
                 _positions[positionIndex] = false;
             }
         }
-        
-        public bool Accept(CitizenAgent agent)
+
+        public bool AssignAgent(CitizenAgent agent)
         {
             if (_isFull)
                 return false;
-            _citizens.Add(agent);
-            _isFull = _citizens.Count >= capacity;
+            AssignedAgents.Add(agent);
+            _isFull = AssignedAgents.Count >= capacity;
+            agent.Assign(this);
+            return true;
+        }
+
+        public void UnassignAgent(CitizenAgent agent)
+        {
+            AssignedAgents.Remove(agent);
+            _isFull = false;
+        }
+        
+        public bool Accept(CitizenAgent agent)
+        {
+            if (!AssignedAgents.Contains(agent))
+                return false;
+            _citizensInside.Add(agent);
             
             if (citizenWorkingPositions.Count > 0)
             {
@@ -68,12 +86,7 @@ namespace Game.Production.POI
                 _citizenPos[agent.citizenId] = spot;
                 // TODO: make citizen walk towards the pos?
                 agent.transform.position = citizenWorkingPositions[spot].position;
-
-                if (_positions.All(it => it))
-                {
-                    _isFull = true;
-                }
-
+                
                 PreAnimation(agent);
                 agent.GetComponent<Animator>().Play(citizenAnimation);
                 // agent.GetComponent<NavMeshAgent>().enabled = false;
@@ -87,13 +100,17 @@ namespace Game.Production.POI
             return true;
         }
 
+        public virtual void Free(CitizenAgent agent)
+        {
+            UnassignAgent(agent);
+        }
 
         public void Release(CitizenAgent agent)
         {
-            if (!_citizens.Contains(agent))
+            if (!_citizensInside.Contains(agent))
                 return;
 
-            _citizens.Remove(agent);
+            _citizensInside.Remove(agent);
             if (citizenWorkingPositions.Count > 0)
             {
                 // TODO: remove pickaxe and shit

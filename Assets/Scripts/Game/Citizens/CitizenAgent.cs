@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using External.Util;
 using Game.Citizens.States;
 using Game.Production;
 using Game.State;
+using Newtonsoft.Json;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -19,7 +23,7 @@ namespace Game.Citizens
         private Animator _animator;
 
         public Dictionary<StateKey, int> Inventory = new();
-        public CitizenData PersistentData;
+        public PersistentCitizenData PersistentData;
         public int citizenId;
         public int inventoryCapacity = 3;
 
@@ -32,9 +36,11 @@ namespace Game.Citizens
         public Vector3 wanderAnchor = Vector3.zero;
         public float wanderRange = 5f;
 
-        public IOrderTarget OrderTarget;
+        public IOrderTarget WorkPlace;
         public IProductDepositer ProductDepositer;
 
+        public bool LoadedFromData = false;
+        
         private void Start()
         {
             navMeshAgent = GetComponent<NavMeshAgent>();
@@ -46,9 +52,14 @@ namespace Game.Citizens
             GoWorkState = new CitizenGoWorkState(this, StateMachine);
             WorkState = new CitizenWorkState(this, StateMachine);
 
-            StartCoroutine(StateMachine.Init(WanderState));
+            PersistentData = new PersistentCitizenData
+            {
+                Profession = CitizenCaste.Beekeeper
+            };
+            if(!LoadedFromData)
+                StartCoroutine(StateMachine.Init(WanderState));
         }
-
+        
         [ContextMenu("Debug/Log data")]
         private void __TestDebugData()
         {
@@ -83,7 +94,19 @@ namespace Game.Citizens
 
         public bool IsUnoccupied()
         {
-            return StateMachine.CurrentState != CarryResourcesState && StateMachine.CurrentState != WorkState;
+            return WorkPlace == null;
+        }
+
+        public void Free()
+        {
+            WorkPlace.Free(this);
+            StartCoroutine(StateMachine.ChangeState(WanderState).Callback(() => WorkPlace = null));
+        }
+
+        public void Assign(IOrderTarget workPlace)
+        {
+            WorkPlace = workPlace;
+            Order(GoWorkState);
         }
 
         public void PlayAnimation(string anim)
@@ -120,12 +143,24 @@ namespace Game.Citizens
         }
     }
 
-    public enum CitizenStateOrder
+    [Serializable]
+    public struct StoredCitizenData
     {
-        Wander,
-        Work,
-        Sleep,
-        Stand,
-        Carry,
+        [FormerlySerializedAs("PersistentData")] [JsonProperty("persistent")]
+        public StoredPersistentCitizenData persistentData;
+        [FormerlySerializedAs("Position")] [JsonProperty("position")]
+        public Vector3 position;
+        [JsonProperty("inventory")]
+        public Dictionary<string, int> Inventory;
+        [FormerlySerializedAs("BaseInventoryCapacity")] [JsonProperty("inventoryCapacity")]
+        public int baseInventoryCapacity;
+        [FormerlySerializedAs("BuildingGuid")] [JsonProperty("assignedBuilding")]
+        public GUID buildingGuid;
+        [JsonProperty("Depositer")]
+        public GUID depositer;
+        [FormerlySerializedAs("State")] [JsonProperty("state")]
+        public string state;
+        [FormerlySerializedAs("WanderAnchor")] [JsonProperty("wanderAnchor")]
+        public Vector3 wanderAnchor;
     }
 }

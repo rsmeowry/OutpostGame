@@ -1,16 +1,17 @@
+﻿using UI.POI;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+namespace UI {
+    public class UIManager: MonoBehaviour
     {
-        
-    }
+        public static UIManager Instance { get; private set; }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public InspectPanelPOI prefabInspectPoi;
+
+        public void Awake()
+        {
+            Instance = this;
+        }
     }
 }
+

@@ -40,7 +40,7 @@ Material:
     m_Floats:
     - _FadeDistance: 140
     - _OutlineDarken: 1
-    - _OutlineThickness: 0.5
+    - _OutlineThickness: 0.1
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:

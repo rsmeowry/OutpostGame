@@ -17,7 +17,7 @@ namespace Game.Citizens.States
             Agent.navMeshAgent.isStopped = true;
             Agent.navMeshAgent.enabled = false;
             yield return new WaitForSeconds(0.2f);
-            if (!Agent.OrderTarget.Accept(Agent))
+            if (!Agent.WorkPlace.Accept(Agent))
             {
                 Agent.navMeshAgent.enabled = true;
                 Agent.Order(Agent.WanderState);
@@ -29,7 +29,8 @@ namespace Game.Citizens.States
         {
             Agent.navMeshAgent.enabled = true;
             Agent.navMeshAgent.isStopped = false;
-            Agent.OrderTarget.Release(Agent);
+            if(Agent.WorkPlace != null)
+                Agent.WorkPlace.Release(Agent);
             
             // Agent.navMeshAgent.SetDestination(Agent.OrderTarget.EntrancePos.GetSelfPosition(Agent));
             // while (Agent.navMeshAgent.remainingDistance > Agent.navMeshAgent.stoppingDistance)
@@ -45,11 +46,11 @@ namespace Game.Citizens.States
             if (_ticker <= 0f)
             {
                 _ticker = 1f;
-                Agent.OrderTarget.WorkerTick(Agent);
+                Agent.WorkPlace.WorkerTick(Agent);
                 if (Agent.InventoryFull())
                 {
                     Agent.StartCoroutine(StateMachine.ChangeState(Agent.CarryResourcesState));
-                    Agent.ProductDepositer = (IProductDepositer)Agent.OrderTarget.GatheringPost;
+                    Agent.ProductDepositer = (IProductDepositer)Agent.WorkPlace.GatheringPost;
                 }
             }
         }

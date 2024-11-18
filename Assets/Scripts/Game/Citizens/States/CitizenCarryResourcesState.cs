@@ -14,7 +14,7 @@ namespace Game.Citizens.States
 
         public override IEnumerator EnterState()
         {
-            Agent.navMeshAgent.SetDestination(Agent.OrderTarget.GatheringPost.EntrancePos.GetSelfPosition(Agent));
+            Agent.navMeshAgent.SetDestination(Agent.WorkPlace.GatheringPost.EntrancePos.GetSelfPosition(Agent));
             yield break;
         }
 
@@ -25,14 +25,14 @@ namespace Game.Citizens.States
 
         public override void FrameUpdate()
         {
-            if (Agent.OrderTarget.GatheringPost.EntrancePos.DoesAccept(Agent))
+            if (Agent.WorkPlace.GatheringPost.EntrancePos.DoesAccept(Agent))
             {
                 DoTick = false;
                 // TODO: maybe separate state for depositing resources
                 Agent.Delayed(0.3f + Random.Range(-0.1f, 0.1f), () =>
                 {
                     Agent.ProductDepositer.DepositInventory(Agent.Inventory);
-                    Agent.OrderTarget.GatheringPost.EntrancePos.Dequeue();
+                    Agent.WorkPlace.GatheringPost.EntrancePos.Dequeue();
                     DoTick = true;
                     Agent.StartCoroutine(StateMachine.ChangeState(Agent.GoWorkState));
                 });
@@ -41,7 +41,7 @@ namespace Game.Citizens.States
 
         public override void Renavigate()
         {
-            var newPos = Agent.OrderTarget.GatheringPost.EntrancePos.GetSelfPosition(Agent);
+            var newPos = Agent.WorkPlace.GatheringPost.EntrancePos.GetSelfPosition(Agent);
             Agent.navMeshAgent.SetDestination(newPos);
         }
     }

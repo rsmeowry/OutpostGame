@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEngine;
 
 namespace Game.Citizens
 {
@@ -6,10 +7,9 @@ namespace Game.Citizens
     {
         public CitizenState CurrentState;
 
-        private bool _doTick = true;
+        private bool _doTick = false;
         public IEnumerator Init(CitizenState state)
         {
-            _doTick = false;
             CurrentState = state;
             yield return state.EnterState();
             _doTick = true;
@@ -17,11 +17,13 @@ namespace Game.Citizens
 
         public IEnumerator ChangeState(CitizenState newState)
         {
+            Debug.Log($"BEGINNING STATE CHANGE TO {newState}");
             _doTick = false; // disabling ticking because state exit might take several frames
             yield return CurrentState.ExitState();
             CurrentState = newState;
             yield return newState.EnterState();
             _doTick = true;
+            Debug.Log($"ENDED STATE CHANGE TO {newState}");
         }
 
         public void FrameUpdate()

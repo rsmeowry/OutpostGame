@@ -12,7 +12,7 @@ namespace Game.Citizens.States
         public override IEnumerator EnterState()
         {
             Agent.navMeshAgent.isStopped = false;
-            Agent.navMeshAgent.SetDestination(Agent.OrderTarget.EntrancePos.GetSelfPosition(Agent));
+            Agent.navMeshAgent.SetDestination(Agent.WorkPlace.EntrancePos.GetSelfPosition(Agent));
             yield break;
         }
 
@@ -24,16 +24,16 @@ namespace Game.Citizens.States
 
         public override void FrameUpdate()
         {
-            if (Agent.OrderTarget.EntrancePos.DoesAccept(Agent))
+            if (Agent.WorkPlace.EntrancePos.DoesAccept(Agent))
             {
-                Agent.OrderTarget.EntrancePos.Dequeue();
+                Agent.WorkPlace.EntrancePos.Dequeue();
                 Agent.StartCoroutine(StateMachine.ChangeState(Agent.WorkState));
             }
         }
 
         public override void Renavigate()
         {
-            Agent.navMeshAgent.SetDestination(Agent.OrderTarget.EntrancePos.GetSelfPosition(Agent));
+            Agent.navMeshAgent.SetDestination(Agent.WorkPlace.EntrancePos.GetSelfPosition(Agent));
         }
     }
 }

@@ -9,7 +9,8 @@ namespace Game.Citizens
         public bool Accept(CitizenAgent agent);
         public void WorkerTick(CitizenAgent agent);
         public void Release(CitizenAgent agent);
-
+        public void Free(CitizenAgent agent);
+        
         public QueuePosition EntrancePos { get; }
         public PointOfInterest GatheringPost { get; }
     }

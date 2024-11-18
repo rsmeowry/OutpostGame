@@ -18,5 +18,11 @@ namespace External.Util
             yield return new WaitForSeconds(seconds);
             action();
         }
+
+        public static IEnumerator Callback(this IEnumerator selfRoutine, Action callback)
+        {
+            yield return selfRoutine;
+            callback();
+        }
     }
 }
