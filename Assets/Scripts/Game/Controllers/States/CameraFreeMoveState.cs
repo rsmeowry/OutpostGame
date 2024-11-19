@@ -126,8 +126,8 @@ namespace Game.Controllers.States
 
         private void CommitMovement()
         {
-            CameraController.transform.position = Vector3.Lerp(CameraController.transform.position, _nextPos, Time.deltaTime * CameraController.moveTime);
-            CameraController.transform.rotation = Quaternion.Lerp(CameraController.transform.rotation, _nextRot, Time.deltaTime * CameraController.moveTime);
+            CameraController.transform.position = Vector3.Lerp(CameraController.transform.position, _nextPos, Time.unscaledDeltaTime * CameraController.moveTime);
+            CameraController.transform.rotation = Quaternion.Lerp(CameraController.transform.rotation, _nextRot, Time.unscaledDeltaTime * CameraController.moveTime);
 
             var zoomAmt = Mathf.Abs(_nextZoom.y);
             var sign = Mathf.Sign(_nextZoom.y);
@@ -146,7 +146,7 @@ namespace Game.Controllers.States
             }
 
             CameraController.cameraTransform.localPosition =
-                Vector3.Lerp(CameraController.cameraTransform.localPosition, _nextZoom, Time.deltaTime * CameraController.moveTime);
+                Vector3.Lerp(CameraController.cameraTransform.localPosition, _nextZoom, Time.unscaledDeltaTime * CameraController.moveTime);
         }
     }
 }

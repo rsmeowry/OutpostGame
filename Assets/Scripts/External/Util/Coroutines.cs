@@ -8,14 +8,14 @@ namespace External.Util
 {
     public static class Coroutines
     {
-        public static void Delayed<T>(this T self, float seconds, Action action) where T: MonoBehaviour
+        public static void Delayed<T>(this T self, float seconds, Action action, bool unscaled = false) where T: MonoBehaviour
         {
-            self.StartCoroutine(DelayRoutine(seconds, action));
+            self.StartCoroutine(DelayRoutine(seconds, action, unscaled));
         }
 
-        private static IEnumerator DelayRoutine(float seconds, Action action)
+        private static IEnumerator DelayRoutine(float seconds, Action action, bool unscaled)
         {
-            yield return new WaitForSeconds(seconds);
+            yield return unscaled ? new WaitForSecondsRealtime(seconds) : new WaitForSeconds(seconds);
             action();
         }
 

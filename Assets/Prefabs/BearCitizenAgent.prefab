@@ -125,6 +125,7 @@ MonoBehaviour:
   inventoryCapacity: 3
   wanderAnchor: {x: 0, y: 0, z: 0}
   wanderRange: 5
+  LoadedFromData: 0
 --- !u!1001 &6781745170480111030
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -217,6 +218,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: bear_rig_smooth
       objectReference: {fileID: 0}
+    - target: {fileID: 1630794972795428178, guid: bfc3d0c7bd968a44289790eeca52f664, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: af6b6f78edd06d64e9712c356071d2f5, type: 2}
     - target: {fileID: 6793566720875105240, guid: bfc3d0c7bd968a44289790eeca52f664, type: 3}
       propertyPath: m_LocalRotation.w
       value: -0.32865885

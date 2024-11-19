@@ -155,9 +155,9 @@ namespace Game.Citizens
         [FormerlySerializedAs("BaseInventoryCapacity")] [JsonProperty("inventoryCapacity")]
         public int baseInventoryCapacity;
         [FormerlySerializedAs("BuildingGuid")] [JsonProperty("assignedBuilding")]
-        public GUID buildingGuid;
+        public Guid buildingGuid;
         [JsonProperty("Depositer")]
-        public GUID depositer;
+        public Guid depositer;
         [FormerlySerializedAs("State")] [JsonProperty("state")]
         public string state;
         [FormerlySerializedAs("WanderAnchor")] [JsonProperty("wanderAnchor")]
