@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f521be56de4fa0b23d2a048d1e7901, type: 3}
+  m_Name: TestBuilding2x2
+  m_EditorClassIdentifier: 
+  name: Test Building 2x2
+  description: This is a test building that is sized 2x2
+  icon: {fileID: 21300000, guid: a2699f2b0411c7c48a2bcd759731fe59, type: 3}
+  buildingPrefab: {fileID: 228556408467100256, guid: caea5f7d1aea5f94bb85d45d43f268d2, type: 3}
+  requirements:
+  - key: stone
+    count: 30
+  - key: wood
+    count: 30

@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SkyboxMaterial
+  m_Shader: {fileID: -6465566751694194690, guid: cd64920c360af10449f465ad9f990034, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 2001
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _SampleTexture2D_ffbe2b217f444153bf2d42788037f918_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 0aabc55d2bd78d84d9cb40fa0d287997, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _HorizonStrength: 0
+    - _MoonSize: 0.33
+    - _QueueControl: 0
+    - _QueueOffset: 1
+    - _StarBrightness: 2
+    - _StarDensity: 40
+    - _SunSize: 0.18
+    m_Colors:
+    - _GroundColor: {r: 0.01960784, g: 0.0531625, b: 0.20784314, a: 1}
+    - _HaloColor: {r: 0.09462364, g: 0.084926985, b: 0.0013390112, a: 1}
+    - _HorizonAccent: {r: 7.3434954, g: 5.701561, b: 1.1534287, a: 1}
+    - _HorizonColor: {r: 0.2627451, g: 0.11764707, b: 1.1497402, a: 1}
+    - _MoonColor: {r: 1.0998863, g: 1.0745361, b: 4.649013, a: 1}
+    - _SkyColor: {r: 0.04076358, g: 0, b: 0.18800673, a: 1}
+    - _StarColor: {r: 1.01674, g: 0.8943869, b: 1.059274, a: 1}
+    - _SunColor: {r: 37.143116, g: 26.675962, b: 14.973927, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &2279961984693867967
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 9

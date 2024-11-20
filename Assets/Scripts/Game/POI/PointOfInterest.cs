@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Game.Citizens.Navigation;
 using Game.Controllers;
+using NUnit.Framework;
 using UI;
+using UI.Util;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Game.POI
 {
-    public abstract class PointOfInterest: MonoBehaviour
+    public abstract class PointOfInterest: MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {
         public AudioClip clickedSound;
         public POIData data;
@@ -24,12 +29,13 @@ namespace Game.POI
 
         private bool _clickTransition;
         
-        private IEnumerator OnMouseDown()
+        public IEnumerator DoClick()
         {
             if (_clickTransition)
                 yield break;
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-                yield break;
+            // Debug.Log(EventSystem.current.IsPointerOverGameObject());
+            // if (EventSystem.current.IsPointerOverGameObject())
+            //     yield break;
             _clickTransition = true;
             TownCameraController.Instance.FocusedPOI = this;
             yield return TownCameraController.Instance.StateMachine.SwitchState(TownCameraController.Instance.FocusedState);
@@ -38,6 +44,25 @@ namespace Game.POI
             poi.InitForResourcePOI();
             _clickTransition = false;
 
-        } 
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            TooltipCtl.Instance.Show(data.title, "дадада");
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            TooltipCtl.Instance.Hide();
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (eventData.button != PointerEventData.InputButton.Left)
+                return;
+            // var list = new List<RaycastResult>();
+            // EventSystem.current.RaycastAll(eventData, list);
+            StartCoroutine(DoClick());
+        }
     }
 }

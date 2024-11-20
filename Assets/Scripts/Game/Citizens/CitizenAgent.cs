@@ -39,6 +39,8 @@ namespace Game.Citizens
         public IOrderTarget WorkPlace;
         public IProductDepositer ProductDepositer;
 
+        public Transform rightArm;
+
         public bool LoadedFromData = false;
         
         private void Start()

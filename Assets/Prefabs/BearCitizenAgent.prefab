@@ -125,6 +125,7 @@ MonoBehaviour:
   inventoryCapacity: 3
   wanderAnchor: {x: 0, y: 0, z: 0}
   wanderRange: 5
+  rightArm: {fileID: 7034554920368355958}
   LoadedFromData: 0
 --- !u!1001 &6781745170480111030
 PrefabInstance:
@@ -288,5 +289,10 @@ Animator:
 --- !u!4 &6455663982950578781 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: bfc3d0c7bd968a44289790eeca52f664, type: 3}
+  m_PrefabInstance: {fileID: 6781745170480111030}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7034554920368355958 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4576320367818713024, guid: bfc3d0c7bd968a44289790eeca52f664, type: 3}
   m_PrefabInstance: {fileID: 6781745170480111030}
   m_PrefabAsset: {fileID: 0}

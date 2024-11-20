@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game.POI
 {
-    [CreateAssetMenu(fileName = "PointOfInterest", menuName = "Interest/POI Data")]
+    [CreateAssetMenu(fileName = "PointOfInterest", menuName = "Outpost/POI Data")]
     public class POIData: ScriptableObject
     {
         public string title;

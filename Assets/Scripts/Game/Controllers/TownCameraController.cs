@@ -30,8 +30,11 @@ namespace Game.Controllers
         public CameraFreeMoveState FreeMoveState;
         public CameraFocusedState FocusedState;
 
+        private Camera _camera;
+
         private void Start()
         {
+            _camera = GetComponentInChildren<Camera>();
             Instance = this;
             StateMachine = new CameraStateMachine(this);
             FreeMoveState = new CameraFreeMoveState(StateMachine, this);

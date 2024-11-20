@@ -2,6 +2,7 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI.Util
@@ -17,13 +18,17 @@ namespace UI.Util
         private int characterWrapLimit = 80;
         
         private LayoutElement _layout;
+        private Image _img;
         
         public CanvasGroup canvasGroup;
+
+        [FormerlySerializedAs("_hidden")] public bool hidden = true;
 
         private void Start()
         {
             _layout = GetComponent<LayoutElement>();
             canvasGroup = GetComponent<CanvasGroup>();
+            _img = GetComponent<Image>();
         }
 
         public void SetText(string vHeader, string vBody)
@@ -37,9 +42,10 @@ namespace UI.Util
 
         private Tween showTween;
 
-        public void DelayedShow()
+        public void DelayedShow(float delay = 0.5f)
         {
-            showTween = transform.DOScale(Vector3.one, 0.2f).SetDelay(0.5f).Play();
+            hidden = false;
+            showTween = transform.DOScale(Vector3.one, 0.2f).SetDelay(delay).Play();
         }
 
         public void Hide()
@@ -49,7 +55,10 @@ namespace UI.Util
                 showTween.Kill();
                 showTween = null;
             }
-            transform.DOScale(Vector3.zero, 0.2f).Play();
+            transform.DOScale(Vector3.zero, 0.2f).OnComplete(() =>
+            {
+                hidden = true;
+            }).Play();
         }
     }
 }

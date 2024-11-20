@@ -28,6 +28,9 @@ namespace Game.State
         
         public static StateKey FromString(string st)
         {
+            if (!st.Contains(":"))
+                return new StateKey(st);
+            
             var sp = st.Split(":");
             return new StateKey(sp[0], sp[1]);
         }

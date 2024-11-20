@@ -20,11 +20,11 @@ namespace UI.Util
             
         }
 
-        public void Show(string header, string body)
+        public void Show(string header, string body, float delay = 0.5f)
         {
             // _tooltip.gameObject.SetActive(true);
             _tooltip.SetText(header, body);
-            _tooltip.DelayedShow();
+            _tooltip.DelayedShow(delay);
         }
 
         public void Hide()
@@ -62,6 +62,8 @@ namespace UI.Util
 
         private void Update()
         {
+            // if (_tooltip.hidden)
+                // return;
             var position = Input.mousePosition;
             var normalizedPosition = new Vector2(position.x / Screen.width, position.y / Screen.height);
             var pivot = CalculatePivot(normalizedPosition);

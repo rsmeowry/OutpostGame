@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ToonLit
+  m_Name: MoyaiToonLit
   m_Shader: {fileID: 4800000, guid: 121a2bcdb1e221f4c90a0722ae9131d0, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 065b2247307f9364a9a12c6a84863eba, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7e6682c48b3ed814abeb1aec7f075792, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:

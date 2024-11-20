@@ -63,7 +63,6 @@ namespace Game.Citizens.States
             {
                 _goal = Goal.Go;
                 var pos = GetWanderPosition();
-                Debug.Log($"{pos.x} {pos.y} {pos.z}");
                 Agent.navMeshAgent.SetDestination(pos);
             }
             else

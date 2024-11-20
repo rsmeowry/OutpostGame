@@ -26,6 +26,8 @@ namespace Game.Production.POI
         private List<CitizenAgent> _citizensInside = new();
         private Dictionary<int, int> _citizenPos = new();
         private List<bool> _positions;
+        [SerializeField]
+        private GameObject tool;
 
         private void Awake()
         {
@@ -88,7 +90,9 @@ namespace Game.Production.POI
                 agent.transform.position = citizenWorkingPositions[spot].position;
                 
                 PreAnimation(agent);
-                agent.GetComponent<Animator>().Play(citizenAnimation);
+                if(tool != null)
+                    Instantiate(tool, agent.rightArm);
+                agent.PlayAnimation(citizenAnimation);
                 // agent.GetComponent<NavMeshAgent>().enabled = false;
             }
             else
@@ -115,13 +119,15 @@ namespace Game.Production.POI
             {
                 // TODO: remove pickaxe and shit
                 ReleaseSpot(_citizenPos[agent.citizenId]);
-                agent.PlayAnimation("Idle");
+                if(tool != null)
+                    Destroy(agent.rightArm.GetChild(0).gameObject);
+                agent.PlayAnimation("Walk");
                 _isFull = false;
             }
             else
             {
                 agent.ShowSelf();
-                agent.PlayAnimation("Idle");
+                agent.PlayAnimation("Walk");
                 _isFull = false;
             }
         }
