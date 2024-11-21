@@ -7,12 +7,20 @@ namespace Game.Tick
     {
         public static TimeManager Instance { get; private set; }
 
+        public int gameSpeed = 1;
+
         public void Start()
         {
             Instance = this;
 
             DOTween.Init();
             DOTween.defaultTimeScaleIndependent = true;
+        }
+        
+        public void ChangeGameSpeed(int newSpeed)
+        {
+            gameSpeed = newSpeed;
+            Time.timeScale = gameSpeed;
         }
 
         [ContextMenu("Test/Speedup")]

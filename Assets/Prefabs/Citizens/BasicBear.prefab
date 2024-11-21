@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2155525623296943858}
   - component: {fileID: 678471201695674057}
   m_Layer: 0
-  m_Name: BearCitizenAgent
+  m_Name: BasicBear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

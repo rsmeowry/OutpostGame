@@ -24,7 +24,7 @@ namespace UI.Building
             if (_isShown)
             {
                 var seq = DOTween.Sequence();
-                seq.Join(_parent.DOAnchorPosY(-210, .5f).SetEase(Ease.OutExpo));
+                seq.Join(_parent.DOAnchorPosY(-230, .5f).SetEase(Ease.OutExpo));
                 // seq.Join(_self.DORotate(Vector3.zero, 0.5f).SetEase(Ease.OutExpo));
                 seq.Play();
             }

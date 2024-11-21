@@ -43,7 +43,6 @@ namespace Game.POI
             poi.poi = this;
             poi.InitForResourcePOI();
             _clickTransition = false;
-
         }
 
         public void OnPointerEnter(PointerEventData eventData)
