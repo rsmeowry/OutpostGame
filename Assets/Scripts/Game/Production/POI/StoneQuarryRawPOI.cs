@@ -1,16 +1,19 @@
-﻿using External.Util;
+﻿using System.Collections.Generic;
+using External.Util;
 using Game.Citizens;
-using Game.POI;
 using Game.Production.Products;
-using UnityEngine;
 
 namespace Game.Production.POI
 {
-    public class StoneQuarryRawPOI: ResourceContainingPOI
+    public class StoneQuarryRawPOI: UtilityResourcePOI
     {
+        private Dictionary<CitizenAgent, int> _ticks;
         public override void WorkerTick(CitizenAgent agent)
         {
-            agent.Inventory.Increment(ProductRegistry.Stone);
+            if (ShouldSubtick(agent, 2))
+            {
+                agent.Inventory.Increment(ProductRegistry.Stone); 
+            }
         }
     }
 }

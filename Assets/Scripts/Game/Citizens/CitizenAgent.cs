@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -32,11 +33,12 @@ namespace Game.Citizens
         public CitizenWanderState WanderState;
         public CitizenGoWorkState GoWorkState;
         public CitizenWorkState WorkState;
+        public CitizenMoveToWorkSpotState MoveToWorkSpotState;
 
         public Vector3 wanderAnchor = Vector3.zero;
         public float wanderRange = 5f;
 
-        public IOrderTarget WorkPlace;
+        public ICitizenWorkPlace WorkPlace;
         public IProductDepositer ProductDepositer;
 
         public Transform rightArm;
@@ -53,6 +55,7 @@ namespace Game.Citizens
             WanderState = new CitizenWanderState(this, StateMachine);
             GoWorkState = new CitizenGoWorkState(this, StateMachine);
             WorkState = new CitizenWorkState(this, StateMachine);
+            MoveToWorkSpotState = new CitizenMoveToWorkSpotState(this, StateMachine);
 
             PersistentData = new PersistentCitizenData
             {
@@ -101,11 +104,11 @@ namespace Game.Citizens
 
         public void Free()
         {
-            WorkPlace.Free(this);
+            WorkPlace.Fire(this);
             StartCoroutine(StateMachine.ChangeState(WanderState).Callback(() => WorkPlace = null));
         }
 
-        public void Assign(IOrderTarget workPlace)
+        public void MarkHiredAt(ICitizenWorkPlace workPlace)
         {
             WorkPlace = workPlace;
             Order(GoWorkState);
@@ -116,6 +119,11 @@ namespace Game.Citizens
             if (_animator == null)
                 return;
             _animator.Play(anim);
+        }
+
+        public IEnumerator WaitForArrival()
+        {
+            yield return new WaitUntil(() => navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance);
         }
 
         public void HideSelf()

@@ -44,7 +44,7 @@ namespace UI.POI
                 PollChildren();
                 return;
             }
-            parentPanel.rcPoi.AssignAgent(ctzn);
+            parentPanel.rcPoi.HireAgent(ctzn);
             PollChildren();
         }
 

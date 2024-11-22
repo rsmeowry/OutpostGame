@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.POI;
 using Game.State;
@@ -16,6 +17,7 @@ namespace Game.Production.POI
         {
             foreach (var key in inventory.Keys)
             {
+                
                 GameStateManager.Instance.IncreaseProduct(key, inventory[key]);
             }
             inventory.Clear();

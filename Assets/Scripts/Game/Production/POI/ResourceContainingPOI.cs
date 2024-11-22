@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.POI;
@@ -10,7 +12,7 @@ using UnityEngine.AI;
 namespace Game.Production.POI
 {
     // Forest clearing + Rock stuff etc.
-    public abstract class ResourceContainingPOI: PointOfInterest, IOrderTarget
+    public abstract class ResourceContainingPOI: PointOfInterest, ICitizenWorkPlace
     {
         public List<Transform> citizenWorkingPositions;
         public string citizenAnimation;
@@ -60,67 +62,113 @@ namespace Game.Production.POI
             }
         }
 
-        public bool AssignAgent(CitizenAgent agent)
+        public bool HireAgent(CitizenAgent agent)
         {
             if (_isFull)
                 return false;
             AssignedAgents.Add(agent);
             _isFull = AssignedAgents.Count >= capacity;
-            agent.Assign(this);
+            agent.MarkHiredAt(this);
             return true;
         }
 
-        public void UnassignAgent(CitizenAgent agent)
+        public IEnumerator BeginWork(CitizenAgent agent, Action<WorkPlaceEnterResult> callback)
         {
-            AssignedAgents.Remove(agent);
-            _isFull = false;
+            _awaitingArrival.Remove(agent);
+            
+            var spot = _citizenPos[agent.citizenId];
+            agent.transform.position = citizenWorkingPositions[spot].position;
+            agent.transform.DORotateQuaternion(citizenWorkingPositions[spot].rotation, 0.5f).SetEase(Ease.Linear).Play();
+                
+            PreAnimation(agent);
+            if (tool != null)
+            {
+                var t = Instantiate(tool, agent.rightArm);
+                var originalScale = t.transform.localScale;
+                t.transform.localScale = Vector3.zero;
+                t.transform.DOScale(originalScale, 0.75f).SetEase(Ease.OutBack).Play();
+            }
+
+            yield return new WaitForSeconds(0.5f);
+            agent.PlayAnimation(citizenAnimation);
+
+            callback(WorkPlaceEnterResult.Accepted);
         }
+
+        private List<CitizenAgent> _awaitingArrival = new();
         
-        public bool Accept(CitizenAgent agent)
+        public IEnumerator EnterWorkPlace(CitizenAgent agent, Action<WorkPlaceEnterResult> callback)
         {
             if (!AssignedAgents.Contains(agent))
-                return false;
-            _citizensInside.Add(agent);
+            {
+                callback(WorkPlaceEnterResult.Declined);
+                yield break;
+            }
+
+            if (_awaitingArrival.Contains(agent))
+            {
+                _citizensInside.Add(agent);
+                yield return BeginWork(agent, callback);
+                yield break;
+            }
             
             if (citizenWorkingPositions.Count > 0)
             {
                 var spot = FindSpot();
                 _citizenPos[agent.citizenId] = spot;
-                // TODO: make citizen walk towards the pos?
-                agent.transform.position = citizenWorkingPositions[spot].position;
                 
-                PreAnimation(agent);
-                if(tool != null)
-                    Instantiate(tool, agent.rightArm);
-                agent.PlayAnimation(citizenAnimation);
-                // agent.GetComponent<NavMeshAgent>().enabled = false;
-            }
-            else
-            {
-                agent.HideSelf();
-                agent.navMeshAgent.enabled = false;
-            }
+                _awaitingArrival.Add(agent);
 
-            return true;
+                callback(WorkPlaceEnterResult.NeedToMoveToSpot);
+                yield break; 
+            }
+            
+            _citizensInside.Add(agent);
+            
+            agent.HideSelf();
+            agent.navMeshAgent.enabled = false;
+
+            callback(WorkPlaceEnterResult.Accepted);
         }
 
-        public virtual void Free(CitizenAgent agent)
+        public bool IsCurrentlyWorking(CitizenAgent agent)
         {
-            UnassignAgent(agent);
+            return _citizensInside.Contains(agent);
         }
 
-        public void Release(CitizenAgent agent)
+        public virtual void Fire(CitizenAgent agent)
+        {
+            AssignedAgents.Remove(agent);
+            _isFull = false;
+        }
+
+        public Vector3 DesignatedWorkingSpot(CitizenAgent agent)
+        {
+            if (citizenWorkingPositions.Count < 0 || !_citizenPos.ContainsKey(agent.citizenId))
+                return Vector3.zero;
+
+            return citizenWorkingPositions[_citizenPos[agent.citizenId]].position;
+        }
+
+        public virtual IEnumerator LeaveWorkPlace(CitizenAgent agent)
         {
             if (!_citizensInside.Contains(agent))
-                return;
+            {
+                yield break;
+            }
 
             _citizensInside.Remove(agent);
             if (citizenWorkingPositions.Count > 0)
             {
                 // TODO: remove pickaxe and shit
                 ReleaseSpot(_citizenPos[agent.citizenId]);
-                if(tool != null)
-                    Destroy(agent.rightArm.GetChild(0).gameObject);
+                
+                // tool disappear animation
+                var tf = agent.rightArm.GetChild(0);
+                tf.DOKill();
+                tf.DOScale(Vector3.zero, 0.75f).SetEase(Ease.OutExpo)
+                    .OnComplete(() => Destroy(agent.rightArm.GetChild(0).gameObject)).Play();
+                
                 agent.PlayAnimation("Walk");
                 _isFull = false;
             }
@@ -131,7 +179,17 @@ namespace Game.Production.POI
                 _isFull = false;
             }
         }
-        
+
+        private void OnDrawGizmos()
+        {
+            foreach (var pos in citizenWorkingPositions)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(pos.position, 0.5f);
+                Gizmos.DrawLine(pos.position, pos.position + pos.forward * 8f);
+            }
+        }
+
         public abstract void WorkerTick(CitizenAgent agent);
         public override QueuePosition EntrancePos => entrancePos;
 

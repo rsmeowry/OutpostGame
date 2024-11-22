@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.Controllers;
 using NUnit.Framework;

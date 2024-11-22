@@ -35,10 +35,9 @@ namespace Game.State
 
         public IEnumerator LoadGameState()
         {
-            Debug.Log($"{CitizenNames.RandomMascName()} {CitizenNames.RandomMascName()} {CitizenNames.RandomMascName()}");
-            Debug.Log($"{CitizenNames.RandomFemName()} {CitizenNames.RandomFemName()} {CitizenNames.RandomFemName()}");
             yield return new WaitForSeconds(2);
             InitialLoadPlayerData();
+            
 
             // Load our markets
             yield return new WaitForSeconds(2);

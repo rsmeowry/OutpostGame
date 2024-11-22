@@ -26,6 +26,13 @@ namespace Game.Citizens
             Instance = this;
         }
 
+        private void Start()
+        {
+            // __TestSpawnCitizen();
+            // __TestSpawnCitizen();
+            // __TestSpawnCitizen();
+        }
+
         [SerializeField]
         private ResourceContainingPOI poi;
         [ContextMenu("Test/Spawn Citizen")]
@@ -51,7 +58,7 @@ namespace Game.Citizens
         [ContextMenu("Test/Spawn Citizen Raw")]
         public CitizenAgent __TestSpawnCitizen()
         {
-            SpawnCitizen(Vector3.zero + Vector3.up * 2);
+            SpawnCitizen(new Vector3(180, 3, 110f));
             return null;
         }
 

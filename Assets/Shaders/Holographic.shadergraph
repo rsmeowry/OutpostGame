@@ -169,6 +169,34 @@
             },
             "m_InputSlot": {
                 "m_Node": {
+                    "m_Id": "880879669ca648b588c161361b84f9a6"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "8fbf567d693a443e821624323d4a5062"
+                },
+                "m_SlotId": 2
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "fee58c03dc6145eab077e1b3ffb3c6f5"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "8fbf567d693a443e821624323d4a5062"
+                },
+                "m_SlotId": 2
+            },
+            "m_InputSlot": {
+                "m_Node": {
                     "m_Id": "ff80c0648b014c91b12552dab028ac1e"
                 },
                 "m_SlotId": 0
@@ -242,34 +270,6 @@
                     "m_Id": "912bae5544ac4ade90f45ff566d67562"
                 },
                 "m_SlotId": 1
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "ff80c0648b014c91b12552dab028ac1e"
-                },
-                "m_SlotId": 2
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "880879669ca648b588c161361b84f9a6"
-                },
-                "m_SlotId": 0
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "ff80c0648b014c91b12552dab028ac1e"
-                },
-                "m_SlotId": 2
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "fee58c03dc6145eab077e1b3ffb3c6f5"
-                },
-                "m_SlotId": 0
             }
         }
     ],
@@ -1200,7 +1200,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "Power",
     "m_StageCapability": 3,
-    "m_Value": 1.0,
+    "m_Value": 2.0,
     "m_DefaultValue": 1.0,
     "m_Labels": []
 }
@@ -1383,10 +1383,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -418.0000305175781,
+            "x": -410.0,
             "y": 200.00001525878907,
-            "width": 208.00006103515626,
-            "height": 302.00006103515627
+            "width": 208.0,
+            "height": 302.0
         }
     },
     "m_Slots": [
@@ -1760,8 +1760,8 @@
     "m_ShaderOutputName": "Tiling",
     "m_StageCapability": 3,
     "m_Value": {
-        "x": 32.0,
-        "y": 32.0
+        "x": 16.0,
+        "y": 16.0
     },
     "m_DefaultValue": {
         "x": 1.0,

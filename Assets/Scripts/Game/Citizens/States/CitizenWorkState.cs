@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Game.Production;
 using UnityEngine;
 
@@ -14,30 +15,47 @@ namespace Game.Citizens.States
 
         public override IEnumerator EnterState()
         {
-            Agent.navMeshAgent.isStopped = true;
-            Agent.navMeshAgent.enabled = false;
             yield return new WaitForSeconds(0.2f);
-            if (!Agent.WorkPlace.Accept(Agent))
+            yield return Agent.WorkPlace.EnterWorkPlace(Agent, (s) =>
             {
-                Agent.navMeshAgent.enabled = true;
-                Agent.Order(Agent.WanderState);
-            }
-            yield break;
+                switch (s)
+                {
+                    case WorkPlaceEnterResult.Accepted:
+                        Agent.navMeshAgent.isStopped = true;
+                        Agent.navMeshAgent.enabled = false;
+                        break;
+                    case WorkPlaceEnterResult.Declined:
+                        Agent.navMeshAgent.enabled = true;
+                        Agent.Order(Agent.WanderState);
+                        break;
+                    case WorkPlaceEnterResult.NeedToMoveToSpot:
+                        Agent.StartCoroutine(StateMachine.ChangeState(Agent.MoveToWorkSpotState));
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(s), s, null);
+                }
+            });
         }
 
         public override IEnumerator ExitState()
         {
             Agent.navMeshAgent.enabled = true;
             Agent.navMeshAgent.isStopped = false;
-            if(Agent.WorkPlace != null)
-                Agent.WorkPlace.Release(Agent);
+            
+            if (Agent.WorkPlace != null)
+            {
+                if (Agent.WorkPlace.IsCurrentlyWorking(Agent))
+                {
+                    yield return Agent.WorkPlace.LeaveWorkPlace(Agent);
+                }
+            }
             
             // Agent.navMeshAgent.SetDestination(Agent.OrderTarget.EntrancePos.GetSelfPosition(Agent));
             // while (Agent.navMeshAgent.remainingDistance > Agent.navMeshAgent.stoppingDistance)
             // {
                 // yield return null;
             // }
-            yield break;
+            // yield break;
         }
 
         public override void FrameUpdate()
