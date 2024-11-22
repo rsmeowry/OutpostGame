@@ -9,12 +9,18 @@ namespace Game.Building
     [CreateAssetMenu(fileName = "BuildingData", menuName = "Outpost/Building Data")]
     public class BuildingData: ScriptableObject
     {
+        public string keyId;
         public string name;
+        [TextArea(2, 4)]
         public string description;
         public Sprite icon;
         public GameObject buildingPrefab;
+        public Vector2Int size;
+        public Color prominentColor;
 
         public List<ResourceRequirement> requirements;
+        
+        public StateKey Id => StateKey.FromString(keyId);
     }
 
     [Serializable]

@@ -8,5 +8,15 @@ namespace External.Util
         {
             self[key] = self.TryGetValue(key, out var og) ? og + by : by;
         }
+
+        public static string ToLineSeparatedString(this IEnumerable<string> strings)
+        {
+            return string.Join("\n", strings);
+        }
+
+        public static string ToCommaSeparatedString(this IEnumerable<string> strings)
+        {
+            return string.Join(",", strings);
+        }
     }
 }

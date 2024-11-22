@@ -7,6 +7,8 @@ namespace UI.BottomRow
 {
     public class BottomRowCtl: MonoBehaviour
     {
+        public static BottomRowCtl Instance { get; private set; }
+        
         public BottomRowTabSelector activeTab;
 
         private RectTransform _self;
@@ -16,8 +18,19 @@ namespace UI.BottomRow
 
         private void Start()
         {
+            Instance = this;
             _self = (RectTransform)transform;
             _btmRow = (RectTransform) transform.GetChild(1).GetChild(0);
+        }
+
+        public IEnumerator HideTopRow()
+        {
+            yield return _self.DOAnchorPosY(-320f, .25f).SetEase(Ease.OutExpo).Play().WaitForCompletion();
+        }
+
+        public IEnumerator ShowTopRow()
+        {
+            yield return _self.DOAnchorPosY(-230f, .25f).SetEase(Ease.OutExpo).Play().WaitForCompletion();
         }
 
         public IEnumerator SwitchTab(BottomRowTabSelector newTab)
@@ -46,13 +59,23 @@ namespace UI.BottomRow
             
             _busy = false;
         }
+        
+        public void CloseTabInstant()
+        {
+            if (_busy)
+                return;
+            activeTab.rectTransform.rotation = Quaternion.Euler(Vector3.zero);
+            activeTab.rectTransform.localScale = Vector3.one;
+            activeTab = null;
+            Destroy(_btmRow.GetChild(0).gameObject);
+        }
 
-        public IEnumerator CloseTab()
+        public IEnumerator CloseTab(bool goFull = false)
         {
             if (_busy)
                 yield break;
             _busy = true;
-            yield return HideTab();
+            yield return HideTab(goFull);
             activeTab = null;
             Destroy(_btmRow.GetChild(0).gameObject);
             _busy = false;
@@ -79,10 +102,10 @@ namespace UI.BottomRow
             yield return seq.Play().WaitForCompletion();
         }
 
-        private IEnumerator HideTab(float timeScale = 1f)
+        private IEnumerator HideTab(bool goFull, float timeScale = 1f)
         {
             var seq = DOTween.Sequence();
-            seq.Join(_self.DOAnchorPosY(-230, .5f * timeScale).SetEase(Ease.OutExpo));
+            seq.Join(_self.DOAnchorPosY(goFull ? -330 : -230, .5f * timeScale).SetEase(Ease.OutExpo));
             seq.Join(activeTab.rectTransform.DORotate(Vector3.zero, .5f * timeScale).SetEase(Ease.OutExpo));
             seq.Join(activeTab.rectTransform.DOScale(Vector3.one, .5f * timeScale).SetEase(Ease.OutExpo));
             yield return seq.Play().WaitForCompletion();

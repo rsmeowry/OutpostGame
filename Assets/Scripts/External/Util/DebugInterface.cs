@@ -2,7 +2,6 @@
 using System.Linq;
 using Game.State;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace External.Util

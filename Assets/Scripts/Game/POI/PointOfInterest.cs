@@ -7,7 +7,6 @@ using Game.Controllers;
 using NUnit.Framework;
 using UI;
 using UI.Util;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -28,10 +27,10 @@ namespace Game.POI
 
 
         private bool _clickTransition;
-        
+
         public IEnumerator DoClick()
         {
-            if (_clickTransition)
+            if (_clickTransition || TownCameraController.Instance.interactionFilter != CameraInteractionFilter.ProductionAndCitizens)
                 yield break;
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
             // if (EventSystem.current.IsPointerOverGameObject())

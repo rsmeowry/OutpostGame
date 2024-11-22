@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace External.Util
@@ -31,7 +30,7 @@ namespace External.Util
         {
             if (!EnableLogs)
                 return;
-            Debug.Log($"[{Prefix}] :: {objects.Select(it => it == null ? "<NULL>" : it.ToString()).ToSeparatedString(", ")}");
+            Debug.Log($"[{Prefix}] :: {objects.Select(it => it == null ? "<NULL>" : it.ToString()).ToCommaSeparatedString()}");
         }
 #pragma warning restore CS0162 // Unreachable code detected
 

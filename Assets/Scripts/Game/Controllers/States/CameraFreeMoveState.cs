@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UI.BottomRow;
 using UnityEngine;
 
 namespace Game.Controllers.States
@@ -30,28 +31,16 @@ namespace Game.Controllers.States
             _nextPos = CameraController.transform.position;
             _nextRot = CameraController.transform.rotation;
             _nextZoom = CameraController.cameraTransform.localPosition;
-            yield break;
+
+            // Show top row again
+            yield return BottomRowCtl.Instance.ShowTopRow();
         }
 
         public override void LateFrameUpdate()
         {
-            ClickHandler();
             MouseMovement();
             KeyboardMovement();
             CommitMovement();
-        }
-        
-                private void ClickHandler()
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                var ray = Camera.main!.ScreenPointToRay(Input.mousePosition);
-                var h = Physics.SphereCast(ray, 0.3f, out var hit);
-                if (h && hit.transform.TryGetComponent<ICameraClickable>(out var clickable))
-                {
-                    clickable.OnClick();
-                }
-            }
         }
 
         private void MouseMovement()

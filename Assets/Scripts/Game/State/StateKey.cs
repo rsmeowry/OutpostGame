@@ -34,5 +34,6 @@ namespace Game.State
             var sp = st.Split(":");
             return new StateKey(sp[0], sp[1]);
         }
+        
     }
 }

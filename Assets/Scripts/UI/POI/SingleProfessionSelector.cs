@@ -33,20 +33,18 @@ namespace UI.POI
 
         public void PollChanges()
         {
-            Debug.Log(_professionName);
             _professionName.SetText(caste switch
             {
                 CitizenCaste.Creator => "Творцы",
                 CitizenCaste.Explorer => "Первопроходцы",
-                CitizenCaste.Beekeeper => "Медокрады",
-                CitizenCaste.Engineer => "Инженеры",
+                CitizenCaste.Beekeeper => "Пасечники",
+                CitizenCaste.Engineer => "Конструкторы",
                 _ => throw new ArgumentOutOfRangeException()
             });
 
             _buttonAdd.interactable = parent.CanAssign(caste);
             _buttonRemove.interactable = parent.CanRemove(caste);
             
-            Debug.Log(parent.parentPanel.rcPoi.AssignedAgents.Count);
             _counter.SetText(parent.parentPanel.rcPoi.AssignedAgents.Count(it => it.PersistentData.Profession == caste).ToString());
         }
     }

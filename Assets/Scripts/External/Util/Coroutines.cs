@@ -24,5 +24,14 @@ namespace External.Util
             yield return selfRoutine;
             callback();
         }
+
+        public static IEnumerator Chained(this IEnumerator selfRoutine, params IEnumerator[] next)
+        {
+            yield return selfRoutine;
+            foreach (var n in next)
+            {
+                yield return n;
+            }
+        }
     }
 }

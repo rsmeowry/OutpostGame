@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.Controllers;
 using UI.Util;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -28,6 +29,9 @@ namespace UI.BottomRow
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (TownCameraController.Instance.StateMachine.CurrentState != TownCameraController.Instance.FreeMoveState)
+                return;
+            
             if (parent.activeTab == this)
             {
                 StartCoroutine(parent.CloseTab());

@@ -1,4 +1,5 @@
 using System;
+using Game.Building;
 using Game.Controllers.States;
 using Game.POI;
 using UnityEngine;
@@ -22,6 +23,7 @@ namespace Game.Controllers
 
         [SerializeField] internal Transform cameraTransform;
         
+        
         public static TownCameraController Instance { get; private set; }
         
         public PointOfInterest FocusedPOI;
@@ -29,23 +31,44 @@ namespace Game.Controllers
         public CameraStateMachine StateMachine;
         public CameraFreeMoveState FreeMoveState;
         public CameraFocusedState FocusedState;
+        public CameraBuildingState BuildingState;
+        public CameraRoadBuildingState RoadBuildingState;
 
-        private Camera _camera;
+        internal Camera Camera;
+
+        public CameraInteractionFilter interactionFilter;
 
         private void Start()
         {
-            _camera = GetComponentInChildren<Camera>();
+            Camera = GetComponentInChildren<Camera>();
             Instance = this;
             StateMachine = new CameraStateMachine(this);
             FreeMoveState = new CameraFreeMoveState(StateMachine, this);
             FocusedState = new CameraFocusedState(StateMachine, this);
+            BuildingState = new CameraBuildingState(StateMachine, this);
+            RoadBuildingState = new CameraRoadBuildingState(StateMachine, this);
             
             StateMachine.Init(FreeMoveState);
+        }
+
+        public Vector3 MouseToWorld()
+        {
+            var ray = Camera.ScreenPointToRay(Input.mousePosition);
+            var hit = new RaycastHit[1];
+            Physics.RaycastNonAlloc(ray, hit, 100000f, BuildingManager.Instance.terrainLayer);
+            return hit[0].point;
         }
 
         private void LateUpdate()
         {
             StateMachine.LateFrameUpdate();
         }
+    }
+
+    public enum CameraInteractionFilter
+    {
+        ProductionAndCitizens,
+        Intersections,
+        None
     }
 }
