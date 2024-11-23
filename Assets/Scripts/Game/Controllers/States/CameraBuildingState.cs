@@ -8,6 +8,8 @@ namespace Game.Controllers.States
 {
     public class CameraBuildingState: CameraFreeMoveState
     {
+        public Vector3 mouseHitPos;
+        
         public CameraBuildingState(CameraStateMachine stateMachine, TownCameraController cameraController) : base(stateMachine, cameraController)
         {
             
@@ -42,15 +44,22 @@ namespace Game.Controllers.States
             var ray = CameraController.Camera.ScreenPointToRay(Input.mousePosition);
             var hit = new RaycastHit[1];
             Physics.RaycastNonAlloc(ray, hit, 100000f, BuildingManager.Instance.terrainLayer);
-            BuildingManager.Instance.currentBuilding.position = BuildingManager.Instance.LerpedSnap(BuildingManager.Instance.currentBuilding.position, hit[0].point);
+            mouseHitPos = hit[0].point;
+            BuildingManager.Instance.MoveBuilding(BuildingManager.Instance.LerpedSnap(BuildingManager.Instance.currentBuilding.position, mouseHitPos));
+
+            // recalculating collisions
+            BuildingManager.Instance.CheckCollisionsIfNeeded();
         }
 
         private void HandleClicks()
         {
             if (Input.GetMouseButtonDown(0))
             {
-                BuildingManager.Instance.StartCoroutine(BuildingManager.Instance.PlaceBuilding());
-                CameraController.StartCoroutine(StateMachine.SwitchState(CameraController.FreeMoveState));
+                BuildingManager.Instance.StartCoroutine(BuildingManager.Instance.PlaceBuilding(success =>
+                {
+                    if(success)
+                        CameraController.StartCoroutine(StateMachine.SwitchState(CameraController.FreeMoveState));
+                }));
                 // TODO: more complex placement
             }
         }

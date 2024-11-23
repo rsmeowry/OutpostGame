@@ -2727,13 +2727,14 @@ MonoBehaviour:
     m_Bits: 64
   cam: {fileID: 330585545}
   lerpedSnappingTime: 15
+  canPlaceColor: {r: 8.1697445, g: 6.092091, b: 1.9653629, a: 1}
+  cantPlaceColor: {r: 5.521027, g: 0.20022346, b: 0.13021289, a: 1}
   gridPlanePrefab: {fileID: 9189805225701128488, guid: e7236245e6d627c4a89e09299dfbb66c, type: 3}
   holographicMaterial: {fileID: 2100000, guid: e1cd44f971ac88042bffe72b66ef763f, type: 2}
   buildingParticlesPrefab: {fileID: 5004987605987777018, guid: 4d594b5dbfb75f3449a0ad822a5c03e9, type: 3}
   currentBuilding: {fileID: 0}
   currentBuildingData: {fileID: 0}
   isBuilding: 0
-  isReady: 0
 --- !u!1 &1222390990
 GameObject:
   m_ObjectHideFlags: 0

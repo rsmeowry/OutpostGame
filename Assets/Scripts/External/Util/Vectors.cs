@@ -13,5 +13,16 @@ namespace External.Util
         {
             return $"({self.x} {self.y} {self.z})";
         }
+
+        // CHECKS ONLY X AND Z
+        public static bool LessThan(this Vector3Int self, Vector3Int other)
+        {
+            return self.x < other.x && self.z < other.z;
+        }
+
+        public static bool GreaterThan(this Vector3Int self, Vector3Int other)
+        {
+            return self.x > other.x && self.z > other.z;
+        }
     }
 }

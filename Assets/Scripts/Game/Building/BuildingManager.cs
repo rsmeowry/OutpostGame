@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using External.Util;
 using Game.Controllers;
+using Game.State;
+using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 namespace Game.Building
@@ -22,6 +25,13 @@ namespace Game.Building
         [SerializeField]
         private float lerpedSnappingTime = 5f;
 
+        [ColorUsage(false, true)]
+        [SerializeField]
+        private Color canPlaceColor;
+        [ColorUsage(false, true)]
+        [SerializeField]
+        private Color cantPlaceColor;
+
         [SerializeField]
         private GameObject gridPlanePrefab;
 
@@ -37,10 +47,17 @@ namespace Game.Building
         public BuildingData currentBuildingData;
         private Material _buildingMaterial;
         private bool _isRotating;
-        [FormerlySerializedAs("_isBuilding")] public bool isBuilding;
-        public bool isReady = true;
+        private bool _hasCollisions;
+        private bool _isConstructing;
+        private Vector3Int _currentCellSpot;
+        [FormerlySerializedAs("_isBuilding")] public bool isBuilding; 
         private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
-        private static readonly int FadeFactor = Shader.PropertyToID("_FadeFactor");
+        private static readonly int GridColor = Shader.PropertyToID("_GridColor");
+        private static readonly int HoloColor = Shader.PropertyToID("_Color");
+        
+        // serialized data below
+        // TODO: read them from save data
+        private Dictionary<Vector3Int, BuiltObject> _builtObjects = new();
 
         private void Start()
         {
@@ -61,16 +78,14 @@ namespace Game.Building
 
         public void BeginBuilding(BuildingData data)
         {
-            isReady = false;
-            
             isBuilding = true;
             currentBuildingData = data;
             currentBuilding = Instantiate(currentBuildingData.buildingPrefab, transform).transform;
+            currentBuilding.GetChild(0).GetChild(0).transform.localScale *= 1.1f;
             currentBuilding.position = SnapToGrid(TownCameraController.Instance.MouseToWorld());
             // todo: handle more than one material?
             var rd = currentBuilding.GetComponentInChildren<Renderer>();
             _buildingMaterial = new Material(rd.material);
-            // Debug.Log(_buildingMaterial.shader);
             rd.material = holographicMaterial;
             Instantiate(gridPlanePrefab, currentBuilding);
         }
@@ -80,16 +95,79 @@ namespace Game.Building
             isBuilding = false;
             Destroy(currentBuilding.gameObject);
             currentBuildingData = null;
-            isReady = true;
         }
 
-        public IEnumerator PlaceBuilding()
+        public void MoveBuilding(Vector3 newPos)
         {
-            if (!isBuilding || _isRotating)
-                yield break;
+            if (_isConstructing)
+                return;
+            currentBuilding.position = newPos;
+        }
 
+        public void CheckCollisionsIfNeeded()
+        {
+            var newCellSpot = _grid.WorldToCell(TownCameraController.Instance.BuildingState.mouseHitPos);
+            if (newCellSpot != _currentCellSpot)
+            {
+                _currentCellSpot = newCellSpot;
+                DoCheckCollisions(newCellSpot);
+            }
+        }
+
+        private void DoCheckCollisions(Vector3Int cellSpot)
+        {
+            var hadCollisionsBefore = _hasCollisions;
+            _hasCollisions = HasCollisions(cellSpot);
+            try
+            {
+                if (hadCollisionsBefore && !_hasCollisions)
+                {
+                    // dont have collisions anymore, restore materials
+                    var buildRd = currentBuilding.GetChild(0).GetChild(0).GetComponentInChildren<Renderer>();
+                    buildRd.material.SetColor(HoloColor, canPlaceColor);
+                    var gridRd = currentBuilding.GetChild(1).GetComponent<Renderer>();
+                    gridRd.material.SetColor(GridColor, canPlaceColor);
+                }
+                else if (!hadCollisionsBefore && _hasCollisions)
+                {
+                    // we got a collision! change materials
+                    var buildRd = currentBuilding.GetChild(0).GetChild(0).GetComponentInChildren<Renderer>();
+                    buildRd.material.SetColor(HoloColor, cantPlaceColor);
+                    var gridRd = currentBuilding.GetChild(1).GetComponent<Renderer>();
+                    gridRd.material.SetColor(GridColor, cantPlaceColor);
+                }
+            }
+            catch (UnityException e)
+            {
+                // Nothing bad happened, that just means the grid is already destroyed
+            }
+            // otherwise nothing changed
+        }
+
+        public IEnumerator PlaceBuilding(Action<bool> callback)
+        {
+            if (!isBuilding || _isRotating || _isConstructing)
+            {
+                callback(false);
+                yield break;
+            }
+            
+            // TODO: maybe like a pulse effect to show you cant build?
+            if (_hasCollisions)
+            {
+                callback(false);
+                yield break;
+            }
+
+            // mark that construction began
+            _isConstructing = true;
+
+            
             // TODO: check several preconditions: aligned to road, near water, etc.
             var buildingItself = currentBuilding.GetChild(0).GetChild(0);
+
+            // scale it down
+            buildingItself.localScale /= 1.1f;
             
             currentBuilding.position = SnapToGrid(TownCameraController.Instance.MouseToWorld());
 
@@ -110,21 +188,27 @@ namespace Game.Building
             particles.Play();
             particles.GetComponent<ParticleSystemRenderer>().material.SetColor(BaseColor, currentBuildingData.prominentColor);
             
-            // then we fade out the grid
-            var buildingRenderer = currentBuilding.transform.GetChild(1).GetComponent<Renderer>().material.DOFloat(40f, FadeFactor, 0.3f)
-                .SetEase(Ease.OutExpo).OnComplete(() =>
-                {
-                    Destroy(currentBuilding.transform.GetChild(1).gameObject);
-                }).Play();
+            // then we remove the grid
+            Destroy(currentBuilding.GetChild(1).gameObject);
             
             // then we tween the scale
             var originalScale = currentBuilding.localScale;
             currentBuilding.localScale = new Vector3(originalScale.x, 0f, originalScale.z);
+
+            var gridPos = _grid.WorldToCell(currentBuilding.position);
+            
             yield return currentBuilding.DOScale(originalScale, 0.5f).SetEase(Ease.OutBack).SetDelay(1.5f).OnStart(() =>
             {
                 rd.enabled = true;
             }).OnComplete(() =>
             {
+                _builtObjects[gridPos] = new BuiltObject
+                {
+                    Id = 0,
+                    CollisionArea = RotatedSize(),
+                    Rotation = Mathf.RoundToInt(buildingItself.rotation.eulerAngles.y),
+                    BuildingType = currentBuildingData.Id.Formatted()
+                };
                 particles.Stop();
                 Destroy(particles.gameObject, 1.5f);
                 buildingItself.SetParent(null);
@@ -132,11 +216,11 @@ namespace Game.Building
                 currentBuilding = null;
                 isBuilding = false;
                 _buildingMaterial = null;
-                isReady = true;
+                callback(true);
+                _isConstructing = false;
             }).Play().WaitForCompletion();
-            
         }
-
+        
         public void Rotate(bool counterClockwise = false)
         {
             if (_isRotating)
@@ -145,7 +229,122 @@ namespace Game.Building
             _isRotating = true;
             var pivot = currentBuilding.GetChild(0);
             pivot.DOLocalRotate(pivot.rotation.eulerAngles + new Vector3(0f, 90 * Mathu.BSign(counterClockwise), 0f),
-                0.25f, RotateMode.FastBeyond360).OnComplete(() => _isRotating = false).SetEase(Ease.OutExpo).Play();
+                0.25f, RotateMode.FastBeyond360).OnComplete(() =>
+            {
+                _isRotating = false;
+                DoCheckCollisions(_currentCellSpot);
+            }).SetEase(Ease.OutExpo).Play();
+        }
+
+        private bool HasCollisions(Vector3 snappedPos)
+        {
+            var pos = new Vector3Int((int) snappedPos.x, (int) snappedPos.y, (int) snappedPos.z);
+
+            // size is (x: 3; y: 2)
+            // we check:
+            // x --->
+            // y
+            // |  * * * *
+            // |  # A * *
+            // |  # # * *
+            // V  * * * *
+            // where A is anchor
+            // A + 0; 0
+            // A + 0; 1
+            // A + -1; 0
+            // A + -1; 1
+            var rotatedSize = RotatedSize();
+            var signX = Math.Sign(rotatedSize.x);
+            var signY = Math.Sign(rotatedSize.y);
+
+            var occupied = OccupiedSpotsInArea(pos);
+
+            if (occupied.Contains(pos))
+                return true;
+            
+            foreach (var x in Enumerable.Range(0, Math.Abs(rotatedSize.x)))
+            {
+                foreach (var y in Enumerable.Range(0, Math.Abs(rotatedSize.y)))
+                {
+                    var delta = new Vector3Int(signX * x, 0, signY * y);
+                    var newPos = pos + delta;
+                    if (occupied.Contains(newPos))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private HashSet<Vector3Int> OccupiedSpotsInArea(Vector3Int point, int range = 5)
+        {
+            var minPoint = point - new Vector3Int(range, 0, range);
+            var maxPoint = point + new Vector3Int(range, 0, range);
+            return _builtObjects.Where(it => it.Key.GreaterThan(minPoint) && it.Key.LessThan(maxPoint))
+                .SelectMany(it => GetCollisionAreaPoints(it.Key, it.Value.CollisionArea)).ToHashSet();
+        }
+
+        private HashSet<Vector3Int> GetCollisionAreaPoints(Vector3Int point, Vector2Int area)
+        {
+            var signX = Math.Sign(area.x);
+            var signY = Math.Sign(area.y);
+
+            var acc = new HashSet<Vector3Int>();
+            acc.Add(point);
+            
+            // if the area is 2 by 2
+            // we do the offsets
+            // 0 0 - 0 1 - 1 0 - 1 1
+            // if the area is -2 by 2
+            // we do the offsets
+            // 0 0 - -1 0 - 0 1 - -1 1
+            // if the area is -2 by -2
+            // we do the offsets
+            // 0 0 - -1 0 - 0 -1 - -1 -1
+            foreach (var x in Enumerable.Range(0, Math.Abs(area.x)))
+            {
+                foreach (var y in Enumerable.Range(0, Math.Abs(area.y)))
+                {
+                    var delta = new Vector3Int(signX * x, 0, signY * y);
+                    acc.Add(point + delta);
+                }
+            }
+
+            return acc;
+        }
+
+        private Vector2Int RotatedSize()
+        {
+            if (_isRotating)
+                return currentBuildingData.size;
+            var pivot = currentBuilding.GetChild(0);
+            var normalizedAngle = 360 - Mathf.RoundToInt(pivot.localRotation.eulerAngles.y) % 360;
+            int signX;
+            int signY;
+            
+            // if we have w:2 h:3, and rotate it
+            // 0 - w:2 h:3
+            // 90 - w:-3 h:2
+            // 180 - w:-2 h:-3
+            // 270 - w:3 h:-2
+            // 360 - w:2 h:3
+
+            switch (normalizedAngle)
+            {
+                case 0:
+                    return currentBuildingData.size;
+                case 90:
+                    return new Vector2Int(-currentBuildingData.size.y, currentBuildingData.size.x);
+                case 180:
+                    return new Vector2Int(-currentBuildingData.size.x, -currentBuildingData.size.y);
+                case 270:
+                    return new Vector2Int(currentBuildingData.size.y, -currentBuildingData.size.x);
+                case 360:
+                    return currentBuildingData.size;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(normalizedAngle), normalizedAngle, "bwa");
+            }
+            return new Vector2Int(currentBuildingData.size.x * signX, currentBuildingData.size.y * signY);
         }
 
         private void Update()
@@ -158,5 +357,17 @@ namespace Game.Building
                 StartCoroutine(TownCameraController.Instance.StateMachine.SwitchState(TownCameraController.Instance.FreeMoveState));
             }
         }
+    }
+
+    internal struct BuiltObject
+    {
+        [JsonProperty("id")]
+        public int Id;
+        [JsonProperty("collisionArea")]
+        public Vector2Int CollisionArea;
+        [JsonProperty("rotation")]
+        public int Rotation;
+        [JsonProperty("buildingType")]
+        public string BuildingType;
     }
 }
