@@ -17,30 +17,29 @@ namespace Game.State
     {
         public static GameStateManager Instance { get; private set; }
 
-        public Dictionary<StateKey, int> PlayerProductCount = new Dictionary<StateKey, int>();
-        public Dictionary<string, int> PlayerProductDelta = new Dictionary<string, int>();
+        public Dictionary<StateKey, int> PlayerProductCount = new();
+        public Dictionary<string, int> PlayerProductDelta = new();
         public int Currency { get; private set; }
 
         public void Awake()
         {
             Instance = this;
         }
-
-        private void Start()
-        {
-            // TODO: this should generally be ran after we load our level
-            // so we should move it there after
-            StartCoroutine(LoadGameState());
-        }
-
+        
         public IEnumerator LoadGameState()
         {
-            yield return new WaitForSeconds(2);
+            if (!FileManager.Instance.Storage.FileExists("save.json", true))
+            {
+                FileManager.Instance.Storage.CreateDir(PlayerDataManager.Instance.playerName);
+                var playerDict = new Dictionary<string, object>();
+            
+                playerDict.Add("resources", PreparePlayerData());
+                playerDict.Add("name", PlayerDataManager.Instance.playerName);
+                yield return NetworkManager.Instance.TryCreatePlayer(JsonConvert.SerializeObject(playerDict));
+                // yield return SavePlayerData("Initially created player");
+            }
             InitialLoadPlayerData();
             
-
-            // Load our markets
-            yield return new WaitForSeconds(2);
             yield return StockManager.Instance.EnsureAllMarketsCreated();
         }
 
@@ -75,7 +74,7 @@ namespace Game.State
             }));
         }
         
-        public IEnumerator SavePlayerData()
+        public IEnumerator SavePlayerData(string log = "Product delta log forced by a save")
         {
             var logData = PlayerProductDelta
                 .Select(it => (it.Key + ":delta", it.Value)).ToDictionary(it => it.Item1, it => it.Value);
@@ -86,7 +85,7 @@ namespace Game.State
 
             StartCoroutine(NetworkManager.Instance.PostPlayerLog(new PlayerLogData()
             {
-                Comment = "Product delta log forced by a save",
+                Comment = log,
                 Deltas = logData,
                 PlayerName = PlayerDataManager.Instance.playerName
             }));

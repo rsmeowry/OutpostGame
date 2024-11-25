@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Game.POI;
+using UnityEngine;
 
 namespace External.Util
 {
@@ -23,6 +24,21 @@ namespace External.Util
         public static bool GreaterThan(this Vector3Int self, Vector3Int other)
         {
             return self.x > other.x && self.z > other.z;
+        }
+
+        public static Vector3 WithY(this Vector3 self, float y)
+        {
+            return new Vector3(self.x, y, self.z);
+        }
+
+        public static SerVec3 Ser(this Vector3 self)
+        {
+            return new SerVec3
+            {
+                X = self.x,
+                Y = self.y,
+                Z = self.z
+            };
         }
     }
 }

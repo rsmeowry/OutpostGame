@@ -171,7 +171,7 @@ namespace Game.Network
             // if it fails then it already exists, lets fetch it instead
             var ou = new CoroutineOutput<string>();
             yield return FetchPlayerData(ou);
-                
+            
             FileManager.Instance.Storage.SaveString(Path.Combine($"{PlayerDataManager.Instance.playerName}", "save.json"), ou.Value);
         }
 
@@ -179,26 +179,7 @@ namespace Game.Network
         {
             _conn = new NetConnection();
             yield return _conn.Setup();
-            _offline = true; // TODO: !_conn.InternetAvailable;
-
-            if (!FileManager.Instance.Storage.FileExists(PlayerDataManager.Instance.playerName)) 
-            {
-                // Player does not exist locally! Maybe does not exist at all. Let's create a new data entry
-                // TODO: this is a BAD idea!!! Remake this when the game is going to release
-                
-                // First we save them locally
-
-                var seedValues = new Dictionary<string, object>();
-                seedValues.Add("test", "hello world");
-                seedValues.Add("another", Random.Range(1, 10000));
-                var seedData = new ReqCreatePlayer()
-                {
-                    Name = PlayerDataManager.Instance.playerName,
-                    Values = seedValues
-                }; // TODO: put some actual data here
-                var converted = JsonConvert.SerializeObject(seedData, Formatting.Indented);
-                yield return TryCreatePlayer(converted);
-            }
+            _offline = !_conn.InternetAvailable;
         }
     }
     

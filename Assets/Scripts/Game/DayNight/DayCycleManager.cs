@@ -1,11 +1,17 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using External.Network;
 using Game.Citizens.States;
+using Game.Storage;
 using UnityEngine;
 
 namespace Game.DayNight
 {
     public class DayCycleManager: MonoBehaviour
     {
+        public static DayCycleManager Instance { get; private set; }
+        
         [SerializeField]
         [Range(0, 1)]
         private float time;
@@ -45,6 +51,11 @@ namespace Game.DayNight
         public bool doBuffer = true;
         private static readonly int StarBrightness = Shader.PropertyToID("_StarBrightness");
 
+        private void Awake()
+        {
+            Instance = this;
+        }
+
         public void Update()
         {
             _tickBuffer += Time.deltaTime;
@@ -67,5 +78,39 @@ namespace Game.DayNight
             skyboxMaterial.SetColor(SkyColor, skyColor.Evaluate(time));
             skyboxMaterial.SetFloat(StarBrightness, Mathf.Lerp(0f, 2f, Mathf.Clamp(time - 0.5f, 0f, 0.5f) * 4f));
         }
+
+        public void Load()
+        {
+            if (!FileManager.Instance.Storage.FileExists("env.dat"))
+                return;
+
+            var str = FileManager.Instance.Storage.ReadFileBytes("env.dat");
+            var fmt = new BinaryFormatter();
+            var data = (StoredEnvData) fmt.Deserialize(str.BaseStream);
+            _secondsTime = data.secondsTime;
+            _tickedTime = data.tickedTime;
+            _tickBuffer = data.tickBuffer;
+        }
+
+        public void Save()
+        {
+            var fmt = new BinaryFormatter();
+            using var memStream = new MemoryStream();
+            fmt.Serialize(memStream, new StoredEnvData
+            {
+                tickBuffer = _tickBuffer,
+                tickedTime = _tickedTime,
+                secondsTime = _secondsTime
+            });
+            FileManager.Instance.Storage.SaveBytes("env.dat", memStream.GetBuffer(), true);
+        }
+    }
+
+    [Serializable]
+    public class StoredEnvData
+    {
+        public float tickBuffer;
+        public float tickedTime;
+        public float secondsTime;
     }
 }

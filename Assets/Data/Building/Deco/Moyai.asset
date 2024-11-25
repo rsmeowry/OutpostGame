@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9f521be56de4fa0b23d2a048d1e7901, type: 3}
   m_Name: Moyai
   m_EditorClassIdentifier: 
-  keyId: 
+  keyId: moyai
   name: "\u0412\u0435\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439
     \u043C\u043E\u043D\u0443\u043C\u0435\u043D\u0442"
   description: "\u041C\u043E\u043D\u0443\u043C\u0435\u043D\u0442 \u043D\u0435\u043A\u0438\u043C

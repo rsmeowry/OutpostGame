@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Building;
 using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.Controllers;
@@ -20,9 +21,13 @@ namespace Game.POI
         
         public virtual (float, float) SoundPitchRange => (0.7f, 1.3f);
 
+        public bool doNotSerialize = false;
         public float cameraZoomAmt = 30f;
         public Transform focusPos;
+        public Transform lookPos;
         public bool shouldDepthOfField = false;
+        public string pointId;
+        public BuiltObject buildingData;
         
         public abstract QueuePosition EntrancePos { get; }
 
@@ -62,6 +67,31 @@ namespace Game.POI
             // var list = new List<RaycastResult>();
             // EventSystem.current.RaycastAll(eventData, list);
             StartCoroutine(DoClick());
+        }
+
+        public abstract SerializedPOIData Serialize();
+    }
+    
+    [Serializable]
+    public abstract class SerializedPOIData
+    {
+        public string originPrefabId;
+        public BuiltObject data;
+        public SerVec3 position;
+        public SerVec3 rotation;
+        public Guid SelfId;
+    }
+
+    [Serializable]
+    public struct SerVec3
+    {
+        public float X;
+        public float Y;
+        public float Z;
+        
+        public Vector3 ToVec3()
+        {
+            return new Vector3(X, Y, Z);
         }
     }
 }

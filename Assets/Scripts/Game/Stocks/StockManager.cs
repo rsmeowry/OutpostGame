@@ -29,13 +29,9 @@ namespace Game.Stocks
 
         private void SetupMarkets()
         {
-            Markets.Add(new MarketData("ores", 
+            Markets.Add(new MarketData("stock_market", 
                 (ProductRegistry.CopperOre, new SoldProductData(3000, 12f, 24f)),
                 (ProductRegistry.IronOre, new SoldProductData(2000, 9f, 14f))
-            ));
-            Markets.Add(new MarketData("products", 
-                (ProductRegistry.CopperOre, new SoldProductData(5000, 90f, 40f)),
-                (ProductRegistry.IronOre, new SoldProductData(6000, 50f, 45f))
             ));
         }
 
@@ -58,6 +54,31 @@ namespace Game.Stocks
             { 
                 StartCoroutine(NetworkManager.Instance.UpdateMarketData(market));
             }
+        }
+
+        public IEnumerator SaveAll()
+        {
+            foreach (var market in Markets)
+            {
+                var delta = market.Offers.ToDictionary(entry => entry.Key, 
+                    entry => (SoldProductData) entry.Value.Clone());
+                var deltas = delta.Select(k => (k.Key.Formatted(), k.Value.Delta(market.Offers[k.Key]))).ToDictionary(x => x.Item1, x => x.Item2);
+                StartCoroutine(NetworkManager.Instance.PostMarketLogs(new MarketLogData()
+                {
+                    Comment = "[SAVE] Save-triggered update",
+                    Deltas = deltas,
+                    MarketId = market.MarketId,
+                    PlayerName = PlayerDataManager.Instance.playerName
+                }));
+
+                yield return NetworkManager.Instance.UpdateMarketData(market);
+            }
+            
+            // saving markets locally now
+            FileManager.Instance.Storage.SaveString(
+                Path.Combine($"{PlayerDataManager.Instance.playerName}", "markets.json"),
+                JsonConvert.SerializeObject(Markets.Select(it => it.PrepareData()).ToList())
+            );
         }
 
         // Daily fluctuations

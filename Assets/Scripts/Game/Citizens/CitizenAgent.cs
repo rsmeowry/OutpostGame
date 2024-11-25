@@ -6,7 +6,9 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using External.Util;
 using Game.Citizens.States;
+using Game.POI;
 using Game.Production;
+using Game.Production.POI;
 using Game.State;
 using Newtonsoft.Json;
 using UnityEditor;
@@ -43,10 +45,12 @@ namespace Game.Citizens
 
         public Transform rightArm;
 
-        public bool LoadedFromData = false;
+        [FormerlySerializedAs("LoadedFromData")] public bool loadedFromData = false;
         
         private void Start()
         {
+            if (loadedFromData)
+                return;
             navMeshAgent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
 
@@ -57,12 +61,59 @@ namespace Game.Citizens
             WorkState = new CitizenWorkState(this, StateMachine);
             MoveToWorkSpotState = new CitizenMoveToWorkSpotState(this, StateMachine);
 
+            if (!loadedFromData)
+            {
+                PersistentData = new PersistentCitizenData
+                {
+                    Profession = CitizenCaste.Beekeeper
+                };
+                StartCoroutine(StateMachine.Init(WanderState));
+            }
+        }
+
+        public void Load()
+        {
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            _animator = GetComponentInChildren<Animator>();
+
+            StateMachine = new CitizenStateMachine();
+            CarryResourcesState = new CitizenCarryResourcesState(this, StateMachine);
+            WanderState = new CitizenWanderState(this, StateMachine);
+            GoWorkState = new CitizenGoWorkState(this, StateMachine);
+            WorkState = new CitizenWorkState(this, StateMachine);
+            MoveToWorkSpotState = new CitizenMoveToWorkSpotState(this, StateMachine);
             PersistentData = new PersistentCitizenData
             {
                 Profession = CitizenCaste.Beekeeper
             };
-            if(!LoadedFromData)
-                StartCoroutine(StateMachine.Init(WanderState));
+        }
+
+        public StoredCitizenData Serialize()
+        {
+            return new StoredCitizenData
+            {
+                baseInventoryCapacity = inventoryCapacity,
+                BuildingGuid = WorkPlace == null ? Guid.Empty : Guid.Parse(((ResourceContainingPOI)WorkPlace).pointId),
+                citizenId = citizenId,
+                Inventory = Inventory.ToDictionary(it => it.Key.Formatted(), it => it.Value),
+                persistentData = new StoredPersistentCitizenData
+                {
+                    awards = PersistentData.Awards,
+                    caste = PersistentData.Profession,
+                    name = PersistentData.Name
+                },
+                position = transform.position.Ser(),
+                state = StateMachine.CurrentState switch
+                {
+                    CitizenCarryResourcesState => "carry",
+                    CitizenGoWorkState => "gowork",
+                    CitizenMoveToWorkSpotState => "movetospot",
+                    CitizenWanderState => "wander",
+                    CitizenWorkState => "work",
+                    _ => throw new ArgumentOutOfRangeException()
+                },
+                wanderAnchor = wanderAnchor.Ser()
+            };
         }
         
         [ContextMenu("Debug/Log data")]
@@ -154,23 +205,22 @@ namespace Game.Citizens
     }
 
     [Serializable]
-    public struct StoredCitizenData
+    public class StoredCitizenData
     {
         [FormerlySerializedAs("PersistentData")] [JsonProperty("persistent")]
         public StoredPersistentCitizenData persistentData;
+        public int citizenId;
         [FormerlySerializedAs("Position")] [JsonProperty("position")]
-        public Vector3 position;
+        public SerVec3 position;
         [JsonProperty("inventory")]
         public Dictionary<string, int> Inventory;
         [FormerlySerializedAs("BaseInventoryCapacity")] [JsonProperty("inventoryCapacity")]
         public int baseInventoryCapacity;
-        [FormerlySerializedAs("BuildingGuid")] [JsonProperty("assignedBuilding")]
-        public Guid buildingGuid;
-        [JsonProperty("Depositer")]
-        public Guid depositer;
+        [JsonProperty("assignedBuilding")]
+        public Guid BuildingGuid;
         [FormerlySerializedAs("State")] [JsonProperty("state")]
         public string state;
         [FormerlySerializedAs("WanderAnchor")] [JsonProperty("wanderAnchor")]
-        public Vector3 wanderAnchor;
+        public SerVec3 wanderAnchor;
     }
 }

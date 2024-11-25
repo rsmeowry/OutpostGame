@@ -62,6 +62,11 @@ namespace Game.Controllers
         private void LateUpdate()
         {
             StateMachine.LateFrameUpdate();
+
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                StartCoroutine(StateMachine.SwitchState(RoadBuildingState));
+            }
         }
     }
 

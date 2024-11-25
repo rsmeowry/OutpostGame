@@ -20,6 +20,11 @@ namespace Game.Production.POI
         }
 
         public override QueuePosition EntrancePos => entrancePos;
+        public override SerializedPOIData Serialize()
+        {
+            return null;
+        }
+
         public void DepositInventory(Dictionary<StateKey, int> inventory)
         {
             foreach (var key in inventory.Keys)

@@ -5,8 +5,10 @@ using System.Linq;
 using DG.Tweening;
 using External.Util;
 using Game.Controllers;
+using Game.POI;
 using Game.State;
 using Newtonsoft.Json;
+using UI.POI;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -57,12 +59,16 @@ namespace Game.Building
         
         // serialized data below
         // TODO: read them from save data
-        private Dictionary<Vector3Int, BuiltObject> _builtObjects = new();
+        public Dictionary<Vector3Int, BuiltObject> BuiltObjects = new();
 
-        private void Start()
+        public BuiltObject ObjectAt(Vector3 pos)
+        {
+            return BuiltObjects[_grid.WorldToCell(pos)];
+        }
+
+        private void Awake()
         {
             Instance = this;
-            
             _grid = GetComponent<Grid>();
         }
         
@@ -144,6 +150,37 @@ namespace Game.Building
             // otherwise nothing changed
         }
 
+        public Transform InstantBuild(BuildingData data, Vector3 position, Vector3 rotation)
+        {
+            currentBuildingData = data;
+            currentBuilding = Instantiate(currentBuildingData.buildingPrefab, transform).transform;
+            Debug.Log(_grid);
+            currentBuilding.transform.position = position;
+            var pivot = currentBuilding.GetChild(0);
+            pivot.rotation = Quaternion.Euler(rotation);
+
+            var buildingItself = currentBuilding.GetChild(0).GetChild(0);
+            var gridPos = _grid.WorldToCell(currentBuilding.position);
+            var rSize = RotatedSize();
+            BuiltObjects[gridPos] = new BuiltObject
+            {
+                Id = 0,
+                CollisionArea = (rSize.x, rSize.y),
+                Rotation = Mathf.RoundToInt(buildingItself.rotation.eulerAngles.y),
+                BuildingType = currentBuildingData.Id.Formatted()
+            };
+            if (buildingItself.TryGetComponent<PointOfInterest>(out var poi))
+            {
+                poi.buildingData = BuiltObjects[gridPos];
+                poi.pointId = Guid.NewGuid().ToString();
+            }
+            buildingItself.SetParent(null);
+            Destroy(currentBuilding.gameObject);
+            currentBuilding = null;
+            currentBuildingData = null;
+            return buildingItself;
+        }
+
         public IEnumerator PlaceBuilding(Action<bool> callback)
         {
             if (!isBuilding || _isRotating || _isConstructing)
@@ -202,13 +239,22 @@ namespace Game.Building
                 rd.enabled = true;
             }).OnComplete(() =>
             {
-                _builtObjects[gridPos] = new BuiltObject
+                var rSize = RotatedSize();
+                BuiltObjects[gridPos] = new BuiltObject
                 {
                     Id = 0,
-                    CollisionArea = RotatedSize(),
+                    CollisionArea = (rSize.x, rSize.y),
                     Rotation = Mathf.RoundToInt(buildingItself.rotation.eulerAngles.y),
                     BuildingType = currentBuildingData.Id.Formatted()
                 };
+                if (buildingItself.TryGetComponent<PointOfInterest>(out var poi))
+                {
+                    poi.buildingData = BuiltObjects[gridPos];
+
+                    var poiId = Guid.NewGuid();
+                    poi.pointId = poiId.ToString();
+                    POIManager.Instance.LoadedPois[poiId] = poi;
+                }
                 particles.Stop();
                 Destroy(particles.gameObject, 1.5f);
                 buildingItself.SetParent(null);
@@ -280,14 +326,14 @@ namespace Game.Building
         {
             var minPoint = point - new Vector3Int(range, 0, range);
             var maxPoint = point + new Vector3Int(range, 0, range);
-            return _builtObjects.Where(it => it.Key.GreaterThan(minPoint) && it.Key.LessThan(maxPoint))
+            return BuiltObjects.Where(it => it.Key.GreaterThan(minPoint) && it.Key.LessThan(maxPoint))
                 .SelectMany(it => GetCollisionAreaPoints(it.Key, it.Value.CollisionArea)).ToHashSet();
         }
 
-        private HashSet<Vector3Int> GetCollisionAreaPoints(Vector3Int point, Vector2Int area)
+        private HashSet<Vector3Int> GetCollisionAreaPoints(Vector3Int point, (int, int) area)
         {
-            var signX = Math.Sign(area.x);
-            var signY = Math.Sign(area.y);
+            var signX = Math.Sign(area.Item1);
+            var signY = Math.Sign(area.Item2);
 
             var acc = new HashSet<Vector3Int>();
             acc.Add(point);
@@ -301,9 +347,9 @@ namespace Game.Building
             // if the area is -2 by -2
             // we do the offsets
             // 0 0 - -1 0 - 0 -1 - -1 -1
-            foreach (var x in Enumerable.Range(0, Math.Abs(area.x)))
+            foreach (var x in Enumerable.Range(0, Math.Abs(area.Item1)))
             {
-                foreach (var y in Enumerable.Range(0, Math.Abs(area.y)))
+                foreach (var y in Enumerable.Range(0, Math.Abs(area.Item2)))
                 {
                     var delta = new Vector3Int(signX * x, 0, signY * y);
                     acc.Add(point + delta);
@@ -359,12 +405,13 @@ namespace Game.Building
         }
     }
 
-    internal struct BuiltObject
+    [Serializable]
+    public struct BuiltObject
     {
         [JsonProperty("id")]
         public int Id;
         [JsonProperty("collisionArea")]
-        public Vector2Int CollisionArea;
+        public (int, int) CollisionArea;
         [JsonProperty("rotation")]
         public int Rotation;
         [JsonProperty("buildingType")]

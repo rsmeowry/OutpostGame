@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using External.Util;
+using Game.Building;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -41,7 +42,7 @@ namespace External.Network
             if (req.result != UnityWebRequest.Result.Success)
             {
                 var err = req.error;
-                _log.Warn($"Failed to send POST request: {err}");
+                _log.Warn($"Failed to send {mtd} request to {path}: {err}");
                 handle.Err(err);
             }
             else
@@ -64,7 +65,7 @@ namespace External.Network
             if (req.result != UnityWebRequest.Result.Success)
             {
                 var err = req.error;
-                _log.Warn($"Failed to send GET request: {err}");
+                _log.Warn($"Failed to send GET request to {path}: {err}");
                 handle.Err(err);
             }
             else

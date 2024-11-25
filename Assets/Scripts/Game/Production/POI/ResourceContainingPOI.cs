@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using External.Util;
+using Game.Building;
 using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.POI;
@@ -206,5 +208,26 @@ namespace Game.Production.POI
                 return firstPost.GetComponent<GatheringPost>();
             }
         }
+
+        public override SerializedPOIData Serialize()
+        {
+            if (doNotSerialize)
+                return null;
+            return new SerializedProductionPOI
+            {
+                assignedAgents = AssignedAgents.Select(it => it.citizenId).ToList(),
+                originPrefabId = buildingData.BuildingType,
+                position = BuildingManager.Instance.SnapToGrid(transform.position).Ser(),
+                rotation = new Vector3(0f, buildingData.Rotation, 0f).Ser(),
+                data = buildingData,
+                SelfId = Guid.Parse(pointId)
+            };
+        }
+    }
+    
+    [Serializable]
+    public class SerializedProductionPOI: SerializedPOIData
+    {
+        public List<int> assignedAgents;
     }
 }

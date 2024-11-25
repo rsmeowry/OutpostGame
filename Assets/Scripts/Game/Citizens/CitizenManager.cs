@@ -1,16 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using DG.Tweening.Plugins;
 using External.Storage;
 using External.Util;
+using Game.POI;
+using Game.Production;
 using Game.Production.POI;
+using Game.State;
+using Game.Storage;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Windows;
+using Random = UnityEngine.Random;
 
 namespace Game.Citizens
 {
-    public class CitizenManager: MonoBehaviour, ISaveable
+    public class CitizenManager: MonoBehaviour
     {
         public static CitizenManager Instance { get; private set; }
 
@@ -18,8 +26,18 @@ namespace Game.Citizens
 
         [SerializeField]
         private CitizenAgent citizenPrefab;
+
+        [SerializeField]
+        private CitizenAgent constructorPrefab;
+        [SerializeField]
+        private CitizenAgent beekeeperPrefab;
+        [SerializeField]
+        private CitizenAgent creatorPrefab;
+        [SerializeField]
+        private CitizenAgent explorerPrefab;
         
-        private List<CitizenAgent> _citizens = new();
+        public Dictionary<int, CitizenAgent> Citizens = new();
+        private Dictionary<int, StoredCitizenData> _intermediate = new();
 
         public void Awake()
         {
@@ -28,30 +46,100 @@ namespace Game.Citizens
 
         private void Start()
         {
-            // __TestSpawnCitizen();
-            // __TestSpawnCitizen();
-            // __TestSpawnCitizen();
+            
         }
+
+        [ContextMenu("Test/Stress Test")]
+        private void __StressTest()
+        {
+            int count = 50;
+            for (int i = 0; i < count; i++)
+            {
+                SpawnCitizen(new Vector3(180, 3, 110f) + Vectors.RemapXYToXZ(Random.insideUnitCircle * 10));
+            }
+        }
+        
+        // LOADING DATA
+
+        public void LoadSavedData()
+        {
+            if (!FileManager.Instance.Storage.FileExists("agents.dat", true))
+                return;
+
+            using var data = FileManager.Instance.Storage.ReadFileBytes("agents.dat", true);
+            var fmt = new BinaryFormatter();
+            
+            var dat = (StoredCitizenDatabase) fmt.Deserialize(data.BaseStream);
+            citizenIdTracker = dat.citizenIdTracker;
+            foreach (var citizen in dat.storedCitizens)
+            {
+                var prefab = citizen.persistentData.caste switch
+                {
+                    CitizenCaste.Creator => creatorPrefab,
+                    CitizenCaste.Explorer => explorerPrefab,
+                    CitizenCaste.Beekeeper => beekeeperPrefab,
+                    CitizenCaste.Engineer => constructorPrefab,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+                var ctz = Instantiate(prefab, transform);
+                ctz.loadedFromData = true;
+                ctz.Inventory = citizen.Inventory.Select(it => (StateKey.FromString(it.Key), it.Value)).ToDictionary(it => it.Item1, it => it.Value);
+                ctz.citizenId = citizen.citizenId;
+                ctz.inventoryCapacity = citizen.baseInventoryCapacity;
+                ctz.wanderAnchor = citizen.wanderAnchor.ToVec3();
+                ctz.PersistentData = ctz.PersistentData;
+                ctz.Load();
+                Citizens[ctz.citizenId] = ctz;
+                _intermediate[ctz.citizenId] = citizen;
+            }
+        }
+
+        public void BeginJobs()
+        {
+            foreach (var citizenKv in Citizens)
+            {
+                var citizen = citizenKv.Value;
+                var dat = _intermediate[citizen.citizenId];
+                if (dat.BuildingGuid == Guid.Empty)
+                {
+                    StartCoroutine(citizen.StateMachine.Init(citizen.WanderState));
+                }
+                else
+                {
+                    var workPlace = (ICitizenWorkPlace)POIManager.Instance.LoadedPois[dat.BuildingGuid];
+                    var rcpoi = (ResourceContainingPOI)workPlace;
+                    if(rcpoi.AssignedAgents.Count + 1 < rcpoi.capacity)
+                        rcpoi.AssignedAgents.Add(citizen);
+                    citizen.WorkPlace = workPlace;
+                    StartCoroutine(citizen.StateMachine.Init(dat.state switch
+                    {
+                        "carry" => citizen.CarryResourcesState,
+                        "wander" => citizen.WanderState,
+                        "gowork" => citizen.GoWorkState,
+                        "work" => citizen.GoWorkState,
+                        "movetospot" => citizen.GoWorkState,
+                        _ => citizen.WanderState
+                    }));
+                }
+            }
+        }
+
+        public void RecalculateAllStates()
+        {
+            
+        }
+        
+        /////////
 
         [SerializeField]
         private ResourceContainingPOI poi;
-        [ContextMenu("Test/Spawn Citizen")]
-        private void __TestSpawn()
-        {
-            var citizen = SpawnCitizen(Vector3.zero + Vector3.up * 2);
-            this.Delayed(5f, () =>
-            {
-                citizen.WorkPlace = poi;
-                citizen.Order(citizen.GoWorkState);
-            });
-        }
-
+        
         public CitizenAgent SpawnCitizen(Vector3 position)
         {
             var citizen = Instantiate(citizenPrefab);
             citizen.transform.position = position;
             citizen.citizenId = citizenIdTracker++;
-            _citizens.Add(citizen);
+            Citizens[citizen.citizenId] = citizen;
             return citizen;
         }
 
@@ -65,29 +153,38 @@ namespace Game.Citizens
         // TODO: using an event here could be useful in case any race conditions arise (shouldn't happen though)
         public bool AnyFree(CitizenCaste caste)
         {
-            return _citizens.Any(it => it.PersistentData.Profession == caste && it.IsUnoccupied());
+            return Citizens.Any(it => it.Value.PersistentData.Profession == caste && it.Value.IsUnoccupied());
         }
 
         public CitizenAgent FindUnassignedCitizen(CitizenCaste caste)
         {
-            return _citizens.FirstOrDefault(it => it.PersistentData.Profession == caste && it.IsUnoccupied());
+            return Citizens.Select(it => it.Value).FirstOrDefault(it => it.PersistentData.Profession == caste && it.IsUnoccupied());
         }
 
         public List<CitizenAgent> FindUnassignedCitizens(CitizenCaste caste, int amount)
         {
-            return _citizens.Where(it => it.PersistentData.Profession == caste && it.IsUnoccupied()).Take(amount).ToList();
+            return Citizens.Select(it => it.Value).Where(it => it.PersistentData.Profession == caste && it.IsUnoccupied()).Take(amount).ToList();
         }
 
-        public void SaveSelf()
+        public void Save()
         {
+            var db = new StoredCitizenDatabase()
+            {
+                citizenIdTracker = citizenIdTracker,
+                storedCitizens = Citizens.Values.Select(it => it.Serialize()).ToList()
+            };
             
+            using var memStream = new MemoryStream();
+            var fmt = new BinaryFormatter();
+            fmt.Serialize(memStream, db);
+            FileManager.Instance.Storage.SaveBytes("agents.dat", memStream.GetBuffer(), true);
         }
 
-        private struct SaveData
+        [Serializable]
+        public class StoredCitizenDatabase
         {
-            [JsonProperty("idTracker")]
-            public int CitizenIdTracker;
-            
+            public int citizenIdTracker;
+            public List<StoredCitizenData> storedCitizens;
         }
     }
 }

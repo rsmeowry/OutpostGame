@@ -2,6 +2,8 @@
 using System.Collections;
 using System.IO;
 using External.Util;
+using Game.Player;
+using Game.State;
 using UnityEngine;
 
 namespace External.Storage
@@ -18,8 +20,10 @@ namespace External.Storage
                 Directory.CreateDirectory(FilePath);
         }
         
-        public void SaveString(string relativePath, string data)
+        public void SaveString(string relativePath, string data, bool localToPlayer = false)
         {
+            if (localToPlayer)
+                relativePath = PlayerDataManager.Instance.playerName + "/" + relativePath;
             var path = Path.Combine(FilePath, relativePath);
             var parent = Directory.GetParent(path)!;
             if (!parent.Exists)
@@ -29,8 +33,24 @@ namespace External.Storage
             stream.Flush();
         }
 
-        public string ReadFile(string relativePath)
+        public void SaveBytes(string relativePath, byte[] data, bool localToPlayer = false)
         {
+            if (localToPlayer)
+                relativePath = PlayerDataManager.Instance.playerName + "/" + relativePath;
+            var path = Path.Combine(FilePath, relativePath);
+            var parent = Directory.GetParent(path)!;
+            if (!parent.Exists)
+                parent.Create();
+            using var stream = new BinaryWriter(File.Create(path));
+            stream.Write(data);
+            stream.Flush();
+        }
+
+        public string ReadFile(string relativePath, bool localToPlayer = false)
+        {
+            if (localToPlayer)
+                relativePath = PlayerDataManager.Instance.playerName + "/" + relativePath;
+
             var path = Path.Combine(FilePath, relativePath);
             if (!File.Exists(path))
             {
@@ -42,15 +62,43 @@ namespace External.Storage
             return stream.ReadToEnd();
         }
 
-        public bool FileExists(string relativePath)
+        public StreamReader ReadFileBytes(string relativePath, bool localToPlayer = false)
         {
-            return File.Exists(Path.Combine(FilePath, relativePath));
-        }
-        
-        public bool DirExists(string relativePath)
-        {
-            return Directory.Exists(Path.Combine(FilePath, relativePath));
+            if (localToPlayer)
+                relativePath = PlayerDataManager.Instance.playerName + "/" + relativePath;
+            var path = Path.Combine(FilePath, relativePath);
+            if (!File.Exists(path))
+            {
+                _log.Warn($"Tried to access a file that does not exist! {relativePath}");
+                return null;
+            }
+            
+            var stream = new StreamReader(File.OpenRead(path));
+            return stream;
         }
 
+        public bool FileExists(string relativePath, bool localToPlayer = false)
+        {
+            if (localToPlayer)
+                relativePath = PlayerDataManager.Instance.playerName + "/" + relativePath;
+
+            return File.Exists(Path.Combine(FilePath, relativePath));
+        }
+
+        public void CreateDir(string relativePath, bool localToPlayer = false)
+        {
+            if (localToPlayer)
+                relativePath = PlayerDataManager.Instance.playerName + "/" + relativePath;
+            var path = Path.Combine(FilePath, relativePath);
+            Directory.CreateDirectory(path);
+        }
+
+        public bool DirExists(string relativePath, bool localToPlayer = false)
+        {
+            if (localToPlayer)
+                relativePath = PlayerDataManager.Instance.playerName + "/" + relativePath;
+
+            return Directory.Exists(Path.Combine(FilePath, relativePath));
+        }
     }
 }

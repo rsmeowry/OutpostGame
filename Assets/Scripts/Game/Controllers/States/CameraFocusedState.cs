@@ -34,7 +34,10 @@ namespace Game.Controllers.States
             _originalAnchor = CameraController.transform.position;
             _previousZoom = CameraController.cameraTransform.localPosition.y;
             CameraController.GetComponentInChildren<Camera>().DOFieldOfView(60f, _animTime).SetEase(_ease).Play();
-            CameraController.cameraTransform.DODynamicLookAt(CameraController.FocusedPOI.transform.position + Vector3.up * 4f, _animTime * 2f).SetEase(_ease).Play();
+            var lookPos = CameraController.FocusedPOI.lookPos != null
+                ? CameraController.FocusedPOI.lookPos.position
+                : CameraController.FocusedPOI.transform.position + Vector3.up * 4f;
+            CameraController.cameraTransform.DODynamicLookAt(lookPos, _animTime * 2f).SetEase(_ease).Play();
             CameraController.transform.DOMove(CameraController.FocusedPOI.focusPos.transform.position, 1.5f).SetEase(_ease)
                 .Play();
             yield return CameraController.cameraTransform.DOLocalMove(Vector3.zero, 1.5f).SetEase(_ease).Play()

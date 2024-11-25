@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Game.RoadBuilding;
 using UI.BottomRow;
 
 namespace Game.Controllers.States
@@ -16,7 +17,9 @@ namespace Game.Controllers.States
             CameraController.interactionFilter = CameraInteractionFilter.Intersections;
             
             // Hide top row so we don't accidentally click
-            yield return BottomRowCtl.Instance.HideTopRow();
+            // yield return BottomRowCtl.Instance.HideTopRow();
+            
+            RoadManager.Instance.StateMachine.ChangeState(RoadManager.Instance.ActiveState);
         }
 
         public override IEnumerator ExitState()

@@ -14,6 +14,8 @@ namespace Game.Citizens.States
 
         public override IEnumerator EnterState()
         {
+            if (Agent.ProductDepositer == null)
+                Agent.ProductDepositer = (IProductDepositer) Agent.WorkPlace.GatheringPost;
             Agent.navMeshAgent.SetDestination(Agent.WorkPlace.GatheringPost.EntrancePos.GetSelfPosition(Agent));
             yield break;
         }
