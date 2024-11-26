@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using External.Data;
 using Game.Citizens;
 using Game.DayNight;
 using Game.Network;
@@ -23,6 +24,7 @@ namespace Game.Storage
 
         private IEnumerator Start()
         {
+            MiscSavedData.Instance.Load();
             DayCycleManager.Instance.Load();
             POIManager.Instance.LoadData();
             yield return GameStateManager.Instance.LoadGameState();
@@ -36,6 +38,7 @@ namespace Game.Storage
         
         public IEnumerator SaveData()
         {
+            MiscSavedData.Instance.Save();
             DayCycleManager.Instance.Save();
             POIManager.Instance.SaveData();
             yield return StockManager.Instance.SaveAll();

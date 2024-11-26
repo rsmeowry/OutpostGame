@@ -122,6 +122,7 @@ namespace Game.Stocks
             {
                 // checking all markets
                 var localMarkets = JsonConvert.DeserializeObject<List<SerializedMarketData>>(FileManager.Instance.Storage.ReadFile(path));
+                // TODO: crashes if the file is empty
                 foreach (var local in localMarkets)
                 {
                     marketsThatNeedCreating.Remove(local.MarketId);

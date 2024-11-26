@@ -42,6 +42,9 @@ namespace Game.Building
 
         [SerializeField]
         private ParticleSystem buildingParticlesPrefab;
+
+        [SerializeField]
+        private GameObject targetBuildingContainer;
         
         private Grid _grid;
 
@@ -174,7 +177,7 @@ namespace Game.Building
                 poi.buildingData = BuiltObjects[gridPos];
                 poi.pointId = Guid.NewGuid().ToString();
             }
-            buildingItself.SetParent(null);
+            buildingItself.SetParent(targetBuildingContainer.transform);
             Destroy(currentBuilding.gameObject);
             currentBuilding = null;
             currentBuildingData = null;
@@ -257,7 +260,7 @@ namespace Game.Building
                 }
                 particles.Stop();
                 Destroy(particles.gameObject, 1.5f);
-                buildingItself.SetParent(null);
+                buildingItself.SetParent(targetBuildingContainer.transform);
                 Destroy(currentBuilding.gameObject);
                 currentBuilding = null;
                 isBuilding = false;

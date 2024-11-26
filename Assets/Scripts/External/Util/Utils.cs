@@ -4,6 +4,7 @@ namespace External.Util
 {
     public static class Utils
     {
+        #if UNITY_EDITOR
         public static object GetValue(this UnityEditor.SerializedProperty property)
         {
             object obj = property.serializedObject.targetObject;
@@ -17,5 +18,6 @@ namespace External.Util
             }
             return obj;
         }
+        #endif
     }
 }

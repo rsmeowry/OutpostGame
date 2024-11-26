@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using External.Data;
 using External.Util;
+using Game.State;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +14,7 @@ namespace External.Achievement
     {
         public static AchievementManager Instance { get; private set; }
 
-        private List<int> _unlockedAchievements = new();
+        private List<StateKey> _unlockedAchievements = new();
 
         private RectTransform _container;
         private TMP_Text _title;
@@ -32,15 +34,16 @@ namespace External.Achievement
         {
             this.Delayed(0.5f, () =>
             {
-                GiveAchievement("Ротару 3", "Произведите 300.000 роторов", 0);
+                GiveAchievement("Ротару 3", "Произведите 300.000 роторов", new StateKey("test"));
             }); 
         }
 
-        public void GiveAchievement(string name, string description, int id)
+        public void GiveAchievement(string name, string description, StateKey id)
         {
             // TODO: two achievements at once cant happen, but just in case need to handle it
             if (_unlockedAchievements.Contains(id))
                 return;
+            MiscSavedData.Instance.Data.Achievements.Add(id.Formatted());
             _unlockedAchievements.Add(id);
             _title.SetText($"Достижение - {name}");
             _description.SetText(description);
