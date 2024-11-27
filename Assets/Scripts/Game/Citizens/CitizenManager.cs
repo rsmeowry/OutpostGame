@@ -87,7 +87,12 @@ namespace Game.Citizens
                 ctz.citizenId = citizen.citizenId;
                 ctz.inventoryCapacity = citizen.baseInventoryCapacity;
                 ctz.wanderAnchor = citizen.wanderAnchor.ToVec3();
-                ctz.PersistentData = ctz.PersistentData;
+                ctz.PersistentData = new PersistentCitizenData()
+                {
+                    Awards = citizen.persistentData.awards,
+                    Name = citizen.persistentData.name,
+                    Profession = citizen.persistentData.caste
+                };
                 ctz.Load();
                 Citizens[ctz.citizenId] = ctz;
                 _intermediate[ctz.citizenId] = citizen;
@@ -139,8 +144,19 @@ namespace Game.Citizens
             var citizen = Instantiate(citizenPrefab);
             citizen.transform.position = position;
             citizen.citizenId = citizenIdTracker++;
+            citizen.PersistentData = new PersistentCitizenData { Profession = CitizenCaste.Beekeeper, Name = Rng.Bool() ? CitizenNames.RandomFemName() : CitizenNames.RandomMascName() };
+            Debug.Log(citizen.PersistentData.Name);
             Citizens[citizen.citizenId] = citizen;
             return citizen;
+        }
+
+        [ContextMenu("Test/Debug Citizen Names")]
+        public void __TestDebugCitizenNames()
+        {
+            foreach (var citizen in Citizens.Values)
+            {
+                Debug.Log(citizen.PersistentData.Name);
+            }
         }
 
         [ContextMenu("Test/Spawn Citizen Raw")]

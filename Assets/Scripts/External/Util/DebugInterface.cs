@@ -30,7 +30,7 @@ namespace External.Util
         {
             if(_doShow)
                 _text.text = $@"====== RESOURCES
-{GameStateManager.Instance.PlayerProductCount.Select(it => "* " + it.Key.Formatted() + ": " + it.Value).ToLineSeparatedString()}
+{GameStateManager.Instance.PlayerProductCount.Select(it => "* " + it.Key + ": " + it.Value).ToLineSeparatedString()}
 ======
     ";
         }

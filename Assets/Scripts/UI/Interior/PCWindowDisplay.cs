@@ -13,6 +13,9 @@ namespace UI.Interior
         private Transform contentContainer;
 
         [SerializeField]
+        private GameObject loadingPrefab;
+
+        [SerializeField]
         private TMP_Text title;
         
         private RectTransform _window;
@@ -27,10 +30,20 @@ namespace UI.Interior
             _window.localScale = Vector3.zero;
         }
 
-        public void ShowWithData(string windowTitle, GameObject data)
+        public GameObject ShowWithData(string windowTitle, GameObject data)
         {
-            ShowTab(data);
+            var v = ShowTab(data);
             title.text = windowTitle;
+            return v;
+        }
+
+        public void ShowLoading(string nextTitle, GameObject next, Action<GameObject> callback)
+        {
+            var load = ShowWithData("GALACTION - Загрузка", loadingPrefab).GetComponent<LoadingComponentHandler>();
+            load.window = this;
+            load.nextTitle = nextTitle;
+            load.next = next;
+            load.Callback = callback;
         }
 
         public void Show()

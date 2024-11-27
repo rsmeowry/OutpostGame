@@ -7,5 +7,11 @@
         public float SellPrice;
         public int BaseStock;
 
+        public ProductData(float buyPrice, float sellPrice, int baseStock)
+        {
+            BuyPrice = buyPrice;
+            SellPrice = sellPrice;
+            BaseStock = baseStock;
+        }
     }
 }

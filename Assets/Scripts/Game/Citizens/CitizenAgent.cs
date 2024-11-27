@@ -63,10 +63,6 @@ namespace Game.Citizens
 
             if (!loadedFromData)
             {
-                PersistentData = new PersistentCitizenData
-                {
-                    Profession = CitizenCaste.Beekeeper
-                };
                 StartCoroutine(StateMachine.Init(WanderState));
             }
         }
@@ -82,10 +78,6 @@ namespace Game.Citizens
             GoWorkState = new CitizenGoWorkState(this, StateMachine);
             WorkState = new CitizenWorkState(this, StateMachine);
             MoveToWorkSpotState = new CitizenMoveToWorkSpotState(this, StateMachine);
-            PersistentData = new PersistentCitizenData
-            {
-                Profession = CitizenCaste.Beekeeper
-            };
         }
 
         public StoredCitizenData Serialize()

@@ -5,6 +5,7 @@ using External.Network;
 using Game.Citizens.States;
 using Game.Storage;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.DayNight
 {
@@ -51,10 +52,18 @@ namespace Game.DayNight
         public bool doBuffer = true;
         private static readonly int StarBrightness = Shader.PropertyToID("_StarBrightness");
 
+        public int days;
+
         private void Awake()
         {
             Instance = this;
         }
+
+        private float _oldTime;
+        private int _oldHour;
+
+        public UnityEvent onDayChanged = new();
+        public UnityEvent onHourPassed = new();
 
         public void Update()
         {
@@ -67,8 +76,24 @@ namespace Game.DayNight
             var cycleTime = dayDuration * 1.5f;
             _tickedTime += bufferFactor / cycleTime;
             _tickedTime %= 0.75f;
-            _secondsTime = (_secondsTime + (1 + timeSpeed.Evaluate(_tickedTime)) * bufferFactor) % cycleTime;
+            var passageSpeed = (time % 1f) > 0.5f ? 2f : 1f;
+            _secondsTime = (_secondsTime + passageSpeed * bufferFactor) % cycleTime;
             time = _secondsTime / cycleTime;
+            if (_oldTime > time)
+            {
+                // new day!
+                onDayChanged.Invoke();
+                days += 1;
+            }
+
+            var newHour = Mathf.RoundToInt(time * 24);
+            if (newHour != _oldHour)
+            {
+                onHourPassed.Invoke();
+                _oldHour = newHour;
+            }
+
+            _oldTime = time;
 
             mainLight.color = lightColor.Evaluate(time);
             mainLight.transform.rotation = Quaternion.Euler(new Vector3(360f * time, -45f, 0f));
@@ -77,6 +102,17 @@ namespace Game.DayNight
             skyboxMaterial.SetColor(HorizonColor, horizonColor.Evaluate(time));
             skyboxMaterial.SetColor(SkyColor, skyColor.Evaluate(time));
             skyboxMaterial.SetFloat(StarBrightness, Mathf.Lerp(0f, 2f, Mathf.Clamp(time - 0.5f, 0f, 0.5f) * 4f));
+        }
+
+        public int DayTimeMinutes()
+        {
+            return Mathf.RoundToInt(time * 24 * 60);
+        }
+
+        public (int, int) DayTime()
+        {
+            var minutes = DayTimeMinutes();
+            return (minutes / 60, minutes % 60);
         }
 
         public void Load()
@@ -90,6 +126,7 @@ namespace Game.DayNight
             _secondsTime = data.secondsTime;
             _tickedTime = data.tickedTime;
             _tickBuffer = data.tickBuffer;
+            days = data.days;
         }
 
         public void Save()
@@ -100,7 +137,8 @@ namespace Game.DayNight
             {
                 tickBuffer = _tickBuffer,
                 tickedTime = _tickedTime,
-                secondsTime = _secondsTime
+                secondsTime = _secondsTime,
+                days = days
             });
             FileManager.Instance.Storage.SaveBytes("env.dat", memStream.GetBuffer(), true);
         }
@@ -112,5 +150,6 @@ namespace Game.DayNight
         public float tickBuffer;
         public float tickedTime;
         public float secondsTime;
+        public int days;
     }
 }

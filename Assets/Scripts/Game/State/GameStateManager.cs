@@ -10,6 +10,7 @@ using Game.Stocks;
 using Game.Storage;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.State
 {
@@ -17,7 +18,7 @@ namespace Game.State
     {
         public static GameStateManager Instance { get; private set; }
 
-        public Dictionary<StateKey, int> PlayerProductCount = new();
+        public Dictionary<string, int> PlayerProductCount = new();
         public Dictionary<string, int> PlayerProductDelta = new();
         public int Currency { get; private set; }
 
@@ -48,21 +49,48 @@ namespace Game.State
             var data = FileManager.Instance.Storage.ReadFile($"{PlayerDataManager.Instance.playerName}/save.json");
             var deserialized = JsonConvert.DeserializeObject<SavedPlayerData>(data);
             var playerData = deserialized.Resources;
-            PlayerProductCount = playerData.ProductCounts.Select(it => (StateKey.FromString(it.Key), it.Value))
+            PlayerProductCount = playerData.ProductCounts.Select(it => (StateKey.FromString(it.Key).Formatted(), it.Value))
                 .ToDictionary(x => x.Item1, x => x.Value);
             Currency = playerData.Currency;
         }
 
+        public UnityEvent<ProductChangedData> onProductChanged = new();
+
         public void IncreaseProduct(StateKey product, int amount)
         {
-            PlayerProductCount[product] = PlayerProductCount.TryGetValue(product, out var pVal) ? pVal + amount : amount;
+            PlayerProductCount[product.Formatted()] = PlayerProductCount.TryGetValue(product.Formatted(), out var pVal) ? pVal + amount : amount;
             var k = product.Formatted();
             PlayerProductDelta[k] = PlayerProductDelta.TryGetValue(k, out var value) ? value + amount : amount;
+            onProductChanged.Invoke(new ProductChangedData()
+            {
+                Product = product,
+                Delta = amount
+            });
+        }
+
+        public UnityEvent currencyIncreaseEvent = new();
+
+        public void ChangeCurrency(int delta, string desc, bool log)
+        {
+            Currency += delta;
+            currencyIncreaseEvent.Invoke();
+
+            if (!log) return;
+            var dt = new Dictionary<string, int>();
+            dt["currency:delta"] = delta;
+            StartCoroutine(NetworkManager.Instance.PostPlayerLog(new PlayerLogData()
+            {
+                Comment = desc,
+                PlayerName = PlayerDataManager.Instance.playerName,
+                Deltas = new Dictionary<string, int>(dt)
+            }));
+
         }
 
         public void IncreaseCurrency(int amount)
         {
             Currency += amount;
+            currencyIncreaseEvent.Invoke();
 
             var dt = new Dictionary<string, int>();
             dt["currency:delta"] = amount;
@@ -95,13 +123,19 @@ namespace Game.State
         private SerializablePlayerData PreparePlayerData()
         {
             var productCounts = PlayerProductCount.Where(it => it.Value > 0)
-                .Select(it => (it.Key.Formatted(), it.Value)).ToDictionary(it => it.Item1, it => it.Value);
+                .Select(it => (it.Key, it.Value)).ToDictionary(it => it.Item1, it => it.Value);
             return new SerializablePlayerData
             {
                 ProductCounts = productCounts,
                 Currency = Currency
             };
         }
+    }
+
+    public struct ProductChangedData
+    {
+        public StateKey Product;
+        public int Delta;
     }
 
     internal struct SavedPlayerData
