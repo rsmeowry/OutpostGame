@@ -31,7 +31,10 @@ namespace External.Util
             if(_doShow)
                 _text.text = $@"====== RESOURCES
 {GameStateManager.Instance.PlayerProductCount.Select(it => "* " + it.Key + ": " + it.Value).ToLineSeparatedString()}
-======
+====== FLUIDS
+{GameStateManager.Instance.FluidCount.Select(it => "* " + it.Key + ": " + it.Value).ToLineSeparatedString()}
+====== FLUID LIMITS
+{GameStateManager.Instance.FluidLimits.Select(it => "* " + it.Key + ": " + it.Value).ToLineSeparatedString()}
     ";
         }
 

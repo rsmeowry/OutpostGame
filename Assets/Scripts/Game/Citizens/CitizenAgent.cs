@@ -46,7 +46,8 @@ namespace Game.Citizens
         public Transform rightArm;
 
         [FormerlySerializedAs("LoadedFromData")] public bool loadedFromData = false;
-        
+        private static readonly int Velocity = Animator.StringToHash("Velocity");
+
         private void Start()
         {
             if (loadedFromData)
@@ -128,6 +129,8 @@ namespace Game.Citizens
         private void Update()
         {
             StateMachine.FrameUpdate();
+            
+            _animator.SetFloat(Velocity, navMeshAgent.velocity.sqrMagnitude);
         }
 
         public bool InventoryFull()

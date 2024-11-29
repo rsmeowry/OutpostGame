@@ -33,27 +33,27 @@ namespace UI.Util
 
         public void SetText(string vHeader, string vBody)
         {
-            _layout.enabled = header.preferredWidth > _layout.preferredWidth ||
-                              body.preferredWidth > _layout.preferredWidth;
-                
             header.text = vHeader;
             body.text = vBody;
+            
+            _layout.enabled = header.preferredWidth > _layout.preferredWidth ||
+                              body.preferredWidth > _layout.preferredWidth;
         }
 
-        private Tween showTween;
+        private Tween _showTween;
 
         public void DelayedShow(float delay = 0.5f)
         {
             hidden = false;
-            showTween = transform.DOScale(Vector3.one, 0.2f).SetDelay(delay).Play();
+            _showTween = transform.DOScale(Vector3.one, 0.2f).SetDelay(delay).Play();
         }
 
         public void Hide()
         {
-            if (showTween != null)
+            if (_showTween != null)
             {
-                showTween.Kill();
-                showTween = null;
+                _showTween.Kill();
+                _showTween = null;
             }
             transform.DOScale(Vector3.zero, 0.2f).OnComplete(() =>
             {

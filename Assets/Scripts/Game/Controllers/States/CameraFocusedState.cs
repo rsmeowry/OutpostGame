@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using DG.Tweening;
+using UI;
+using UI.BottomRow;
 using UnityEngine;
 
 namespace Game.Controllers.States
@@ -15,6 +17,9 @@ namespace Game.Controllers.States
 
         public override IEnumerator ExitState()
         {
+            BottomRowCtl.Instance.StartCoroutine(BottomRowCtl.Instance.ShowTopRow());
+            UIManager.Instance.HidePanel();
+            
             CameraController.transform.DOMove(_originalAnchor, 1.5f).Play();
             CameraController.GetComponentInChildren<Camera>().DOFieldOfView(40f, 1.5f).SetEase(Ease.Flash).Play();
             CameraController.cameraTransform.DOLocalRotate(new Vector3(45f, 0f, 0f), 1.5f).Play();
@@ -24,6 +29,7 @@ namespace Game.Controllers.States
 
         public override IEnumerator EnterState()
         {
+            BottomRowCtl.Instance.StartCoroutine(BottomRowCtl.Instance.HideTopRow());
             yield return DoFocus();
         }
 
@@ -48,7 +54,6 @@ namespace Game.Controllers.States
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                
                 CameraController.StartCoroutine(StateMachine.SwitchState(CameraController.FreeMoveState));
             }
         }

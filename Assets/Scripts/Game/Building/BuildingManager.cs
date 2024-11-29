@@ -45,12 +45,15 @@ namespace Game.Building
 
         [SerializeField]
         private GameObject targetBuildingContainer;
+
+        [SerializeField]
+        private LayerMask waterLayer;
         
         private Grid _grid;
 
         public Transform currentBuilding;
         public BuildingData currentBuildingData;
-        private Material _buildingMaterial;
+        private Dictionary<Transform, Material> _buildingMaterials = new();
         private bool _isRotating;
         private bool _hasCollisions;
         private bool _isConstructing;
@@ -91,12 +94,21 @@ namespace Game.Building
             currentBuildingData = data;
             currentBuilding = Instantiate(currentBuildingData.buildingPrefab, transform).transform;
             currentBuilding.GetChild(0).GetChild(0).transform.localScale *= 1.1f;
+            if (currentBuilding.GetChild(0).GetChild(0).TryGetComponent<PointOfInterest>(out var poi))
+            {
+                poi.enabled = false;
+            }
             currentBuilding.position = SnapToGrid(TownCameraController.Instance.MouseToWorld());
             // todo: handle more than one material?
-            var rd = currentBuilding.GetComponentInChildren<Renderer>();
-            _buildingMaterial = new Material(rd.material);
-            rd.material = holographicMaterial;
+            var rds = currentBuilding.GetComponentsInChildren<Renderer>();
+            foreach (var rd in rds)
+            {
+                _buildingMaterials[rd.transform] = new Material(rd.material);
+                rd.material = holographicMaterial;
+            }
             Instantiate(gridPlanePrefab, currentBuilding);
+            
+            CheckPlaceableConditions();
         }
 
         public void CancelBuilding()
@@ -110,10 +122,11 @@ namespace Game.Building
         {
             if (_isConstructing)
                 return;
+            newPos.y = Mathf.Max(0f, newPos.y);
             currentBuilding.position = newPos;
         }
 
-        public void CheckCollisionsIfNeeded()
+        public void CheckPlaceableConditions()
         {
             var newCellSpot = _grid.WorldToCell(TownCameraController.Instance.BuildingState.mouseHitPos);
             if (newCellSpot != _currentCellSpot)
@@ -122,11 +135,11 @@ namespace Game.Building
                 DoCheckCollisions(newCellSpot);
             }
         }
-
+        
         private void DoCheckCollisions(Vector3Int cellSpot)
         {
             var hadCollisionsBefore = _hasCollisions;
-            _hasCollisions = HasCollisions(cellSpot);
+            _hasCollisions = HasCollisions(cellSpot) || HasWaterCollisions(cellSpot);
             try
             {
                 if (hadCollisionsBefore && !_hasCollisions)
@@ -134,6 +147,7 @@ namespace Game.Building
                     // dont have collisions anymore, restore materials
                     var buildRd = currentBuilding.GetChild(0).GetChild(0).GetComponentInChildren<Renderer>();
                     buildRd.material.SetColor(HoloColor, canPlaceColor);
+                    var childCount = currentBuilding.childCount;
                     var gridRd = currentBuilding.GetChild(1).GetComponent<Renderer>();
                     gridRd.material.SetColor(GridColor, canPlaceColor);
                 }
@@ -157,7 +171,6 @@ namespace Game.Building
         {
             currentBuildingData = data;
             currentBuilding = Instantiate(currentBuildingData.buildingPrefab, transform).transform;
-            Debug.Log(_grid);
             currentBuilding.transform.position = position;
             var pivot = currentBuilding.GetChild(0);
             pivot.rotation = Quaternion.Euler(rotation);
@@ -176,8 +189,14 @@ namespace Game.Building
             {
                 poi.buildingData = BuiltObjects[gridPos];
                 poi.pointId = Guid.NewGuid().ToString();
+                poi.OnBuilt();
             }
             buildingItself.SetParent(targetBuildingContainer.transform);
+            
+            var lPos = buildingItself.localPosition;
+            lPos.y = Mathf.Max(0f, lPos.y);
+            buildingItself.localPosition = lPos;
+            
             Destroy(currentBuilding.gameObject);
             currentBuilding = null;
             currentBuildingData = null;
@@ -212,11 +231,12 @@ namespace Game.Building
             currentBuilding.position = SnapToGrid(TownCameraController.Instance.MouseToWorld());
 
             // hide the building first
-            var rd = buildingItself.TryGetComponent<Renderer>(out var cmp)
-                ? cmp
-                : buildingItself.GetComponentInChildren<Renderer>();
-            rd.material = _buildingMaterial;
-            rd.enabled = false;
+            foreach (var rd in buildingItself.GetComponentsInChildren<Renderer>())
+            {
+                rd.material = _buildingMaterials[rd.transform];
+                rd.enabled = false;
+            }
+            _buildingMaterials.Clear();
             
             // placing animation
             // TODO: sounds
@@ -239,7 +259,10 @@ namespace Game.Building
             
             yield return currentBuilding.DOScale(originalScale, 0.5f).SetEase(Ease.OutBack).SetDelay(1.5f).OnStart(() =>
             {
-                rd.enabled = true;
+                foreach (var rd in buildingItself.GetComponentsInChildren<Renderer>())
+                {
+                    rd.enabled = true;
+                }
             }).OnComplete(() =>
             {
                 var rSize = RotatedSize();
@@ -257,16 +280,24 @@ namespace Game.Building
                     var poiId = Guid.NewGuid();
                     poi.pointId = poiId.ToString();
                     POIManager.Instance.LoadedPois[poiId] = poi;
+                    poi.enabled = true;
+                    poi.OnBuilt();
                 }
                 particles.Stop();
                 Destroy(particles.gameObject, 1.5f);
                 buildingItself.SetParent(targetBuildingContainer.transform);
+                
+                var lPos = buildingItself.localPosition;
+                lPos.y = Mathf.Max(0f, lPos.y);
+                buildingItself.localPosition = lPos;
+
                 Destroy(currentBuilding.gameObject);
                 currentBuilding = null;
-                isBuilding = false;
-                _buildingMaterial = null;
+                isBuilding = false; 
                 callback(true);
                 _isConstructing = false;
+                _hasCollisions = true;
+                _currentCellSpot.x = -10000; // shouldnt really occur, so we are fine
             }).Play().WaitForCompletion();
         }
         
@@ -283,6 +314,70 @@ namespace Game.Building
                 _isRotating = false;
                 DoCheckCollisions(_currentCellSpot);
             }).SetEase(Ease.OutExpo).Play();
+        }
+
+        private bool HasWaterCollisions(Vector3 snappedPos)
+        {
+            var pos = new Vector3Int((int) snappedPos.x, (int) snappedPos.y, (int) snappedPos.z);
+            var rotatedSize = RotatedSize();
+            var signX = Math.Sign(rotatedSize.x);
+            var signY = Math.Sign(rotatedSize.y);
+            
+            HashSet<Vector3Int> requiredWaterSpots = new();
+            if (currentBuildingData.requiresWater)
+            {
+                // rotation pivot -> (1) water test positions
+                var ot = currentBuilding.transform.GetChild(0);
+                if (ot.childCount >= 2)
+                {
+                    var waterTestPositions = ot.GetChild(1);
+                    for (var i = 0; i < waterTestPositions.childCount; i++)
+                    {
+                        var posDelta = waterTestPositions.GetChild(i).position - currentBuilding.position;
+                        posDelta.x = Mathf.Floor(posDelta.x / 10);
+                        posDelta.z = Mathf.Floor(posDelta.z / 10);
+                        var ps = pos + posDelta;
+                        ps.y = 0;
+                        requiredWaterSpots.Add(new Vector3Int((int)ps.x, (int)ps.y, (int)ps.z));
+                    }
+                }
+            }
+            
+            foreach (var x in Enumerable.Range(0, Math.Abs(rotatedSize.x)))
+            {
+                foreach (var y in Enumerable.Range(0, Math.Abs(rotatedSize.y)))
+                {
+                    var delta = new Vector3Int(signX * x, 0, signY * y);
+                    var realPos = pos + delta;
+                    var waterPos = realPos;
+                    waterPos.y = 0;
+                    var hitWater = IsWater(_grid.CellToWorld(realPos));
+                    if (hitWater)
+                    {
+                        // if we are supposed to be over water its fine
+                        if (requiredWaterSpots.Contains(waterPos))
+                            continue;
+                        
+                        return true;
+                    } else if (requiredWaterSpots.Contains(waterPos))
+                        // if we are supposed to be over water and we arent, thats bad
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsWater(Vector3 worldPos)
+        {
+            var wp = worldPos;
+            wp.y = 20f;
+            wp += new Vector3(5, 0, 5);
+            // centering it
+            Debug.DrawRay(wp, Vector3.down, Color.red, 1.5f);
+            var hits = new RaycastHit[5];
+            Physics.SphereCastNonAlloc(wp, 1f, Vector3.down, hits, 25f);
+            return hits.Any(it => it.collider && it.collider.CompareTag("Water"));
         }
 
         private bool HasCollisions(Vector3 snappedPos)

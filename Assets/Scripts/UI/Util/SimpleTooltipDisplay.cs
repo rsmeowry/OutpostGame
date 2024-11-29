@@ -1,22 +1,23 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace UI.Util
 {
-    public class SimpleTooltipDisplay: MonoBehaviour
+    public class SimpleTooltipDisplay: MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField]
-        private string title;
+        public string title;
         [SerializeField]
         [TextArea(4, 5)]
-        private string body;
+        public string body;
         
-        private void OnMouseEnter()
+        public void OnPointerEnter(PointerEventData eventData)
         {
             TooltipCtl.Instance.Show(title, body);
         }
 
-        private void OnMouseExit()
+        public void OnPointerExit(PointerEventData eventData)
         {
             TooltipCtl.Instance.Hide();
         }

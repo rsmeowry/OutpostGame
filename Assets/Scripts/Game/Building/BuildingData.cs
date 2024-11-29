@@ -17,6 +17,7 @@ namespace Game.Building
         public GameObject buildingPrefab;
         public Vector2Int size;
         public Color prominentColor;
+        public bool requiresWater;
 
         public List<ResourceRequirement> requirements;
         

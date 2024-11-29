@@ -53,6 +53,7 @@ namespace Game.POI
                 var found = buildingDb.buildings.First(it => it.Id.Formatted() == pl.originPrefabId);
                 var obj = BuildingManager.Instance.InstantBuild(found, pl.position.ToVec3(), pl.rotation.ToVec3());
                 obj.GetComponent<PointOfInterest>().pointId = pl.SelfId.ToString();
+                obj.GetComponent<PointOfInterest>().LoadData(pl);
                 LoadedPois[pl.SelfId] = obj.GetComponent<PointOfInterest>();
             }
         }

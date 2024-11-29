@@ -2,12 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using External.Achievement;
 using Game.Building;
 using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.Controllers;
+using Game.Sound;
 using NUnit.Framework;
 using UI;
+using UI.POI;
 using UI.Util;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -28,11 +31,24 @@ namespace Game.POI
         public bool shouldDepthOfField = false;
         public string pointId;
         public BuiltObject buildingData;
+
+        public virtual string PoiTitle => data.title;
+        public virtual string PoiDesc => "";
         
         public abstract QueuePosition EntrancePos { get; }
 
 
         private bool _clickTransition;
+
+        protected bool IsBuilt;
+
+        protected AudioSource AudioSource;
+        
+        public virtual void OnBuilt()
+        {
+            IsBuilt = true;
+            AudioSource = SoundManager.Instance.AddAudioSource(transform);
+        }
 
         public IEnumerator DoClick()
         {
@@ -44,15 +60,18 @@ namespace Game.POI
             _clickTransition = true;
             TownCameraController.Instance.FocusedPOI = this;
             yield return TownCameraController.Instance.StateMachine.SwitchState(TownCameraController.Instance.FocusedState);
-            var poi = Instantiate(UIManager.Instance.prefabInspectPoi, UIManager.Instance.transform);
+            var poi = UIManager.Instance.OpenPanel();
             poi.poi = this;
-            poi.InitForResourcePOI();
+            // poi.InitForResourcePOI();
+            LoadForInspect(poi);
             _clickTransition = false;
         }
 
+        protected abstract void LoadForInspect(PanelViewPOI panel);
+
         public void OnPointerEnter(PointerEventData eventData)
         {
-            TooltipCtl.Instance.Show(data.title, "дадада");
+            TooltipCtl.Instance.Show(PoiTitle, PoiDesc);
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -70,6 +89,11 @@ namespace Game.POI
         }
 
         public abstract SerializedPOIData Serialize();
+
+        public virtual void LoadData(SerializedPOIData pl)
+        {
+            
+        }
     }
     
     [Serializable]

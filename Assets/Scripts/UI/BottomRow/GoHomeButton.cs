@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using DG.Tweening;
 using Game.Controllers;
+using Inside;
 using UI.Util;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,6 +13,9 @@ namespace UI.BottomRow
     {
         [SerializeField]
         private Image black;
+
+        [SerializeField]
+        private GameObject cameraInside;
 
         [SerializeField]
         private GameObject controlRoom;
@@ -38,11 +42,10 @@ namespace UI.BottomRow
         private IEnumerator DoClick()
         {
             _transition = true;
-            yield return black.DOFade(1f, 0.5f).Play().WaitForCompletion();
-            // TODO: disable rendering of overworld elements
-            yield return BottomRowCtl.Instance.HideTopRow();
+            yield return ViewSwitchCtl.Instance.SwitchToLocal();
             TownCameraController.Instance.gameObject.SetActive(false);
             controlRoom.SetActive(true);
+            cameraInside.SetActive(true);
             yield return black.DOFade(0f, 0.5f).Play().WaitForCompletion();
             _transition = false;
         }

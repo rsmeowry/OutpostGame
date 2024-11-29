@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Game.Citizens;
+using Game.Production.POI;
 using UnityEngine;
 
 namespace UI.POI
 {
     public class CitizenSelectorParent: MonoBehaviour
     {
-        public InspectPanelPOI parentPanel;
+        public PanelViewPOI parentPanel;
         public List<CitizenCaste> acceptedProfessions;
-        public SingleProfessionSelector singlePrefab;
+
+        [SerializeField]
+        private SingleProfessionSelector singlePrefab;
         
         private List<SingleProfessionSelector> _children = new();
 
@@ -29,7 +32,6 @@ namespace UI.POI
 
         public void PollChildren()
         {
-            Debug.Log("Polling for the first time");
             foreach(var child in _children)
                 child.PollChanges();
         }
@@ -44,13 +46,14 @@ namespace UI.POI
                 PollChildren();
                 return;
             }
-            parentPanel.rcPoi.HireAgent(ctzn);
+
+            ((ResourceContainingPOI)parentPanel.poi).HireAgent(ctzn);
             PollChildren();
         }
 
         public void RemoveCitizen(CitizenCaste caste)
         {
-            var citizen = parentPanel.rcPoi.AssignedAgents.FirstOrDefault(it => it.PersistentData.Profession == caste);
+            var citizen = ((ResourceContainingPOI) parentPanel.poi).AssignedAgents.FirstOrDefault(it => it.PersistentData.Profession == caste);
             if (citizen == null)
             {
                 PollChildren();
@@ -62,12 +65,12 @@ namespace UI.POI
         
         public bool CanAssign(CitizenCaste caste)
         {
-            return parentPanel.rcPoi.AssignedAgents.Count < parentPanel.rcPoi.capacity && CitizenManager.Instance.AnyFree(caste);
+            return ((ResourceContainingPOI) parentPanel.poi).AssignedAgents.Count < ((ResourceContainingPOI) parentPanel.poi).capacity && CitizenManager.Instance.AnyFree(caste);
         }
 
         public bool CanRemove(CitizenCaste caste)
         {
-            return parentPanel.rcPoi.AssignedAgents.Count(it => it.PersistentData.Profession == caste) > 0;
+            return ((ResourceContainingPOI) parentPanel.poi).AssignedAgents.Count(it => it.PersistentData.Profession == caste) > 0;
         }
     }
 }

@@ -20,6 +20,10 @@ namespace Game.State
 
         public Dictionary<string, int> PlayerProductCount = new();
         public Dictionary<string, int> PlayerProductDelta = new();
+
+        public Dictionary<StateKey, int> FluidCount = new();
+        public Dictionary<StateKey, int> FluidLimits = new();
+        
         public int Currency { get; private set; }
 
         public void Awake()
@@ -32,10 +36,14 @@ namespace Game.State
             if (!FileManager.Instance.Storage.FileExists("save.json", true))
             {
                 FileManager.Instance.Storage.CreateDir(PlayerDataManager.Instance.playerName);
+                var fluidLimit = new Dictionary<string, int>();
+                fluidLimit[ProductRegistry.Water.Formatted()] = 10; // very low limit to encourage making more cisterns
                 var playerDict = new Dictionary<string, object>();
             
                 playerDict.Add("resources", PreparePlayerData());
                 playerDict.Add("name", PlayerDataManager.Instance.playerName);
+                playerDict.Add("fluids", new Dictionary<string, int>());
+                playerDict.Add("fluid_limits", fluidLimit);
                 yield return NetworkManager.Instance.TryCreatePlayer(JsonConvert.SerializeObject(playerDict));
                 // yield return SavePlayerData("Initially created player");
             }
@@ -52,6 +60,8 @@ namespace Game.State
             PlayerProductCount = playerData.ProductCounts.Select(it => (StateKey.FromString(it.Key).Formatted(), it.Value))
                 .ToDictionary(x => x.Item1, x => x.Value);
             Currency = playerData.Currency;
+            FluidCount = playerData.Fluids.ToDictionary(it => StateKey.FromString(it.Key), it => it.Value);
+            FluidLimits = playerData.FluidLimits.ToDictionary(it => StateKey.FromString(it.Key), it => it.Value);
         }
 
         public UnityEvent<ProductChangedData> onProductChanged = new();
@@ -124,10 +134,17 @@ namespace Game.State
         {
             var productCounts = PlayerProductCount.Where(it => it.Value > 0)
                 .Select(it => (it.Key, it.Value)).ToDictionary(it => it.Item1, it => it.Value);
+            var fluidCounts = FluidCount.Where(it => it.Value > 0)
+                .Select(it => (it.Key, it.Value)).ToDictionary(it => it.Item1.Formatted(), it => it.Value);
+            var fluidLimits = FluidLimits
+                .Select(it => (it.Key, it.Value)).ToDictionary(it => it.Item1.Formatted(), it => it.Value);
+
             return new SerializablePlayerData
             {
                 ProductCounts = productCounts,
-                Currency = Currency
+                Currency = Currency,
+                FluidLimits = fluidLimits,
+                Fluids = fluidCounts
             };
         }
     }
@@ -150,5 +167,9 @@ namespace Game.State
         public Dictionary<string, int> ProductCounts;
         [JsonProperty("currency")]
         public int Currency;
+        [JsonProperty("fluids")]
+        public Dictionary<string, int> Fluids;
+        [JsonProperty("fluid_limits")]
+        public Dictionary<string, int> FluidLimits;
     }
 }

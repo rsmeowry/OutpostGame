@@ -48,7 +48,7 @@ namespace Game.Controllers.States
             BuildingManager.Instance.MoveBuilding(BuildingManager.Instance.LerpedSnap(BuildingManager.Instance.currentBuilding.position, mouseHitPos));
 
             // recalculating collisions
-            BuildingManager.Instance.CheckCollisionsIfNeeded();
+            BuildingManager.Instance.CheckPlaceableConditions();
         }
 
         private void HandleClicks()

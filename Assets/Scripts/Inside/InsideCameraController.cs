@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using External.Util;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -35,25 +36,28 @@ namespace Inside
             
         }
 
-        private IEnumerator Start()
+        private void OnEnable()
         {
             rot = transform.rotation;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            
+            this.Delayed(2f, () =>
+            {
+                foreach (var rd in toUnrenderPoi.GetComponentsInChildren<Renderer>())
+                {
+                    rd.enabled = false;
+                }
+                foreach (var rd in toUnrenderPoi2.GetComponentsInChildren<Renderer>())
+                {
+                    rd.enabled = false;
+                }
+                foreach (var rd in toUnrenderUnits.GetComponentsInChildren<Renderer>())
+                {
+                    rd.enabled = false;
+                }
+            });
 
-            yield return new WaitForSeconds(2f);
-            foreach (var rd in toUnrenderPoi.GetComponentsInChildren<Renderer>())
-            {
-                rd.enabled = false;
-            }
-            foreach (var rd in toUnrenderPoi2.GetComponentsInChildren<Renderer>())
-            {
-                rd.enabled = false;
-            }
-            foreach (var rd in toUnrenderUnits.GetComponentsInChildren<Renderer>())
-            {
-                rd.enabled = false;
-            }
         }
 
         private void OnDisable()

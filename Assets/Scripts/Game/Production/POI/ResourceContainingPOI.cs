@@ -8,6 +8,7 @@ using Game.Building;
 using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.POI;
+using UI.POI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -222,6 +223,12 @@ namespace Game.Production.POI
                 data = buildingData,
                 SelfId = Guid.Parse(pointId)
             };
+        }
+
+        protected override void LoadForInspect(PanelViewPOI panel)
+        {
+            // hire citizens
+            panel.AddCitizenHireSelector();
         }
     }
     

@@ -22,6 +22,8 @@ namespace Game.DayNight
 
         [SerializeField]
         private AnimationCurve timeSpeed;
+        [SerializeField]
+        private AnimationCurve sunIntensity;
 
         [SerializeField] [GradientUsage(true)] 
         private Gradient horizonColor;
@@ -42,6 +44,11 @@ namespace Game.DayNight
 
         [SerializeField]
         private Light mainLight;
+
+        [SerializeField]
+        private Light colorLight;
+
+        private Light _activeLight;
 
         private static readonly int HorizonColor = Shader.PropertyToID("_HorizonColor");
         private static readonly int SkyColor = Shader.PropertyToID("_SkyColor");
@@ -95,8 +102,12 @@ namespace Game.DayNight
 
             _oldTime = time;
 
+            var lc = lightColor.Evaluate(time);
             mainLight.color = lightColor.Evaluate(time);
             mainLight.transform.rotation = Quaternion.Euler(new Vector3(360f * time, -45f, 0f));
+            mainLight.intensity = sunIntensity.Evaluate(time);
+            
+            RenderSettings.ambientLight = lc;
             
             // TODO: set shader material color shit
             skyboxMaterial.SetColor(HorizonColor, horizonColor.Evaluate(time));

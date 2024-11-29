@@ -6,6 +6,7 @@ using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.POI;
 using Game.State;
+using UI.POI;
 using UnityEngine;
 
 namespace Game.Production.POI
@@ -16,6 +17,11 @@ namespace Game.Production.POI
         private QueuePosition entrancePos;
         
         public override QueuePosition EntrancePos => entrancePos;
+        protected override void LoadForInspect(PanelViewPOI panel)
+        {
+            throw new NotImplementedException();
+        }
+
         public override SerializedPOIData Serialize()
         {
             return new GatheringPostData()

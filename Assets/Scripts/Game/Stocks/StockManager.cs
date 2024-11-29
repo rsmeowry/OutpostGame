@@ -194,8 +194,15 @@ namespace Game.Stocks
             if (FileManager.Instance.Storage.FileExists(path))
             {
                 // checking all markets
-                var localMarkets = JsonConvert.DeserializeObject<List<SerializedMarketData>>(FileManager.Instance.Storage.ReadFile(path));
-                // TODO: crashes if the file is empty
+                var localMarkets =
+                    JsonConvert.DeserializeObject<List<SerializedMarketData>>(FileManager.Instance.Storage.ReadFile(path));
+                if (localMarkets == null)
+                {
+                    // pray that there is something online
+                    yield return NetworkManager.Instance.FetchAllMarkets(Markets.Select(it => it.PrepareData()).ToList());
+                    yield break;
+                }
+
                 foreach (var local in localMarkets)
                 {
                     marketsThatNeedCreating.Remove(local.MarketId);

@@ -4,6 +4,7 @@ using External.Util;
 using Game.Building;
 using Game.Citizens;
 using Game.Citizens.Navigation;
+using UI.POI;
 using UnityEngine;
 
 namespace Game.POI.Deco
@@ -13,6 +14,11 @@ namespace Game.POI.Deco
         public QueuePosition entrancePos;
 
         public override QueuePosition EntrancePos => entrancePos;
+        protected override void LoadForInspect(PanelViewPOI panel)
+        {
+            throw new NotImplementedException();
+        }
+
         public override SerializedPOIData Serialize()
         {
             return new SerializedDecoPoi()
