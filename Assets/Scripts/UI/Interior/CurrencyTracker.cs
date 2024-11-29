@@ -1,5 +1,6 @@
 ﻿using System;
 using DG.Tweening;
+using Game.Production.POI;
 using Game.State;
 using TMPro;
 using UnityEngine;
@@ -13,13 +14,20 @@ namespace UI.Interior
 
         private Vector3 _basePos;
         private RectTransform _rect;
+
         
         private void Start()
         {
             _rect = (RectTransform)transform;
             _basePos = _rect.anchoredPosition;
-            CurrencyHandler();
+            GameStateManager.Instance.currencyIncreaseEvent.RemoveListener(CurrencyHandler);
             GameStateManager.Instance.currencyIncreaseEvent.AddListener(CurrencyHandler);
+        }
+
+        private void OnEnable()
+        {
+            GameStateManager.Instance?.currencyIncreaseEvent?.AddListener(CurrencyHandler);
+            CurrencyHandler();
         }
 
         private void OnDisable()
@@ -33,7 +41,7 @@ namespace UI.Interior
             _shakeTween?.Kill();
             _rect.anchoredPosition = _basePos;
             _shakeTween = _rect.DOShakeAnchorPos(0.2f, 5f).Play();
-            text.text = $"{GameStateManager.Instance.Currency:##,###} ЭМ";
+            text.text = $"{GameStateManager.Instance.Currency} ЭМ";
         }
     }
 }

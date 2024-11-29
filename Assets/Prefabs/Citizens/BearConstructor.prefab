@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5956661631171793534}
   - component: {fileID: 8627437845275715501}
   m_Layer: 0
-  m_Name: ConstructorBear
+  m_Name: BearConstructor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

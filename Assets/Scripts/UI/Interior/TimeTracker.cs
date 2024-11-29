@@ -13,6 +13,12 @@ namespace UI.Interior
         {
             _text = GetComponent<TMP_Text>();
             TimeHandler();
+            DayCycleManager.Instance.onHourPassed.RemoveListener(TimeHandler);
+            DayCycleManager.Instance.onHourPassed.AddListener(TimeHandler);
+        }
+
+        private void OnEnable()
+        {
             DayCycleManager.Instance.onHourPassed.AddListener(TimeHandler);
         }
 
@@ -24,7 +30,7 @@ namespace UI.Interior
         private void TimeHandler()
         {
             var (hours, minutes) = DayCycleManager.Instance.DayTime();
-            _text.text = $"{hours:D2}:{minutes:D2}";
+            _text.text = $"День {DayCycleManager.Instance.days + 1} | {hours:D2}:{minutes:D2}";
         }
     }
 }

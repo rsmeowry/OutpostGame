@@ -23,10 +23,7 @@ namespace Game.Citizens
         public static CitizenManager Instance { get; private set; }
 
         private int citizenIdTracker = 0;
-
-        [SerializeField]
-        private CitizenAgent citizenPrefab;
-
+        
         [SerializeField]
         private CitizenAgent constructorPrefab;
         [SerializeField]
@@ -35,6 +32,9 @@ namespace Game.Citizens
         private CitizenAgent creatorPrefab;
         [SerializeField]
         private CitizenAgent explorerPrefab;
+        
+        [SerializeField]
+        public GameObject boxPrefab;
         
         public Dictionary<int, CitizenAgent> Citizens = new();
         private Dictionary<int, StoredCitizenData> _intermediate = new();
@@ -47,16 +47,6 @@ namespace Game.Citizens
         private void Start()
         {
             
-        }
-
-        [ContextMenu("Test/Stress Test")]
-        private void __StressTest()
-        {
-            int count = 50;
-            for (int i = 0; i < count; i++)
-            {
-                SpawnCitizen(new Vector3(180, 3, 110f) + Vectors.RemapXYToXZ(Random.insideUnitCircle * 10));
-            }
         }
         
         // LOADING DATA
@@ -139,12 +129,19 @@ namespace Game.Citizens
         [SerializeField]
         private ResourceContainingPOI poi;
         
-        public CitizenAgent SpawnCitizen(Vector3 position)
+        public CitizenAgent SpawnCitizen(Vector3 position, PersistentCitizenData data)
         {
-            var citizen = Instantiate(citizenPrefab);
+            var citizen = Instantiate(data.Profession switch
+            {
+                CitizenCaste.Creator => creatorPrefab,
+                CitizenCaste.Explorer => explorerPrefab,
+                CitizenCaste.Beekeeper => beekeeperPrefab,
+                CitizenCaste.Engineer => constructorPrefab,
+                _ => throw new ArgumentOutOfRangeException()
+            });
             citizen.transform.position = position;
             citizen.citizenId = citizenIdTracker++;
-            citizen.PersistentData = new PersistentCitizenData { Profession = CitizenCaste.Beekeeper, Name = Rng.Bool() ? CitizenNames.RandomFemName() : CitizenNames.RandomMascName() };
+            citizen.PersistentData = data;
             Debug.Log(citizen.PersistentData.Name);
             Citizens[citizen.citizenId] = citizen;
             return citizen;
@@ -162,7 +159,11 @@ namespace Game.Citizens
         [ContextMenu("Test/Spawn Citizen Raw")]
         public CitizenAgent __TestSpawnCitizen()
         {
-            SpawnCitizen(new Vector3(180, 3, 110f));
+            SpawnCitizen(new Vector3(180, 3, 110f), new PersistentCitizenData()
+            {
+                Name = CitizenNames.RandomMascName(),
+                Profession = CitizenCaste.Creator
+            });
             return null;
         }
 

@@ -82,17 +82,13 @@ namespace Game.Production.POI
             var spot = _citizenPos[agent.citizenId];
             agent.transform.position = citizenWorkingPositions[spot].position;
             agent.transform.DORotateQuaternion(citizenWorkingPositions[spot].rotation, 0.5f).SetEase(Ease.Linear).Play();
-                
+            
             PreAnimation(agent);
             if (tool != null)
-            {
-                var t = Instantiate(tool, agent.rightArm);
-                var originalScale = t.transform.localScale;
-                t.transform.localScale = Vector3.zero;
-                t.transform.DOScale(originalScale, 0.75f).SetEase(Ease.OutBack).Play();
+            { 
+                yield return agent.SpawnItem(tool);
             }
 
-            yield return new WaitForSeconds(0.5f);
             agent.PlayAnimation(citizenAnimation);
 
             callback(WorkPlaceEnterResult.Accepted);
@@ -163,14 +159,10 @@ namespace Game.Production.POI
             _citizensInside.Remove(agent);
             if (citizenWorkingPositions.Count > 0)
             {
-                // TODO: remove pickaxe and shit
                 ReleaseSpot(_citizenPos[agent.citizenId]);
                 
                 // tool disappear animation
-                var tf = agent.rightArm.GetChild(0);
-                tf.DOKill();
-                tf.DOScale(Vector3.zero, 0.75f).SetEase(Ease.OutExpo)
-                    .OnComplete(() => Destroy(agent.rightArm.GetChild(0).gameObject)).Play();
+                yield return agent.RemoveItem();
                 
                 agent.PlayAnimation("Walk");
                 _isFull = false;

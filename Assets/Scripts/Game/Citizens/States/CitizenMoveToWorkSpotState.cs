@@ -20,6 +20,8 @@ namespace Game.Citizens.States
         public override void FrameUpdate()
         {
             FaceTarget();
+            if (!Agent.navMeshAgent.enabled)
+                Agent.navMeshAgent.enabled = true;
             if (Agent.navMeshAgent.remainingDistance <= Agent.navMeshAgent.stoppingDistance)
             {
                 Agent.StartCoroutine(StateMachine.ChangeState(Agent.WorkState));

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using External.Util;
 using Game.Citizens;
 using Game.Network;
 using Game.Player;
@@ -30,31 +31,41 @@ namespace Game.State
         {
             Instance = this;
         }
-        
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                foreach (var k in ProductRegistry.Instance.AllItems())
+                {
+                    IncreaseProduct(k, 100);
+                }
+                IncreaseCurrency(100);
+            }
+        }
+
         public IEnumerator LoadGameState()
         {
             if (!FileManager.Instance.Storage.FileExists("save.json", true))
             {
                 FileManager.Instance.Storage.CreateDir(PlayerDataManager.Instance.playerName);
-                var fluidLimit = new Dictionary<string, int>();
-                fluidLimit[ProductRegistry.Water.Formatted()] = 10; // very low limit to encourage making more cisterns
                 var playerDict = new Dictionary<string, object>();
             
                 playerDict.Add("resources", PreparePlayerData());
                 playerDict.Add("name", PlayerDataManager.Instance.playerName);
-                playerDict.Add("fluids", new Dictionary<string, int>());
-                playerDict.Add("fluid_limits", fluidLimit);
                 yield return NetworkManager.Instance.TryCreatePlayer(JsonConvert.SerializeObject(playerDict));
                 // yield return SavePlayerData("Initially created player");
             }
-            InitialLoadPlayerData();
+            yield return InitialLoadPlayerData();
             
             yield return StockManager.Instance.EnsureAllMarketsCreated();
         }
 
-        private void InitialLoadPlayerData()
+        private IEnumerator InitialLoadPlayerData()
         {
-            var data = FileManager.Instance.Storage.ReadFile($"{PlayerDataManager.Instance.playerName}/save.json");
+            var o = new CoroutineOutput<string>();
+            yield return NetworkManager.Instance.FetchPlayerData(o);
+            var data = o.Value;
             var deserialized = JsonConvert.DeserializeObject<SavedPlayerData>(data);
             var playerData = deserialized.Resources;
             PlayerProductCount = playerData.ProductCounts.Select(it => (StateKey.FromString(it.Key).Formatted(), it.Value))
@@ -77,7 +88,7 @@ namespace Game.State
                 Delta = amount
             });
         }
-
+        
         public UnityEvent currencyIncreaseEvent = new();
 
         public void ChangeCurrency(int delta, string desc, bool log)
@@ -138,6 +149,8 @@ namespace Game.State
                 .Select(it => (it.Key, it.Value)).ToDictionary(it => it.Item1.Formatted(), it => it.Value);
             var fluidLimits = FluidLimits
                 .Select(it => (it.Key, it.Value)).ToDictionary(it => it.Item1.Formatted(), it => it.Value);
+            if (!fluidLimits.ContainsKey(ProductRegistry.Water.Formatted()))
+                fluidLimits[ProductRegistry.Water.Formatted()] = 10;
 
             return new SerializablePlayerData
             {

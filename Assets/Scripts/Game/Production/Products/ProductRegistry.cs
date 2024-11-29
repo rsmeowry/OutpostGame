@@ -57,6 +57,11 @@ namespace Game.Production.Products
         {
             return _eachProduct[product.Formatted()];
         }
+
+        public HashSet<StateKey> AllItems()
+        {
+            return _eachProduct.Keys.Select(StateKey.FromString).ToHashSet();
+        }
         
         public StateKey RandomItem()
         {

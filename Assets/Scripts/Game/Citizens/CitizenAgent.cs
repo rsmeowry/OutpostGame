@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using DG.Tweening;
 using External.Util;
 using Game.Citizens.States;
 using Game.POI;
@@ -160,6 +161,20 @@ namespace Game.Citizens
             Order(GoWorkState);
         }
 
+        public void SetAnimatorBool(int hash, bool value)
+        {
+            if (_animator == null)
+                return;
+            _animator.SetBool(hash, value);
+        }
+
+        public void SetAnimatorTrigger(int hash)
+        {
+            if (_animator == null)
+                return;
+            _animator.SetTrigger(hash);
+        }
+
         public void PlayAnimation(string anim)
         {
             if (_animator == null)
@@ -196,6 +211,26 @@ namespace Game.Citizens
         public void Renavigate()
         {
             StateMachine.Renavigate();
+        }
+
+        public IEnumerator SpawnItem(GameObject prefab)
+        {
+            if (rightArm.childCount > 0)
+                yield return RemoveItem();
+            var obj = Instantiate(prefab, rightArm);
+            var originalScale = obj.transform.localScale;
+            obj.transform.localScale = Vector3.zero;
+            yield return obj.transform.DOScale(originalScale, 0.35f).SetEase(Ease.OutExpo).Play().WaitForCompletion();
+        }
+
+        public IEnumerator RemoveItem()
+        {
+            if (rightArm.childCount <= 0)
+                yield break;
+            var tf = rightArm.GetChild(0);
+            tf.DOKill();
+            yield return tf.DOScale(Vector3.zero, 0.4f).SetEase(Ease.OutExpo)
+                .OnComplete(() => Destroy(rightArm.GetChild(0).gameObject)).Play().WaitForCompletion();
         }
     }
 

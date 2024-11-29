@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using External.Util;
+using UnityEngine;
 
 namespace Game.Citizens
 {
@@ -355,5 +356,12 @@ namespace Game.Citizens
                    FemLastNames[Random.Range(0, FemLastNames.Length)];
         }
 
+        private static CitizenCaste[] _castes = new[]
+            { CitizenCaste.Beekeeper, CitizenCaste.Creator, CitizenCaste.Engineer, CitizenCaste.Explorer };
+
+        public static CitizenCaste RandomCaste()
+        {
+            return Rng.Choice(_castes);
+        }
     }
 }
