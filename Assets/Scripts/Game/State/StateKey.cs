@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 namespace Game.State
 {
     // Used to manage various product types in game
+    [Serializable]
     public readonly struct StateKey: IEquatable<StateKey>, IComparable<StateKey>, IEqualityComparer<StateKey>
     {
         public readonly string Namespace;

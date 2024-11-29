@@ -56,11 +56,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0.5
-    - _AmplitudeFactor: 5
-    - _BillboardSize: 0.062
-    - _EffectBlend: 0.591
-    - _Inflate: 0.05
+    - _AlphaClip: 0.56
+    - _AmplitudeFactor: 6
+    - _BillboardSize: 0.054
+    - _EffectBlend: 0.503
+    - _Inflate: 0.03
     - _QueueControl: 0
     - _QueueOffset: 0
     - _WaveAmplitude: 5

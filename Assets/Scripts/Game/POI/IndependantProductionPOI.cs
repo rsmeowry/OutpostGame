@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Game.POI
 {
-    public abstract class IndependantProductionPOI: PointOfInterest
+    public abstract class IndependantTickingPOI: PointOfInterest
     {
         [SerializeField]
         private string desc;
@@ -21,6 +21,7 @@ namespace Game.POI
         public abstract void Tick();
 
         private float _ticker;
+        [NonSerialized]
         private bool _isWorking;
         public void Update()
         {
@@ -34,9 +35,11 @@ namespace Game.POI
                 // _anim.SetBool(Working, IsWorking);
                 if (!IsWorking && _isWorking)
                 {
-                    _anim.SetBool(Working, false);
+                    if(_anim)
+                        _anim.SetBool(Working, false);
                 } else if (IsWorking && !_isWorking)
                 {
+                    if(_anim)
                     _anim.SetBool(Working, true);
                 }
 
@@ -46,6 +49,13 @@ namespace Game.POI
 
         private Animator _anim;
         private static readonly int Working = Animator.StringToHash("Working");
+
+        private void Start()
+        {
+            // TODO: REMOVE THIS ITS SUCH A FUCKING BAD IDEA
+            if (doNotSerialize)
+                IsBuilt = true;
+        }
 
         public override void OnBuilt()
         {

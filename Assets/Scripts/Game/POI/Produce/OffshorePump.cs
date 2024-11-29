@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Game.POI.Produce
 {
-    public class OffshorePump: IndependantProductionPOI
+    public class OffshorePump: IndependantTickingPOI
     {
         [SerializeField]
         private Sprite waterSprite;

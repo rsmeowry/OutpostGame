@@ -3370,8 +3370,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   window: {fileID: 2086288499}
-  componentPrefab: {fileID: 0}
-  title: 
+  componentPrefab: {fileID: 347499441688382337, guid: 191fbc8cdd9929c428369fdfd15e92c7, type: 3}
+  title: "GALACTION - \u041F\u043E\u0438\u0441\u043A \u0437\u0430\u0434\u0430\u043D\u0438\u0439"
   tipTitle: "\u0421\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0437\u0430\u0434\u0430\u043D\u0438\u044F"
   tipDesc: "\u0421\u043C\u043E\u0442\u0440\u0438\u0442\u0435 \u0442\u0435\u043A\u0443\u0449\u0435\u0435
     \u0437\u0430\u0434\u0430\u043D\u0438\u0435, \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u043D\u043E\u0435
@@ -9870,6 +9870,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1794718652}
   - component: {fileID: 1794718651}
+  - component: {fileID: 1794718661}
   - component: {fileID: 1794718659}
   - component: {fileID: 1794718653}
   - component: {fileID: 1794718654}
@@ -9878,6 +9879,7 @@ GameObject:
   - component: {fileID: 1794718657}
   - component: {fileID: 1794718658}
   - component: {fileID: 1794718660}
+  - component: {fileID: 1794718662}
   m_Layer: 0
   m_Name: GameStateManager
   m_TagString: Untagged
@@ -10033,6 +10035,34 @@ MonoBehaviour:
   onOffersUpdated:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1794718661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794718650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44c22b18f93e4bdc8569ab7cd8d205ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  completedTasks: []
+--- !u!114 &1794718662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794718650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e37793d513e1406d8872b8869f91a103, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  electricityLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &1797693869
 GameObject:
   m_ObjectHideFlags: 0
@@ -11902,6 +11932,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contentContainer: {fileID: 2060521167}
   loadingPrefab: {fileID: 5806178643212697592, guid: 18538fcb00015fe4f946f239cdea9e14, type: 3}
+  taskPrefab: {fileID: 347499441688382337, guid: 191fbc8cdd9929c428369fdfd15e92c7, type: 3}
   title: {fileID: 211409022}
 --- !u!1 &2117018782
 GameObject:

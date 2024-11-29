@@ -1,5 +1,6 @@
 ﻿using System;
 using DG.Tweening;
+using External.Util;
 using Game.Production.POI;
 using Game.State;
 using TMPro;
@@ -38,6 +39,12 @@ namespace UI.Interior
         private Tween _shakeTween;
         private void CurrencyHandler()
         {
+            if (_rect == null)
+            {
+                this.Delayed(0.5f, CurrencyHandler);
+                return;
+            }
+
             _shakeTween?.Kill();
             _rect.anchoredPosition = _basePos;
             _shakeTween = _rect.DOShakeAnchorPos(0.2f, 5f).Play();

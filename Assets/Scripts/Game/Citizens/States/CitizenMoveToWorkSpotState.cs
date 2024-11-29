@@ -13,6 +13,7 @@ namespace Game.Citizens.States
         public override IEnumerator EnterState()
         {
             Agent.navMeshAgent.isStopped = false;
+            Agent.navMeshAgent.enabled = true;
             Agent.navMeshAgent.SetDestination(Agent.WorkPlace.DesignatedWorkingSpot(Agent));
             yield break;
         }
@@ -39,14 +40,11 @@ namespace Game.Citizens.States
                 var lookRotation = Quaternion.LookRotation(dir);
                 Agent.transform.rotation = Quaternion.Slerp(Agent.transform.rotation, lookRotation, Time.deltaTime * 5);
             }
-
         }
-
-
+        
         public override void Renavigate()
         {
             Agent.navMeshAgent.SetDestination(Agent.WorkPlace.DesignatedWorkingSpot(Agent));
         }
-
     }
 }

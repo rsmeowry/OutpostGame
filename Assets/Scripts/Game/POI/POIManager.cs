@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 using Game.Building;
 using Game.Citizens;
 using Game.Production.POI;
 using Game.Storage;
+using Game.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,6 +31,8 @@ namespace Game.POI
 
         public void LoadData()
         {
+            TaskManager.Instance.LoadData();
+            
             LoadAllPointsOfInterest();
             
             PreloadPointsOfInterest();
@@ -83,6 +87,7 @@ namespace Game.POI
 
         public void SaveData()
         {
+            
             var db = (from poi in LoadedPois where !poi.Value.doNotSerialize select poi.Value.Serialize()).ToList();
             
             using var memStream = new MemoryStream();
@@ -91,6 +96,8 @@ namespace Game.POI
             FileManager.Instance.Storage.SaveBytes("poi.dat", memStream.GetBuffer(), true);
             
             CitizenManager.Instance.Save();
+            
+            TaskManager.Instance.SaveData();
         }
     }
 

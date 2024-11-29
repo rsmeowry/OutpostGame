@@ -16,6 +16,9 @@ namespace UI.Interior
         private GameObject loadingPrefab;
 
         [SerializeField]
+        public GameObject taskPrefab;
+
+        [SerializeField]
         private TMP_Text title;
         
         private RectTransform _window;
