@@ -13,6 +13,7 @@ using Game.State;
 using Game.Storage;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Windows;
 using Random = UnityEngine.Random;
 
@@ -129,6 +130,8 @@ namespace Game.Citizens
         [SerializeField]
         private ResourceContainingPOI poi;
         
+        public UnityEvent onCitizenFired;
+        
         public CitizenAgent SpawnCitizen(Vector3 position, PersistentCitizenData data)
         {
             var citizen = Instantiate(data.Profession switch
@@ -142,13 +145,12 @@ namespace Game.Citizens
             citizen.transform.position = position;
             citizen.citizenId = citizenIdTracker++;
             citizen.PersistentData = data;
-            Debug.Log(citizen.PersistentData.Name);
             Citizens[citizen.citizenId] = citizen;
             return citizen;
         }
 
         [ContextMenu("Test/Debug Citizen Names")]
-        public void __TestDebugCitizenNames()
+        public void __TestDebDebugCitizenNames()
         {
             foreach (var citizen in Citizens.Values)
             {

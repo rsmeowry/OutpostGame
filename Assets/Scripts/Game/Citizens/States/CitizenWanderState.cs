@@ -17,6 +17,7 @@ namespace Game.Citizens.States
         public override IEnumerator EnterState()
         {
             Agent.navMeshAgent.isStopped = false;
+            Agent.navMeshAgent.enabled = true;
             Agent.navMeshAgent.SetDestination(GetWanderPosition());
             yield break;
         }

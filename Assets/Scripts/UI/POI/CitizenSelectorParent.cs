@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using External.Util;
 using Game.Citizens;
 using Game.Production.POI;
 using UnityEngine;
@@ -28,6 +30,13 @@ namespace UI.POI
             }
             
             PollChildren();
+            
+            CitizenManager.Instance.onCitizenFired.AddListener(PollChildren);
+        }
+
+        private void OnDisable()
+        {
+            CitizenManager.Instance.onCitizenFired.RemoveListener(PollChildren);
         }
 
         public void PollChildren()
@@ -65,7 +74,8 @@ namespace UI.POI
         
         public bool CanAssign(CitizenCaste caste)
         {
-            return ((ResourceContainingPOI) parentPanel.poi).AssignedAgents.Count < ((ResourceContainingPOI) parentPanel.poi).capacity && CitizenManager.Instance.AnyFree(caste);
+            var rcPoi = (ResourceContainingPOI)parentPanel.poi;
+            return rcPoi.AssignedAgents.Count < rcPoi.capacity && CitizenManager.Instance.AnyFree(caste);
         }
 
         public bool CanRemove(CitizenCaste caste)

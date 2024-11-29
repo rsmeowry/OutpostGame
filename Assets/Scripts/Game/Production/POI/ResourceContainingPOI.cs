@@ -162,7 +162,7 @@ namespace Game.Production.POI
                 ReleaseSpot(_citizenPos[agent.citizenId]);
                 
                 // tool disappear animation
-                yield return agent.RemoveItem();
+                StartCoroutine(agent.RemoveItem());
                 
                 agent.PlayAnimation("Walk");
                 _isFull = false;

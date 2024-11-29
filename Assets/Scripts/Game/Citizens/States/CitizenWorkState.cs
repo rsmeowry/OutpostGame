@@ -16,6 +16,11 @@ namespace Game.Citizens.States
         public override IEnumerator EnterState()
         {
             yield return new WaitForSeconds(0.2f);
+            if (Agent.WorkPlace == null)
+            { 
+                yield return StateMachine.ChangeState(Agent.WanderState);
+                yield break;
+            }
             yield return Agent.WorkPlace.EnterWorkPlace(Agent, (s) =>
             {
                 switch (s)

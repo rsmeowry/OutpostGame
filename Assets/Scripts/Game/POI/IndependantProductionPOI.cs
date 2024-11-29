@@ -2,6 +2,7 @@
 using External.Util;
 using Game.Building;
 using Game.Citizens.Navigation;
+using UI.POI;
 using UnityEngine;
 
 namespace Game.POI

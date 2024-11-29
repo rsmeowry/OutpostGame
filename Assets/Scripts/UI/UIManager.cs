@@ -39,6 +39,8 @@ namespace UI {
             _closingView = true;
             _openingView = false;
             _panelTween?.Kill();
+            if (_activePanel == null)
+                return;
             var rect = (RectTransform) _activePanel.transform;
             rect.DOScale(Vector3.zero, 0.4f).SetEase(Ease.InBack).OnComplete(() =>
             {

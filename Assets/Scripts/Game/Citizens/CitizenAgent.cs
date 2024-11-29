@@ -152,7 +152,8 @@ namespace Game.Citizens
         public void Free()
         {
             WorkPlace.Fire(this);
-            StartCoroutine(StateMachine.ChangeState(WanderState).Callback(() => WorkPlace = null));
+            WorkPlace = null;
+            StartCoroutine(StateMachine.ChangeState(WanderState));
         }
 
         public void MarkHiredAt(ICitizenWorkPlace workPlace)
