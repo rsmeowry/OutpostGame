@@ -9,6 +9,7 @@ using Game.POI;
 using Game.Production.Products;
 using Game.State;
 using Game.Stocks;
+using Game.Upgrades;
 using UnityEngine;
 
 namespace Game.Storage
@@ -25,6 +26,7 @@ namespace Game.Storage
         private IEnumerator Start()
         {
             MiscSavedData.Instance.Load();
+            UpgradeTreeManager.Instance.LoadData();
             DayCycleManager.Instance.Load();
             POIManager.Instance.LoadData();
             yield return GameStateManager.Instance.LoadGameState();
@@ -38,6 +40,7 @@ namespace Game.Storage
         
         public IEnumerator SaveData()
         {
+            UpgradeTreeManager.Instance.Save();
             MiscSavedData.Instance.Save();
             DayCycleManager.Instance.Save();
             POIManager.Instance.SaveData();

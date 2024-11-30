@@ -4792,10 +4792,10 @@ RectTransform:
   m_Children:
   - {fileID: 1822601663}
   - {fileID: 2012864679}
-  - {fileID: 2086288496}
   - {fileID: 289101650}
-  - {fileID: 2011874398}
   - {fileID: 2078874117}
+  - {fileID: 2086288496}
+  - {fileID: 2011874398}
   m_Father: {fileID: 242535702}
   m_LocalEulerAnglesHint: {x: 4.644, y: 179.982, z: -0.45}
   m_AnchorMin: {x: 0, y: 0}
@@ -9083,8 +9083,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   window: {fileID: 2086288499}
-  componentPrefab: {fileID: 0}
-  title: 
+  componentPrefab: {fileID: 803488302656018437, guid: 00f2881459d552b47afb69a4bc6d0a63, type: 3}
+  title: "GALACTION - \u0423\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435"
   tipTitle: "\u0418\u0437\u0443\u0447\u0430\u0442\u044C \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0438"
   tipDesc: "\u0418\u0437\u0443\u0447\u0430\u0439\u0442\u0435 \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0438,
     \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043F\u043E\u0437\u0432\u043E\u043B\u044F\u0442
@@ -10144,6 +10144,7 @@ GameObject:
   - component: {fileID: 1794718658}
   - component: {fileID: 1794718660}
   - component: {fileID: 1794718662}
+  - component: {fileID: 1794718663}
   m_Layer: 0
   m_Name: GameStateManager
   m_TagString: Untagged
@@ -10330,6 +10331,42 @@ MonoBehaviour:
   electricityLayer:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &1794718663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794718650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2f371c6aa464ece90c550d10c650cad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upgradeDatabase:
+  - {fileID: 11400000, guid: f8987ca68a148114bbe3cba37d255504, type: 2}
+  - {fileID: 11400000, guid: 3dcbb0a9fc1d16648871b32e6f10eb09, type: 2}
+  - {fileID: 11400000, guid: 47582092696e59946871c62ecb677e06, type: 2}
+  - {fileID: 11400000, guid: 273180cf11eb646469ab2a7a2c77755d, type: 2}
+  - {fileID: 11400000, guid: 126041a8c13b90a458355caf046d286e, type: 2}
+  - {fileID: 11400000, guid: c68033bf84c10234fb890f36a13311f2, type: 2}
+  - {fileID: 11400000, guid: 78f270557ba23044e85cd1bcd08b65d8, type: 2}
+  - {fileID: 11400000, guid: bb67cb204fc82b2409d6bfbf4136eecb, type: 2}
+  - {fileID: 11400000, guid: 869ba25fdcfac3c498544e1ecfb6eacd, type: 2}
+  - {fileID: 11400000, guid: 32cc301cd327d7747976bbc625912f6a, type: 2}
+  - {fileID: 11400000, guid: ec727f2f86af43b4f8d6611c82ed4e53, type: 2}
+  - {fileID: 11400000, guid: 2f3ca81a5668a0b419258966f81d559a, type: 2}
+  - {fileID: 11400000, guid: 854627b02f4e5584c9253e66286a3216, type: 2}
+  - {fileID: 11400000, guid: 43b895bc128525b4089fa4a75b603f38, type: 2}
+  - {fileID: 11400000, guid: 7cd080e89263aae40b05263245e70f8a, type: 2}
+  - {fileID: 11400000, guid: 07c4aaae19eec8047be53b8277038632, type: 2}
+  - {fileID: 11400000, guid: e769346e568ded4439b4165c1cad9109, type: 2}
+  - {fileID: 11400000, guid: 920a076c6a10cc249bc452b540a7edce, type: 2}
+  - {fileID: 11400000, guid: ba3338f697e7c044cb23d67cc00f99c8, type: 2}
+  - {fileID: 11400000, guid: 3329cb2e39188464b8e7b5ae5364a5f3, type: 2}
+  onUpgradeUnlocked:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1797693869
 GameObject:
   m_ObjectHideFlags: 0
@@ -11637,6 +11674,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2060521167}
+  - component: {fileID: 2060521168}
   m_Layer: 0
   m_Name: Container
   m_TagString: Untagged
@@ -11663,6 +11701,32 @@ RectTransform:
   m_AnchoredPosition: {x: 0.8999939, y: -20.89}
   m_SizeDelta: {x: 540, y: 580}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2060521168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060521166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_Spacing: 5
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &2062888131
 GameObject:
   m_ObjectHideFlags: 0
@@ -11982,7 +12046,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2086288495}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
