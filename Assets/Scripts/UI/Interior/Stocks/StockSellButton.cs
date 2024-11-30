@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using External.Data;
 using Game.Production.Products;
 using Game.State;
 using Game.Stocks;
+using Game.Upgrades;
 using UI.Util;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -22,8 +24,11 @@ namespace UI.Interior.Stocks
         private int _itemCount;
         private string _productName;
 
+        private bool _hasExpFromSelling;
+
         private void Start()
         {
+            UpgradeTreeManager.Instance.Has(Game.Upgrades.Upgrades.ExpFromSelling);
             _self = GetComponent<Button>();
             _productName = ProductRegistry.Instance.GetProductData(parent.Item).name;
             _itemCount = GameStateManager.Instance.PlayerProductCount.GetValueOrDefault(parent.Item.Formatted(), 0);
@@ -67,19 +72,21 @@ namespace UI.Interior.Stocks
             var receipt = market.Sell(parent.Item, sellAmount == -1 ? _itemCount : sellAmount);
             // TODO: fancy receipt pop up
             if (_itemCount < sellAmount || (sellAmount == -1 && _itemCount <= 0)) return;
-            
+            var cnt = sellAmount == -1 ? _itemCount : sellAmount;
+
+            if (_hasExpFromSelling && cnt > 50)
+                MiscSavedData.Instance.Data.Experience += 100;
             market.DoSell(receipt);
             GameStateManager.Instance.ChangeCurrency(receipt.TotalProfit,
                 $"Sold {receipt.SoldCount} items of type {receipt.Item.Formatted()}",
                 receipt.SoldCount >= 50);
-            var cnt = sellAmount == -1 ? _itemCount : sellAmount;
-            TooltipCtl.Instance.Show($"Продать {_productName}: {cnt}", $"Вы получите {_estimatedProfit} ЭМ" + (_itemCount < sellAmount || (sellAmount == -1 && _itemCount <= 0) ? " (НЕДОСТАТОЧНО ПРЕДМЕТОВ)" : "", 0.2f));
+            TooltipCtl.Instance.Show($"Продать {_productName}: {cnt}", $"Вы получите {_estimatedProfit} ЭМ" + (_hasExpFromSelling && cnt > 50 ? " (+100 XP)" : "")  + (_itemCount < sellAmount || (sellAmount == -1 && _itemCount <= 0) ? " (НЕДОСТАТОЧНО ПРЕДМЕТОВ)" : ""), 0.2f);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
             var cnt = sellAmount == -1 ? _itemCount : sellAmount;
-            TooltipCtl.Instance.Show($"Продать {_productName}: {cnt}", $"Вы получите {_estimatedProfit} ЭМ" + (_itemCount < sellAmount || (sellAmount == -1 && _itemCount <= 0) ? " (НЕДОСТАТОЧНО ПРЕДМЕТОВ)" : "", 0.2f));
+            TooltipCtl.Instance.Show($"Продать {_productName}: {cnt}", $"Вы получите {_estimatedProfit} ЭМ" + (_hasExpFromSelling && cnt > 50 ? " (+100 XP)" : "") + (_itemCount < sellAmount || (sellAmount == -1 && _itemCount <= 0) ? " (НЕДОСТАТОЧНО ПРЕДМЕТОВ)" : ""), 0.2f);
         }
 
         public void OnPointerExit(PointerEventData eventData)

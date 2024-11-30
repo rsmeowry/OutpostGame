@@ -4366,7 +4366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   window: {fileID: 2086288499}
-  componentPrefab: {fileID: 4003475258953789535, guid: db40ae8cb64a0e44183de03c30d23b8b, type: 3}
+  componentPrefab: {fileID: 2026051653997938080, guid: d9e5c314904704c44a1792c515769381, type: 3}
   title: "\u0416\u0438\u0442\u0435\u043B\u0438"
   tipTitle: "\u041F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0436\u0438\u0442\u0435\u043B\u0435\u0439"
   tipDesc: "\u0423\u0437\u043D\u0430\u0432\u0430\u0439\u0442\u0435 \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0443
@@ -11674,7 +11674,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2060521167}
-  - component: {fileID: 2060521168}
   m_Layer: 0
   m_Name: Container
   m_TagString: Untagged
@@ -11701,32 +11700,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0.8999939, y: -20.89}
   m_SizeDelta: {x: 540, y: 580}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2060521168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2060521166}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 1
-  m_Spacing: 5
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!1 &2062888131
 GameObject:
   m_ObjectHideFlags: 0

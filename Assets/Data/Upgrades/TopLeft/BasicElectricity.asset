@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: basic_electricity
   title: "\u042D\u043B\u0435\u043A\u0442\u0440\u043E\u0441\u0435\u0442\u044C"
-  description: "\u041F\u043E\u0437\u0432\u043E\u043B\u0438\u0442\u044C \u0441\u0442\u0440\u043E\u0438\u0442\u044C
+  description: "\u041F\u043E\u0437\u0432\u043E\u043B\u0438\u0442 \u0441\u0442\u0440\u043E\u0438\u0442\u044C
     \u0442\u0440\u0430\u043D\u0441\u0444\u043E\u0440\u043C\u0430\u0442\u043E\u0440\u044B
     \u0438 \u0432\u0435\u0442\u0440\u044F\u043D\u044B\u0435 \u043C\u0435\u043B\u044C\u043D\u0438\u0446\u044B"
   baseExperienceCost: 600
@@ -22,3 +22,4 @@ MonoBehaviour:
   unlocks:
   - {fileID: 11400000, guid: e769346e568ded4439b4165c1cad9109, type: 2}
   - {fileID: 11400000, guid: ec727f2f86af43b4f8d6611c82ed4e53, type: 2}
+  group: 0

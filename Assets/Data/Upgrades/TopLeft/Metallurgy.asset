@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: metallurgy
   title: "\u041E\u0441\u043D\u043E\u0432\u044B \u043C\u0435\u0442\u0430\u043B\u043B\u0443\u0440\u0433\u0438\u0438"
-  description: "\u041F\u043E\u0437\u0432\u043E\u043B\u0438\u0442\u044C \u0441\u0442\u0440\u043E\u0438\u0442\u044C
-    \u043F\u043B\u0430\u0432\u0438\u043B\u044C\u043D\u044E"
+  description: "\u041F\u043E\u0437\u0432\u043E\u043B\u0438\u0442 \u0432\u0430\u043C
+    \u0441\u0442\u0440\u043E\u0438\u0442\u044C \u043F\u043B\u0430\u0432\u0438\u043B\u044C\u043D\u044E"
   baseExperienceCost: 700
   isInfinite: 0
   unlocks:
   - {fileID: 11400000, guid: 920a076c6a10cc249bc452b540a7edce, type: 2}
+  group: 0
