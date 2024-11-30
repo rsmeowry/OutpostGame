@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Pump
-    second: {fileID: 2100000, guid: 148cdc0687e466544bc18f8195b1d851, type: 2}
+    second: {fileID: 2100000, guid: 9b8af6887703c08419b7723971beb21d, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

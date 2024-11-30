@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Game.POI.Electricity;
 using UnityEngine;
 
 namespace Game.Electricity
@@ -88,7 +89,6 @@ namespace Game.Electricity
 
         public bool RequestPower(float amount)
         {
-            Debug.Log("POWER REQUESTED");
             Tick();
             if (amount > _availablePower)
                 return false;
@@ -105,10 +105,8 @@ namespace Game.Electricity
             {
                 if (hit == null)
                     continue;
-                Debug.Log($"JUST HIT {hit.gameObject}");
                 if (hit.TryGetComponent<IElectrical>(out var ele))
                 {
-                    Debug.Log("GOT COVERED");
                     ele.IsCovered = true;
                     
                     if (hit.TryGetComponent<IElectricityConsumer>(out var cons))
@@ -118,6 +116,26 @@ namespace Game.Electricity
                 }
             }
         }
+        
+        private static readonly float Ln1000 = Mathf.Log(1000);
+        public static string ConvertToWatts(
+            float number)
+        {
+            if (number <= 0)
+                return "0 Вт";
+            var unitMultipliers = " кМГТ";
+            var numberWeight = (int) Mathf.Floor(Mathf.Log(number) / Ln1000);
+
+            Debug.Log(numberWeight);
+            numberWeight = Mathf.Min(numberWeight, unitMultipliers.Length - 1);
+            char? unitWeightSymbol = unitMultipliers[numberWeight];
+
+            number /= Mathf.Pow(1000, numberWeight);
+            var formatted = $"{number:0.#} {unitWeightSymbol}Вт";
+
+            return (formatted);
+        }
+
     }
 
     public struct ElectricityStatistics

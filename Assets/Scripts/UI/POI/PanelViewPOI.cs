@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Game.Electricity;
 using Game.POI;
 using Game.Production.POI;
 using Game.Production.Products;
@@ -14,6 +15,13 @@ namespace UI.POI
         private CitizenSelectorParent selectorParentPrefab;
         [FormerlySerializedAs("soloProductionPrefab")] [SerializeField]
         private ProductionStatistics productionPrefab;
+        [SerializeField]
+        private POIElectricityStatistics electricityStatsPrefab;
+
+        [SerializeField]
+        private ElectricityProdReqs electricityProdPrefab;
+        [SerializeField]
+        private ElectricityConsReqs electricityConsPrefab;
 
         public PointOfInterest poi;
         
@@ -71,6 +79,30 @@ namespace UI.POI
             prod.helpDescription = "На этот объект можно отправить медведей определенных сословий, чтобы они добывали ресурсы";
             
             _components.Add(prod.gameObject);
+        }
+
+        public void AddGlobalElectricityStats()
+        {
+            var stat = Instantiate(electricityStatsPrefab, transform);
+            stat.transform.SetSiblingIndex(transform.childCount - 2);
+
+            stat.Stats = ElectricityManager.Instance.GetStatistics();
+        }
+        
+        public void AddElectricityProduction()
+        {
+            var req = Instantiate(electricityProdPrefab, transform);
+            req.transform.SetSiblingIndex(transform.childCount - 2);
+
+            req.Producer = poi.GetComponent<IElectricityProducer>();
+        }
+        
+        public void AddElectricityConsumption()
+        {
+            var req = Instantiate(electricityConsPrefab, transform);
+            req.transform.SetSiblingIndex(transform.childCount - 2);
+
+            req.Consumer = poi.GetComponent<IElectricityConsumer>();
         }
     }
 }

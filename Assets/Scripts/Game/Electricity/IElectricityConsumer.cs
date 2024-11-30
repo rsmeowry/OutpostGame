@@ -9,8 +9,7 @@ namespace Game.Electricity
 
         public bool IsConnectedAndWorking()
         {
-            return IsCovered && ElectricityManager.Instance.RequestPower(
-                Consumption);
+            return IsCovered && ElectricityManager.Instance.RequestPower(Consumption);
         }
     }
 }

@@ -760,6 +760,20 @@
                 "m_Node": {
                     "m_Id": "5b00f159d99e47e69531c34bd58cb69b"
                 },
+                "m_SlotId": 2
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "aebd9dc704144955aca305d80bcbb835"
+                },
+                "m_SlotId": 2
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "5b00f159d99e47e69531c34bd58cb69b"
+                },
                 "m_SlotId": 3
             }
         },
@@ -1539,8 +1553,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1678.0001220703125,
-            "y": -1834.0001220703125,
+            "x": -1744.0001220703125,
+            "y": -1971.0001220703125,
             "width": 206.0,
             "height": 131.0
         }
@@ -1560,7 +1574,7 @@
     "m_CustomColors": {
         "m_SerializableColors": []
     },
-    "m_Space": 2,
+    "m_Space": 4,
     "m_PositionSource": 0
 }
 
@@ -2424,10 +2438,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1160.0,
-            "y": -1446.0,
+            "x": -1159.9998779296875,
+            "y": -1470.9998779296875,
             "width": 207.99993896484376,
-            "height": 302.0
+            "height": 301.9998779296875
         }
     },
     "m_Slots": [
@@ -4597,7 +4611,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "Scale",
     "m_StageCapability": 3,
-    "m_Value": 2.0,
+    "m_Value": 5.0,
     "m_DefaultValue": 10.0,
     "m_Labels": []
 }
@@ -5595,8 +5609,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1428.0,
-            "y": -1840.0,
+            "x": -1428.0001220703125,
+            "y": -1958.0001220703125,
             "width": 154.0,
             "height": 142.0
         }
@@ -6540,9 +6554,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1427.9998779296875,
-            "y": -1683.0,
-            "width": 125.9998779296875,
+            "x": -1463.0001220703125,
+            "y": -1702.0001220703125,
+            "width": 126.0,
             "height": 118.0
         }
     },

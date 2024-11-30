@@ -8,7 +8,7 @@ namespace Game.Electricity
     {
         protected override void LoadForInspect(PanelViewPOI panel)
         {
-            
+            panel.AddElectricityProduction();
         }
 
         public override int SecondsPerTick => 1;

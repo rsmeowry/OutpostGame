@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 3282951591201450981}
   - component: {fileID: 5570001349111121085}
   - component: {fileID: 4406402677106352599}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: OffshorePump
   m_TagString: Untagged
   m_Icon: {fileID: 0}

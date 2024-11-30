@@ -29,7 +29,7 @@ namespace Game.Electricity
         
         protected override void LoadForInspect(PanelViewPOI panel)
         {
-            
+            panel.AddElectricityConsumption();
         }
     }
 }

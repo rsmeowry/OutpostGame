@@ -622,6 +622,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectorParentPrefab: {fileID: 1154832053968723836, guid: ab3c6262756808f44b7c5c51873e2952, type: 3}
   productionPrefab: {fileID: 833422941199811178, guid: 7f58cb444c5fbfb4da8106eaad731c36, type: 3}
+  electricityStatsPrefab: {fileID: 8113954210026552558, guid: f35b2ca3f1224864a8e50169ab092ad2, type: 3}
+  electricityProdPrefab: {fileID: 2894499303370238197, guid: ba6155524f55e534eb6ff669599b9e40, type: 3}
+  electricityConsPrefab: {fileID: 5089372215468909808, guid: 840a9662eeb861b4bb6d91c2ac4d8da1, type: 3}
   poi: {fileID: 0}
 --- !u!1 &8310822885081661376
 GameObject:

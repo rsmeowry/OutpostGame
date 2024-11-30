@@ -22,7 +22,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 3e4a88a57dab00a41804ae68546d485c, type: 3}
   buildingPrefab: {fileID: 7635834318294786028, guid: c33707bda193e0b4ab53a98374e7e16c, type: 3}
   size: {x: 1, y: 1}
-  prominentColor: {r: 0.8867924, g: 0.73485005, b: 0.3890174, a: 1}
+  prominentColor: {r: 0.43596476, g: 0.7640736, b: 0.9528302, a: 1}
   requiresWater: 0
   requirements:
   - key: iron_bars

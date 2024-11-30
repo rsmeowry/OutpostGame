@@ -41,7 +41,7 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 0f599719740a51d4d8dd7ad812369025, type: 3}
     name: "\u0416\u0435\u043B\u0435\u0437\u043D\u044B\u0435 \u043F\u0440\u0443\u0442\u044C\u044F"
   - key: cog
-    icon: {fileID: 21300000, guid: d3a8383812e74f141ae173d860d048ce, type: 3}
+    icon: {fileID: 21300000, guid: 73005c21bd5797347a2f92bc69cc850e, type: 3}
     name: "\u0428\u0435\u0441\u0442\u0435\u0440\u0435\u043D\u043A\u0430"
   - key: copper_wires
     icon: {fileID: 21300000, guid: 48ee8d74e4009f343a3d8080afd6aa26, type: 3}

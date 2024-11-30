@@ -13,8 +13,5 @@ MonoBehaviour:
   m_Name: Electricity
   m_EditorClassIdentifier: Assembly-CSharp:Game.Building:BuildingDatabase
   buildings:
-  - {fileID: 11400000, guid: 7cea0bac8bb639f4790e8bedffe32256, type: 2}
-  - {fileID: 11400000, guid: 7cea0bac8bb639f4790e8bedffe32256, type: 2}
-  - {fileID: 11400000, guid: 7cea0bac8bb639f4790e8bedffe32256, type: 2}
-  - {fileID: 11400000, guid: 7cea0bac8bb639f4790e8bedffe32256, type: 2}
   - {fileID: 11400000, guid: d65d07fb68df471428d0db4d1ec23e49, type: 2}
+  - {fileID: 11400000, guid: f2bba8ac88945ba46911c8156ff7ba41, type: 2}

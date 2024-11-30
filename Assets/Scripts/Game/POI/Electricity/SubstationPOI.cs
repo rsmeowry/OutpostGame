@@ -2,17 +2,16 @@
 using External.Util;
 using Game.Building;
 using Game.Citizens.Navigation;
-using Game.POI;
+using Game.Electricity;
 using Game.POI.Deco;
 using UI.POI;
 using UnityEngine;
 
-namespace Game.Electricity
+namespace Game.POI.Electricity
 {
     public class SubstationPOI: PointOfInterest
     {
-        public override QueuePosition EntrancePos { get; }
-        
+        public override QueuePosition EntrancePos => null;
         public override void OnBuilt()
         {
             base.OnBuilt();
@@ -22,12 +21,12 @@ namespace Game.Electricity
 
         protected override void LoadForInspect(PanelViewPOI panel)
         {
-            throw new System.NotImplementedException();
+            panel.AddGlobalElectricityStats();
         }
 
         public override SerializedPOIData Serialize()
         {
-            return new SerializedDecoPoi()
+            return new SerializedDecoPoi
             {
                 data = buildingData,
                 originPrefabId = buildingData.BuildingType,
