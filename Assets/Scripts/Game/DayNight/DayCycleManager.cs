@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using External.Network;
+using External.Util;
 using Game.Citizens.States;
 using Game.Storage;
 using UnityEngine;
@@ -83,7 +84,7 @@ namespace Game.DayNight
             var cycleTime = dayDuration * 1.5f;
             _tickedTime += bufferFactor / cycleTime;
             _tickedTime %= 0.75f;
-            var passageSpeed = (time % 1f) > 0.5f ? 2f : 1f;
+            var passageSpeed = time % 1f > 0.5f ? 2f : 1f;
             _secondsTime = (_secondsTime + passageSpeed * bufferFactor) % cycleTime;
             time = _secondsTime / cycleTime;
             if (_oldTime > time)
@@ -123,7 +124,17 @@ namespace Game.DayNight
         public (int, int) DayTime()
         {
             var minutes = DayTimeMinutes();
-            return (minutes / 60, minutes % 60);
+            if (time > 0.5f)
+            {
+                var remappedTime = Mathu.Remap(time, 0.5f, 1f, 0f, 0.5f);
+                var operatedMinutes = Mathf.RoundToInt(minutes * 1.5f - minutes * remappedTime);
+                return (operatedMinutes / 60, operatedMinutes % 60);
+            }
+            else
+            {
+                var operatedMinutes = Mathf.RoundToInt(minutes * 1.5f);
+                return (operatedMinutes / 60, operatedMinutes % 60);
+            }
         }
 
         public void Load()

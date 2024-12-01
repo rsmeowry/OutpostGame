@@ -1,5 +1,6 @@
 ﻿using System;
 using Game.Production.Products;
+using Game.Sound;
 using Game.State;
 using Game.Stocks;
 using UI.Util;
@@ -20,8 +21,11 @@ namespace UI.Interior.Stocks
         private int _estimatedCost;
         private string _productName;
 
+        private AudioClip _clip;
+
         private void Start()
         {
+            _clip = SoundBank.Instance.GetSound("shop.purchase");
             _self = GetComponent<Button>();
             _productName = ProductRegistry.Instance.GetProductData(parent.Item).name;
             RecalculatePossibilities();
@@ -58,6 +62,9 @@ namespace UI.Interior.Stocks
             GameStateManager.Instance.ChangeCurrency(-receipt.TotalCost,
                 $"Bought {receipt.BoughtCount} items of type {receipt.Item.Formatted()}",
                 receipt.BoughtCount >= 50);
+            
+            SoundManager.Instance.PlaySound2D(_clip, 0.5f);
+            
             var add = (_estimatedCost > GameStateManager.Instance.Currency ? " (НЕДОСТАТОЧНО)" : "", 0.2f);
             TooltipCtl.Instance.Show($"Купить {_productName}: {buyAmount}", $"Обойдется вам в {_estimatedCost} ЭМ" + add);
         }

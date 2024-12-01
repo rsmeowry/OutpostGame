@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using External.Data;
 using Game.Production.Products;
+using Game.Sound;
 using Game.State;
 using Game.Stocks;
 using Game.Upgrades;
@@ -25,6 +26,8 @@ namespace UI.Interior.Stocks
         private string _productName;
 
         private bool _hasExpFromSelling;
+
+        private Lazy<AudioClip> clip = new();
 
         private void Start()
         {
@@ -77,6 +80,9 @@ namespace UI.Interior.Stocks
             if (_hasExpFromSelling && cnt > 50)
                 MiscSavedData.Instance.Data.Experience += 100;
             market.DoSell(receipt);
+            
+            SoundManager.Instance.PlaySound2D(clip.Value, 0.5f);
+            
             GameStateManager.Instance.ChangeCurrency(receipt.TotalProfit,
                 $"Sold {receipt.SoldCount} items of type {receipt.Item.Formatted()}",
                 receipt.SoldCount >= 50);

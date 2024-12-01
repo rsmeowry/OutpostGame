@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Unit
   - Water
+  - Camera
   layers:
   - Default
   - TransparentFX

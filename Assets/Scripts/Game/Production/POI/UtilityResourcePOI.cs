@@ -14,11 +14,15 @@ namespace Game.Production.POI
             var t = _ticks.Increment(agent.citizenId);
             if (t % subtickCount == 0)
             {
-                _ticks[agent.citizenId] = 0;
                 return true;
             }
 
             return false;
+        }
+
+        protected int GetTick(CitizenAgent agent)
+        {
+            return _ticks.GetValueOrDefault(agent.citizenId);
         }
 
         public override IEnumerator LeaveWorkPlace(CitizenAgent agent)
