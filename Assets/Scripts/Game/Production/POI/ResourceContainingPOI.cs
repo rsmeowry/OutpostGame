@@ -188,6 +188,7 @@ namespace Game.Production.POI
         public abstract void WorkerTick(CitizenAgent agent);
         public override QueuePosition EntrancePos => entrancePos;
 
+        // TODO: OPTIMIZE THIS BULLSHIT
         public virtual PointOfInterest GatheringPost
         {
             get

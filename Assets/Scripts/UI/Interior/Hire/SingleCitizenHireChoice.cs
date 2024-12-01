@@ -145,6 +145,11 @@ namespace UI.Interior.Hire
             
             hireButton.onClick.AddListener(() =>
             {
+                if (!CitizenManager.Instance.CanSpawnCitizen())
+                {
+                    ToastManager.Instance.ShowToast("Недостаточно жилых мест! Постройте дом");
+                    return;
+                }
                 hireButton.interactable = false;
                 CareerManager.Instance.Hire(Offer);
             });

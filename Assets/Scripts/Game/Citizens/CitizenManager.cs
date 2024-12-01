@@ -7,6 +7,7 @@ using DG.Tweening.Plugins;
 using External.Storage;
 using External.Util;
 using Game.POI;
+using Game.POI.Housing;
 using Game.Production;
 using Game.Production.POI;
 using Game.State;
@@ -38,6 +39,8 @@ namespace Game.Citizens
         public GameObject boxPrefab;
         
         public Dictionary<int, CitizenAgent> Citizens = new();
+        [NonSerialized]
+        public List<HousePOI> Houses = new();
         private Dictionary<int, StoredCitizenData> _intermediate = new();
 
         public void Awake()
@@ -90,6 +93,11 @@ namespace Game.Citizens
             }
         }
 
+        public bool CanSpawnCitizen()
+        {
+            return Houses.Sum(it => it.houseSize) >= Citizens.Count + 1;
+        }
+
         public void BeginJobs()
         {
             foreach (var citizenKv in Citizens)
@@ -103,10 +111,14 @@ namespace Game.Citizens
                 else
                 {
                     var workPlace = (ICitizenWorkPlace)POIManager.Instance.LoadedPois[dat.BuildingGuid];
+                    var home = (HousePOI)POIManager.Instance.LoadedPois[dat.BuildingGuid];
                     var rcpoi = (ResourceContainingPOI)workPlace;
                     if(rcpoi.AssignedAgents.Count + 1 < rcpoi.capacity)
                         rcpoi.AssignedAgents.Add(citizen);
                     citizen.WorkPlace = workPlace;
+                    citizen.Home = home;
+                    home.Tenants.Add(citizen);
+                    
                     StartCoroutine(citizen.StateMachine.Init(dat.state switch
                     {
                         "carry" => citizen.CarryResourcesState,
@@ -114,6 +126,8 @@ namespace Game.Citizens
                         "gowork" => citizen.GoWorkState,
                         "work" => citizen.GoWorkState,
                         "movetospot" => citizen.GoWorkState,
+                        "gohome" => citizen.GoHomeState,
+                        "sleep" => citizen.SleepState,
                         _ => citizen.WanderState
                     }));
                 }
@@ -145,6 +159,8 @@ namespace Game.Citizens
             citizen.transform.position = position;
             citizen.citizenId = citizenIdTracker++;
             citizen.PersistentData = data;
+            citizen.Home = Houses.First(it => it.Tenants.Count < it.houseSize);
+            citizen.Home.Tenants.Add(citizen);
             Citizens[citizen.citizenId] = citizen;
             return citizen;
         }

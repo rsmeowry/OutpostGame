@@ -7,7 +7,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using DG.Tweening;
 using External.Util;
 using Game.Citizens.States;
+using Game.DayNight;
 using Game.POI;
+using Game.POI.Housing;
 using Game.Production;
 using Game.Production.POI;
 using Game.State;
@@ -37,11 +39,14 @@ namespace Game.Citizens
         public CitizenGoWorkState GoWorkState;
         public CitizenWorkState WorkState;
         public CitizenMoveToWorkSpotState MoveToWorkSpotState;
+        public CitizenSleepState SleepState;
+        public CitizenGoHomeState GoHomeState;
 
         public Vector3 wanderAnchor = Vector3.zero;
         public float wanderRange = 5f;
 
         public ICitizenWorkPlace WorkPlace;
+        public HousePOI Home;
         public IProductDepositer ProductDepositer;
 
         public Transform rightArm;
@@ -56,12 +61,14 @@ namespace Game.Citizens
             navMeshAgent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
 
-            StateMachine = new CitizenStateMachine();
+            StateMachine = new CitizenStateMachine(this);
             CarryResourcesState = new CitizenCarryResourcesState(this, StateMachine);
             WanderState = new CitizenWanderState(this, StateMachine);
             GoWorkState = new CitizenGoWorkState(this, StateMachine);
             WorkState = new CitizenWorkState(this, StateMachine);
             MoveToWorkSpotState = new CitizenMoveToWorkSpotState(this, StateMachine);
+            GoHomeState = new CitizenGoHomeState(this, StateMachine);
+            SleepState = new CitizenSleepState(this, StateMachine);
 
             if (!loadedFromData)
             {
@@ -74,12 +81,14 @@ namespace Game.Citizens
             navMeshAgent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
 
-            StateMachine = new CitizenStateMachine();
+            StateMachine = new CitizenStateMachine(this);
             CarryResourcesState = new CitizenCarryResourcesState(this, StateMachine);
             WanderState = new CitizenWanderState(this, StateMachine);
             GoWorkState = new CitizenGoWorkState(this, StateMachine);
             WorkState = new CitizenWorkState(this, StateMachine);
             MoveToWorkSpotState = new CitizenMoveToWorkSpotState(this, StateMachine);
+            GoHomeState = new CitizenGoHomeState(this, StateMachine);
+            SleepState = new CitizenSleepState(this, StateMachine);
         }
 
         public StoredCitizenData Serialize()
@@ -88,6 +97,7 @@ namespace Game.Citizens
             {
                 baseInventoryCapacity = inventoryCapacity,
                 BuildingGuid = WorkPlace == null ? Guid.Empty : Guid.Parse(((ResourceContainingPOI)WorkPlace).pointId),
+                HouseGuid = Guid.Parse(Home.pointId),
                 citizenId = citizenId,
                 Inventory = Inventory.ToDictionary(it => it.Key.Formatted(), it => it.Value),
                 persistentData = new StoredPersistentCitizenData
@@ -104,6 +114,8 @@ namespace Game.Citizens
                     CitizenMoveToWorkSpotState => "movetospot",
                     CitizenWanderState => "wander",
                     CitizenWorkState => "work",
+                    CitizenGoHomeState => "gohome",
+                    CitizenSleepState => "sleep",
                     _ => throw new ArgumentOutOfRangeException()
                 },
                 wanderAnchor = wanderAnchor.Ser()
@@ -130,8 +142,15 @@ namespace Game.Citizens
         private void Update()
         {
             StateMachine.FrameUpdate();
-            
+
             _animator.SetFloat(Velocity, navMeshAgent.velocity.sqrMagnitude);
+
+            if (!_attemptingToGoHome && DayCycleManager.Instance.DayTimeMinutes() > 720 &&
+                StateMachine.CurrentState != SleepState && StateMachine.CurrentState != GoHomeState)
+            {
+                _attemptingToGoHome = true;
+                StartCoroutine(StateMachine.ChangeState(GoHomeState).Callback(() => _attemptingToGoHome = false));
+            }
         }
 
         public bool InventoryFull()
@@ -139,9 +158,11 @@ namespace Game.Citizens
             return Inventory.Values.Sum() >= inventoryCapacity;
         }
 
+        private bool _attemptingToGoHome;
         private void FixedUpdate()
         {
             StateMachine.PhysicsUpdate();
+            
         }
 
         public bool IsUnoccupied()
@@ -249,6 +270,8 @@ namespace Game.Citizens
         public int baseInventoryCapacity;
         [JsonProperty("assignedBuilding")]
         public Guid BuildingGuid;
+        [JsonProperty("home")]
+        public Guid HouseGuid;
         [FormerlySerializedAs("State")] [JsonProperty("state")]
         public string state;
         [FormerlySerializedAs("WanderAnchor")] [JsonProperty("wanderAnchor")]
