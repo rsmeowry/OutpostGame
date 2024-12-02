@@ -5,6 +5,7 @@ using Game.State;
 using Game.Stocks;
 using UI.Util;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -21,7 +22,7 @@ namespace UI.Interior.Stocks
         private int _estimatedCost;
         private string _productName;
 
-        private AudioClip _clip;
+        private AudioResource _clip;
 
         private void Start()
         {
@@ -65,14 +66,14 @@ namespace UI.Interior.Stocks
             
             SoundManager.Instance.PlaySound2D(_clip, 0.5f);
             
-            var add = (_estimatedCost > GameStateManager.Instance.Currency ? " (НЕДОСТАТОЧНО)" : "", 0.2f);
-            TooltipCtl.Instance.Show($"Купить {_productName}: {buyAmount}", $"Обойдется вам в {_estimatedCost} ЭМ" + add);
+            var add = _estimatedCost > GameStateManager.Instance.Currency ? " (НЕДОСТАТОЧНО)" : "";
+            TooltipCtl.Instance.Show($"Купить {_productName}: {buyAmount}", $"Обойдется вам в {_estimatedCost} ЭМ" + add, 0.2f);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            var add = (_estimatedCost > GameStateManager.Instance.Currency ? " (НЕДОСТАТОЧНО)" : "", 0.2f);
-            TooltipCtl.Instance.Show($"Купить {_productName}: {buyAmount}", $"Обойдется вам в {_estimatedCost} ЭМ" + add);
+            var add = _estimatedCost > GameStateManager.Instance.Currency ? " (НЕДОСТАТОЧНО)" : "";
+            TooltipCtl.Instance.Show($"Купить {_productName}: {buyAmount}", $"Обойдется вам в {_estimatedCost} ЭМ" + add, 0.2f);
         }
 
         public void OnPointerExit(PointerEventData eventData)

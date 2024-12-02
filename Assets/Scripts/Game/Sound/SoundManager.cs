@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Game.Sound
 {
@@ -26,14 +27,17 @@ namespace Game.Sound
             return o;
         }
 
-        public void PlaySound2D(AudioClip sound, float volume, float pitch = 1f)
+        public void PlaySound2D(AudioResource sound, float volume, float pitch = 1f)
         {
-            _executor.PlaySound2D(sound, volume, pitch);
+            _executor.PlaySound2D((AudioClip) sound, volume, pitch);
         }
 
-        public void PlaySoundAt(AudioClip sound, Vector3 position, float volume = 1f, float pitch = 1f)
+        public void PlaySoundAt(AudioResource sound, Vector3 position, float volume = 1f, float pitch = 1f)
         {
-            _executor.PlaySoundAt(sound, position, volume, pitch);
+            if(sound is AudioClip clp)
+                _executor.PlaySoundAt(clp, position, volume, pitch);
+            else
+                _executor.PlayResourceAt(sound, position);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using External.Util;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Game.Sound
 {
@@ -11,6 +12,8 @@ namespace Game.Sound
         private int poolSize;
         [SerializeField]
         private float audioCutoff;
+        [SerializeField]
+        private AudioMixerGroup sfxGroup;
         private AudioSource[] _audioPool;
         private List<int> _free = new();
         private float _audioCutoffSqr;
@@ -21,7 +24,10 @@ namespace Game.Sound
             _audioPool = new AudioSource[poolSize];
             for (var i = 0; i < poolSize; i++)
             {
-                _audioPool[i] = gameObject.AddComponent<AudioSource>();
+                var src = gameObject.AddComponent<AudioSource>();
+                src.hideFlags = HideFlags.HideInInspector;
+                src.outputAudioMixerGroup = sfxGroup;
+                _audioPool[i] = src;
             }
 
             _free = Enumerable.Range(0, poolSize).ToList();
@@ -65,6 +71,19 @@ namespace Game.Sound
             source.volume = volume;
             source.pitch = pitch;
             source.clip = sound;
+            source.Play();
+            StartCoroutine(new WaitUntil(() => !source.isPlaying).Callback(() => Destroy(source.gameObject)));
+        }
+
+        public void PlayResourceAt(AudioResource res, Vector3 position)
+        {
+            var listener = Camera.main!.transform.position;
+            if ((listener - position).sqrMagnitude > _audioCutoffSqr)
+                return;
+
+            var source = SoundManager.Instance.AddAudioSource(transform);
+            source.transform.position = position;
+            source.resource = res;
             source.Play();
             StartCoroutine(new WaitUntil(() => !source.isPlaying).Callback(() => Destroy(source.gameObject)));
         }

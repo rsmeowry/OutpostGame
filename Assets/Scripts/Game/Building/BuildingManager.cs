@@ -160,7 +160,7 @@ namespace Game.Building
                     gridRd.material.SetColor(GridColor, cantPlaceColor);
                 }
             }
-            catch (UnityException e)
+            catch (UnityException _)
             {
                 // Nothing bad happened, that just means the grid is already destroyed
             }

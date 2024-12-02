@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using External.Util;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Game.Sound
 {
@@ -16,7 +17,7 @@ namespace Game.Sound
         private List<SingleSoundInfo> sounds;
         [SerializeField]
         private List<VariableSoundInfo> variableSounds;
-
+        
         public void Awake()
         {
             _clips = sounds.ToDictionary(it => it.soundId, it => (ISoundInfo) it);
@@ -27,7 +28,7 @@ namespace Game.Sound
             Instance = this;
         }
 
-        public AudioClip GetSound(string id)
+        public AudioResource GetSound(string id)
         {
             return _clips.GetValueOrDefault(id, null)?.GetClip();
         }
@@ -35,15 +36,15 @@ namespace Game.Sound
 
     public interface ISoundInfo
     {
-        AudioClip GetClip();
+        AudioResource GetClip();
     }
     
     [Serializable]
     public class SingleSoundInfo: ISoundInfo
     {
         public string soundId;
-        public AudioClip clip;
-        public AudioClip GetClip()
+        public AudioResource clip;
+        public AudioResource GetClip()
         {
             return clip;
         }
@@ -55,7 +56,7 @@ namespace Game.Sound
         public string soundId;
         public AudioClip[] clips;
         
-        public AudioClip GetClip()
+        public AudioResource GetClip()
         {
             return Rng.Choice(clips);
         }

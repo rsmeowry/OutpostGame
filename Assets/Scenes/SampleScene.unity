@@ -873,7 +873,7 @@ GameObject:
   - component: {fileID: 197369906}
   - component: {fileID: 197369905}
   - component: {fileID: 197369907}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GrasslandArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1498,7 +1498,7 @@ AudioSource:
   m_GameObject: {fileID: 258358670}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -53653547034744560, guid: f3e2071587faa544fb424fb2d4055e3c, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
@@ -3257,7 +3257,7 @@ GameObject:
   - component: {fileID: 524582349}
   - component: {fileID: 524582348}
   - component: {fileID: 524582350}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: MountainArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5505,7 +5505,7 @@ GameObject:
   - component: {fileID: 915684860}
   - component: {fileID: 915684861}
   - component: {fileID: 915684862}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: CameraRig
   m_TagString: Camera
   m_Icon: {fileID: 0}
@@ -5569,7 +5569,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 20, y: 20, z: 20}
+  m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &915684862
 Rigidbody:
@@ -6909,7 +6909,7 @@ GameObject:
   - component: {fileID: 1159455273}
   - component: {fileID: 1159455276}
   - component: {fileID: 1159455275}
-  - component: {fileID: 1159455271}
+  - component: {fileID: 1159455277}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -6917,103 +6917,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!82 &1159455271
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1159455270}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!114 &1159455273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7059,18 +6962,11 @@ MonoBehaviour:
   sounds:
   - soundId: shop.purchase
     clip: {fileID: 8300000, guid: 8f69f449669d8f141b0f207b512e5c8c, type: 3}
-  variableSounds:
   - soundId: citizen.pickaxe
-    clips:
-    - {fileID: 8300000, guid: 9a50beaa15ba4fb499ba70857bec2622, type: 3}
-    - {fileID: 8300000, guid: e49c743f353b85e4b8d3fdccee52be76, type: 3}
-    - {fileID: 8300000, guid: 7d56dc471fe85124cad833065bad8abd, type: 3}
+    clip: {fileID: 6418180475301049370, guid: 03da06b862c391b46b21b18e7b2017c4, type: 2}
   - soundId: citizen.axe
-    clips:
-    - {fileID: 8300000, guid: c4e1b0d9c562f6145ba2840a4ece8e49, type: 3}
-    - {fileID: 8300000, guid: 37c76d73ab9f08f4e88f8b6c067ecf9a, type: 3}
-    - {fileID: 8300000, guid: eed5391220736bb4bb7d60f57f9521bf, type: 3}
-    - {fileID: 8300000, guid: bee2b585078cdaa43aee2b8150c1576f, type: 3}
+    clip: {fileID: 6418180475301049370, guid: 01c07057d0f28144ca9f76b15aecb428, type: 2}
+  variableSounds: []
 --- !u!114 &1159455276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7085,6 +6981,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolSize: 8
   audioCutoff: 140
+  sfxGroup: {fileID: -2445523635307457517, guid: f3e2071587faa544fb424fb2d4055e3c, type: 2}
+--- !u!114 &1159455277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159455270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e8c17b3c812416aa4214cc824d78d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicChannel: {fileID: 1632383290}
+  outsideNight:
+  - {fileID: 8300000, guid: 2292bf5496fa3cc47a9fb86396ce91e6, type: 3}
+  - {fileID: 8300000, guid: a35bdaf0eb1db6f4aaa30d6e3da2c9ec, type: 3}
+  outsideDay:
+  - {fileID: 8300000, guid: a35bdaf0eb1db6f4aaa30d6e3da2c9ec, type: 3}
+  - {fileID: 8300000, guid: 2292bf5496fa3cc47a9fb86396ce91e6, type: 3}
+  insideNight:
+  - {fileID: 8300000, guid: fdd7c12732ca6b544b836d842d28b9f6, type: 3}
+  - {fileID: 8300000, guid: e2a1966c555b58a4887461471283f692, type: 3}
+  insideDay:
+  - {fileID: 8300000, guid: fdd7c12732ca6b544b836d842d28b9f6, type: 3}
+  - {fileID: 8300000, guid: e2a1966c555b58a4887461471283f692, type: 3}
+  mood: 0
 --- !u!1 &1159586687
 GameObject:
   m_ObjectHideFlags: 0
@@ -9805,7 +9728,7 @@ GameObject:
   - component: {fileID: 1580361468}
   - component: {fileID: 1580361467}
   - component: {fileID: 1580361469}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ForestArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10376,7 +10299,7 @@ AudioSource:
   m_GameObject: {fileID: 1632383287}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 2453749166270984641, guid: f3e2071587faa544fb424fb2d4055e3c, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
@@ -11047,7 +10970,7 @@ GameObject:
   - component: {fileID: 1770591297}
   - component: {fileID: 1770591296}
   - component: {fileID: 1770591298}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ShorelineArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
