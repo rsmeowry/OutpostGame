@@ -24,6 +24,11 @@ namespace Inside
         private Transform toUnrenderUnits;
 
         [SerializeField]
+        private Terrain toUnrenderTerrain;
+        [SerializeField]
+        private Camera cameraTerrain;
+
+        [SerializeField]
         private float rotationTime;
         
         private float _rotationY;
@@ -41,6 +46,9 @@ namespace Inside
             rot = transform.rotation;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            toUnrenderTerrain.enabled = false;
+            cameraTerrain.GetComponent<GrassBlendRenderer>().enabled = false;
             
             this.Delayed(2f, () =>
             {
@@ -62,6 +70,9 @@ namespace Inside
 
         private void OnDisable()
         {
+            toUnrenderTerrain.enabled = true;
+            cameraTerrain.GetComponent<GrassBlendRenderer>().enabled = true;
+
             foreach (var rd in toUnrenderPoi.GetComponentsInChildren<Renderer>())
             {
                 rd.enabled = true;

@@ -20,14 +20,13 @@ namespace Game.POI.Produce
             base.OnBuilt();
             if (_wasActivated)
                 return;
-            GameStateManager.Instance.FluidLimits.Increment(ProductRegistry.Water, 50);
+            GameStateManager.Instance.ChangeFluidLimit(ProductRegistry.Water, 50);
             _wasActivated = true;
         }
 
         protected override void LoadForInspect(PanelViewPOI panel)
         {
-            // TODO: fluid display component
-            throw new NotImplementedException();
+            panel.AddLiquidStats();
         }
 
         public override void LoadData(SerializedPOIData pl)

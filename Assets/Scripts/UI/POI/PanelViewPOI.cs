@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Game.Electricity;
 using Game.POI;
+using Game.POI.Housing;
 using Game.Production.POI;
 using Game.Production.Products;
 using TMPro;
@@ -22,6 +23,18 @@ namespace UI.POI
         private ElectricityProdReqs electricityProdPrefab;
         [SerializeField]
         private ElectricityConsReqs electricityConsPrefab;
+
+        [SerializeField]
+        private RecipeSelectorParent recipeSelectorPrefab;
+
+        [SerializeField]
+        private LiquidStatistics liquidStatsPrefab;
+
+        [SerializeField]
+        private HouseStatistics tenantsViewPrefab;
+
+        [SerializeField]
+        private CameraFollowComponent screenshottingPrefab;
 
         public PointOfInterest poi;
         
@@ -103,6 +116,34 @@ namespace UI.POI
             req.transform.SetSiblingIndex(transform.childCount - 2);
 
             req.Consumer = poi.GetComponent<IElectricityConsumer>();
+        }
+
+        public void AddRecipeSelector()
+        {
+            var rec = Instantiate(recipeSelectorPrefab, transform);
+            rec.transform.SetSiblingIndex(transform.childCount - 2);
+            
+            rec.RecipeContainer = poi.GetComponent<IRecipeContainer>();
+        }
+
+        public void AddLiquidStats()
+        {
+            var pref = Instantiate(liquidStatsPrefab, transform);
+            pref.transform.SetSiblingIndex(transform.childCount - 2);
+        }
+
+        public void AddTenantsView()
+        {
+            var view = Instantiate(tenantsViewPrefab, transform);
+            view.transform.SetSiblingIndex(transform.childCount - 2);
+
+            view.House = poi.GetComponent<HousePOI>();
+        }
+
+        public void AddScreenshotting()
+        {
+            var view = Instantiate(screenshottingPrefab, transform);
+            view.transform.SetSiblingIndex(transform.childCount - 2);
         }
     }
 }

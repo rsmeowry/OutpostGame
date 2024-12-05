@@ -21,6 +21,11 @@ namespace External.Achievement
         private TMP_Text _description;
         private Image _icon;
 
+        private void Awake()
+        {
+            Instance = this;
+        }
+
         private void Start()
         {
             _container = (RectTransform) transform;

@@ -28,3 +28,4 @@ MonoBehaviour:
     count: 30
   - key: bricks
     count: 5
+  requiredUpgrade: fluid_handling

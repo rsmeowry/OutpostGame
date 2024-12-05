@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Tutorial;
 using UI.BottomRow;
 using UnityEngine;
 
@@ -115,6 +116,7 @@ namespace Game.Controllers.States
 
         private void CommitMovement()
         {
+            TutorialCtl.Instance.SendMovementData(_nextPos);
             CameraController.transform.position = Vector3.Lerp(CameraController.transform.position, _nextPos, Time.unscaledDeltaTime * CameraController.moveTime);
             CameraController.transform.rotation = Quaternion.Lerp(CameraController.transform.rotation, _nextRot, Time.unscaledDeltaTime * CameraController.moveTime);
 
@@ -123,11 +125,11 @@ namespace Game.Controllers.States
             if (zoomAmt > CameraController.zoomMax)
             {
                 _nextZoom = Vector3.SmoothDamp(_nextZoom, new Vector3(0f, sign * CameraController.zoomMax, -sign * CameraController.zoomMax),
-                    ref _zoomVelocity, CameraController.zoomDampen);
+                    ref _zoomVelocity, CameraController.zoomDampen, float.PositiveInfinity, Time.unscaledDeltaTime);
             } else if (zoomAmt < CameraController.zoomMin)
             {
                 _nextZoom = Vector3.SmoothDamp(_nextZoom, new Vector3(0f, sign * CameraController.zoomMin, -sign * CameraController.zoomMin),
-                    ref _zoomVelocity, CameraController.zoomDampen / 4f);
+                    ref _zoomVelocity, CameraController.zoomDampen / 4f, float.PositiveInfinity, Time.unscaledDeltaTime);
                 if (zoomAmt * sign <= 10f)
                 {
                     _nextZoom = new Vector3(0f, 10f, -10f);
@@ -136,6 +138,16 @@ namespace Game.Controllers.States
 
             CameraController.cameraTransform.localPosition =
                 Vector3.Lerp(CameraController.cameraTransform.localPosition, _nextZoom, Time.unscaledDeltaTime * CameraController.moveTime);
+        }
+
+        public override void ShouldClampTo(Vector3 pos)
+        {
+            _nextPos = pos;
+            var yp = _dragStartPos.y;
+            _dragStartPos = pos;
+            _dragStartPos.y = yp;
+            _dragCurrent = pos;
+            _dragCurrent.y = yp;
         }
     }
 }

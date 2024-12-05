@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using External.Util;
 using Game.Citizens;
+using Game.DayNight;
 using Game.Network;
 using Game.Player;
 using Game.Production.Products;
@@ -12,6 +13,7 @@ using Game.Storage;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Game.State
 {
@@ -42,6 +44,14 @@ namespace Game.State
                 }
                 IncreaseCurrency(100);
             }
+        }
+
+        private void Start()
+        {
+            DayCycleManager.Instance.onDayChanged.AddListener(() =>
+            {
+                StartCoroutine(SaveLoader.Instance.SaveData());
+            });
         }
 
         public IEnumerator LoadGameState()
@@ -76,6 +86,19 @@ namespace Game.State
         }
 
         public UnityEvent<ProductChangedData> onProductChanged = new();
+        public UnityEvent onFluidsChanged = new();
+
+        public void ChangeFluids(StateKey fluid, int amount)
+        {
+            FluidCount.Increment(fluid, amount);
+            onFluidsChanged.Invoke();
+        }
+
+        public void ChangeFluidLimit(StateKey fluid, int amount)
+        {
+            FluidLimits.Increment(fluid, amount);
+            onFluidsChanged.Invoke();
+        }
 
         public void IncreaseProduct(StateKey product, int amount)
         {
@@ -89,12 +112,13 @@ namespace Game.State
             });
         }
         
-        public UnityEvent currencyIncreaseEvent = new();
+        [FormerlySerializedAs("currencyIncreaseEvent")] 
+        public UnityEvent onCurrencyChanged = new();
 
         public void ChangeCurrency(int delta, string desc, bool log)
         {
             Currency += delta;
-            currencyIncreaseEvent.Invoke();
+            onCurrencyChanged.Invoke();
 
             if (!log) return;
             var dt = new Dictionary<string, int>();
@@ -105,13 +129,12 @@ namespace Game.State
                 PlayerName = PlayerDataManager.Instance.playerName,
                 Deltas = new Dictionary<string, int>(dt)
             }));
-
         }
 
         public void IncreaseCurrency(int amount)
         {
             Currency += amount;
-            currencyIncreaseEvent.Invoke();
+            onCurrencyChanged.Invoke();
 
             var dt = new Dictionary<string, int>();
             dt["currency:delta"] = amount;

@@ -21,19 +21,19 @@ namespace UI.Interior
         {
             _rect = (RectTransform)transform;
             _basePos = _rect.anchoredPosition;
-            GameStateManager.Instance.currencyIncreaseEvent.RemoveListener(CurrencyHandler);
-            GameStateManager.Instance.currencyIncreaseEvent.AddListener(CurrencyHandler);
+            GameStateManager.Instance.onCurrencyChanged.RemoveListener(CurrencyHandler);
+            GameStateManager.Instance.onCurrencyChanged.AddListener(CurrencyHandler);
         }
 
         private void OnEnable()
         {
-            GameStateManager.Instance?.currencyIncreaseEvent?.AddListener(CurrencyHandler);
+            GameStateManager.Instance?.onCurrencyChanged?.AddListener(CurrencyHandler);
             CurrencyHandler();
         }
 
         private void OnDisable()
         {
-            GameStateManager.Instance.currencyIncreaseEvent.RemoveListener(CurrencyHandler);
+            GameStateManager.Instance.onCurrencyChanged.RemoveListener(CurrencyHandler);
         }
 
         private Tween _shakeTween;

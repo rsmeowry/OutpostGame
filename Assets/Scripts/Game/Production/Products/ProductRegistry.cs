@@ -71,13 +71,6 @@ namespace Game.Production.Products
         public void Awake()
         {
             Instance = this;
-            PreloadProducts();
-        }
-
-        private void PreloadProducts()
-        {
-            // TODO: ?
-            // why did i even add this method lol
         }
     }
 }

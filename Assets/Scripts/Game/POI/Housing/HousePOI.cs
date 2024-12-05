@@ -24,7 +24,7 @@ namespace Game.POI.Housing
         
         protected override void LoadForInspect(PanelViewPOI panel)
         {
-            // TODO: panel housing view
+            panel.AddTenantsView();
         }
 
         private void Start()

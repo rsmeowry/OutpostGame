@@ -27,7 +27,7 @@ namespace Game.POI.Produce
             if (_works)
             {
                 AudioSource.PlayOneShot(waterClip);
-                GameStateManager.Instance.FluidCount.Increment(ProductRegistry.Water);
+                GameStateManager.Instance.ChangeFluids(ProductRegistry.Water, 1);
             }
         }
 
@@ -41,6 +41,7 @@ namespace Game.POI.Produce
         {
             panel.AddSoloProduction("Вода", waterSprite, "1/с");
             panel.AddElectricityConsumption();
+            panel.AddLiquidStats();
         }
 
         public bool IsCovered { get; set; }

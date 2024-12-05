@@ -110,7 +110,6 @@ namespace Game.DayNight
             
             RenderSettings.ambientLight = lc;
             
-            // TODO: set shader material color shit
             skyboxMaterial.SetColor(HorizonColor, horizonColor.Evaluate(time));
             skyboxMaterial.SetColor(SkyColor, skyColor.Evaluate(time));
             skyboxMaterial.SetFloat(StarBrightness, Mathf.Lerp(0f, 2f, Mathf.Clamp(time - 0.5f, 0f, 0.5f) * 4f));

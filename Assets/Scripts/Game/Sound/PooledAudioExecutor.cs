@@ -47,7 +47,7 @@ namespace Game.Sound
             
             next.Stop();
             next.clip = sound;
-            next.volume = volume; // TODO: preferences setting volume
+            next.volume = volume;
             next.pitch = pitch;
             
             next.Play();

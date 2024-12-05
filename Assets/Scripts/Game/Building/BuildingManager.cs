@@ -8,6 +8,7 @@ using Game.Controllers;
 using Game.POI;
 using Game.State;
 using Newtonsoft.Json;
+using Tutorial;
 using UI.POI;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -64,7 +65,6 @@ namespace Game.Building
         private static readonly int HoloColor = Shader.PropertyToID("_Color");
         
         // serialized data below
-        // TODO: read them from save data
         public Dictionary<Vector3Int, BuiltObject> BuiltObjects = new();
 
         public BuiltObject ObjectAt(Vector3 pos)
@@ -99,7 +99,6 @@ namespace Game.Building
                 poi.enabled = false;
             }
             currentBuilding.position = SnapToGrid(TownCameraController.Instance.MouseToWorld());
-            // todo: handle more than one material?
             var rds = currentBuilding.GetComponentsInChildren<Renderer>();
             foreach (var rd in rds)
             {
@@ -122,7 +121,7 @@ namespace Game.Building
         {
             if (_isConstructing)
                 return;
-            newPos.y = Mathf.Max(0f, newPos.y);
+            newPos.y = Mathf.Max(-3f, newPos.y);
             currentBuilding.position = newPos;
         }
 
@@ -139,7 +138,10 @@ namespace Game.Building
         private void DoCheckCollisions(Vector3Int cellSpot)
         {
             var hadCollisionsBefore = _hasCollisions;
-            _hasCollisions = HasCollisions(cellSpot) || HasWaterCollisions(cellSpot);
+            var extraConditions = false;
+            if (currentBuilding.TryGetComponent<IBuildingWithConditions>(out var cond))
+                extraConditions = !cond.CanBePlacedAt(_grid.CellToWorld(cellSpot));
+            _hasCollisions = extraConditions || HasCollisions(cellSpot) || HasWaterCollisions(cellSpot);
             try
             {
                 if (hadCollisionsBefore && !_hasCollisions)
@@ -173,6 +175,7 @@ namespace Game.Building
             currentBuilding = Instantiate(currentBuildingData.buildingPrefab, transform).transform;
             currentBuilding.transform.position = position;
             var pivot = currentBuilding.GetChild(0);
+            Debug.Log($"Doing rotation {rotation.Formatted()}");
             pivot.rotation = Quaternion.Euler(rotation);
 
             var buildingItself = currentBuilding.GetChild(0).GetChild(0);
@@ -182,7 +185,7 @@ namespace Game.Building
             {
                 Id = 0,
                 CollisionArea = (rSize.x, rSize.y),
-                Rotation = Mathf.RoundToInt(buildingItself.rotation.eulerAngles.y),
+                Rotation = (int) rotation.y,
                 BuildingType = currentBuildingData.Id.Formatted()
             };
             if (buildingItself.TryGetComponent<PointOfInterest>(out var poi))
@@ -194,7 +197,10 @@ namespace Game.Building
             buildingItself.SetParent(targetBuildingContainer.transform);
             
             var lPos = buildingItself.localPosition;
-            lPos.y = Mathf.Max(0f, lPos.y);
+            var hit = new RaycastHit[1];
+            Physics.RaycastNonAlloc(lPos + Vector3.up * 10, Vector3.down, hit, 50);
+            var y = hit[0].point.y;
+            lPos.y = Mathf.Max(-3f, y);
             buildingItself.localPosition = lPos;
             
             Destroy(currentBuilding.gameObject);
@@ -221,8 +227,6 @@ namespace Game.Building
             // mark that construction began
             _isConstructing = true;
 
-            
-            // TODO: check several preconditions: aligned to road, near water, etc.
             var buildingItself = currentBuilding.GetChild(0).GetChild(0);
 
             // scale it down
@@ -257,6 +261,13 @@ namespace Game.Building
 
             var gridPos = _grid.WorldToCell(currentBuilding.position);
             
+            // take the resources
+            foreach (var req in currentBuildingData.requirements)
+            {
+                GameStateManager.Instance.IncreaseProduct(StateKey.FromString(req.key), -req.count);
+            }
+
+            
             yield return currentBuilding.DOScale(originalScale, 0.5f).SetEase(Ease.OutBack).SetDelay(1.5f).OnStart(() =>
             {
                 foreach (var rd in buildingItself.GetComponentsInChildren<Renderer>())
@@ -270,7 +281,7 @@ namespace Game.Building
                 {
                     Id = 0,
                     CollisionArea = (rSize.x, rSize.y),
-                    Rotation = Mathf.RoundToInt(buildingItself.rotation.eulerAngles.y),
+                    Rotation = Mathf.RoundToInt(buildingItself.localRotation.eulerAngles.y),
                     BuildingType = currentBuildingData.Id.Formatted()
                 };
                 if (buildingItself.TryGetComponent<PointOfInterest>(out var poi))
@@ -282,13 +293,15 @@ namespace Game.Building
                     POIManager.Instance.LoadedPois[poiId] = poi;
                     poi.enabled = true;
                     poi.OnBuilt();
+                    
+                    TutorialCtl.Instance.ActiveStep?.ReceiveBuildingBuilt(currentBuildingData);
                 }
                 particles.Stop();
                 Destroy(particles.gameObject, 1.5f);
                 buildingItself.SetParent(targetBuildingContainer.transform);
                 
                 var lPos = buildingItself.localPosition;
-                lPos.y = Mathf.Max(0f, lPos.y);
+                lPos.y = Mathf.Max(-3f, lPos.y);
                 buildingItself.localPosition = lPos;
 
                 Destroy(currentBuilding.gameObject);
@@ -368,16 +381,33 @@ namespace Game.Building
             return false;
         }
 
+        [ContextMenu("Test/HELP")]
+        private void Test()
+        {
+            Debug.Log(_grid.WorldToCell(new Vector3(10000, 10, 1000)).ToString());
+            Debug.Log(_grid.WorldToCell(new Vector3(1000, 10, 1000)).ToString());
+            Debug.Log(_grid.WorldToCell(new Vector3(960, 10, 950)).ToString());
+        }
+
+        private bool IsObstacle(Vector3 worldPos)
+        {
+            var wp = worldPos;
+            wp.y = 20f;
+            wp += new Vector3(5, 0, 5);
+            var hits = new RaycastHit[4];
+            Physics.RaycastNonAlloc(wp, Vector3.down, hits, 23f);
+            return hits.Any(it => it.collider && it.collider.CompareTag("Obstacle"));
+        }
+
         private bool IsWater(Vector3 worldPos)
         {
             var wp = worldPos;
             wp.y = 20f;
             wp += new Vector3(5, 0, 5);
             // centering it
-            Debug.DrawRay(wp, Vector3.down, Color.red, 1.5f);
-            var hits = new RaycastHit[5];
-            Physics.SphereCastNonAlloc(wp, 1f, Vector3.down, hits, 25f);
-            return hits.Any(it => it.collider && it.collider.CompareTag("Water"));
+            var hits = new RaycastHit[4];
+            Physics.RaycastNonAlloc(wp, Vector3.down, hits, 23f);
+            return hits.Any(it => it.collider && it.collider.CompareTag("Water")) && !hits.Any(it => it.collider && it.collider.name.Contains("Terrain"));
         }
 
         private bool HasCollisions(Vector3 snappedPos)
@@ -412,7 +442,7 @@ namespace Game.Building
                 {
                     var delta = new Vector3Int(signX * x, 0, signY * y);
                     var newPos = pos + delta;
-                    if (occupied.Contains(newPos))
+                    if (occupied.Contains(newPos) || IsObstacle(_grid.CellToWorld(newPos)))
                         return true;
                 }
             }

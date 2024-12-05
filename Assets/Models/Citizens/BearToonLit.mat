@@ -41,13 +41,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AdditionalLightIgnoreCelShade: 0.9
-    - _CelShadeMidPoint: -0.5
+    - _AdditionalLightIgnoreCelShade: 0
+    - _CelShadeMidPoint: -0.19
     - _CelShadeSoftness: 0.05
     - _Cutoff: 0.701
     - _DirectLightMultiplier: 1
     - _EmissionMulByBaseColor: 1
-    - _IndirectLightMultiplier: 0.975
+    - _IndirectLightMultiplier: 1
     - _IsFace: 0
     - _MainLightIgnoreCelShade: 0
     - _OcclusionRemapEnd: 1

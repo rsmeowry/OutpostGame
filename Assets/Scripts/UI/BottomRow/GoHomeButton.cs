@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using DG.Tweening;
 using Game.Controllers;
+using Game.Tasks;
 using Inside;
+using Tutorial;
 using UI.Util;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -35,7 +37,7 @@ namespace UI.BottomRow
         {
             if (TownCameraController.Instance.interactionFilter == CameraInteractionFilter.None || _transition)
                 return;
-
+            
             StartCoroutine(DoClick());
         }
 

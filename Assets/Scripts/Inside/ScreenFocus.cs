@@ -1,6 +1,8 @@
 ﻿using System;
 using DG.Tweening;
 using External.Util;
+using Tutorial;
+using UI.Interior;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,6 +11,8 @@ namespace Inside
     public class ScreenFocus: MonoBehaviour
     {
         private Material _material;
+        
+        public static ScreenFocus Instance { get; private set; }
 
         [SerializeField] [ColorUsage(false, true)]
         private Color overColor;
@@ -29,7 +33,12 @@ namespace Inside
 
         private float _prevFov;
         private Vector3 _prevPos;
-        
+
+        private void Awake()
+        {
+            Instance = this;
+        }
+
         private void Start()
         {
             _material = GetComponentInChildren<MeshRenderer>().material;
@@ -64,6 +73,8 @@ namespace Inside
                 _isFocused = true;
                 _inTransition = false;
             });
+            
+            TutorialCtl.Instance.ActiveStep?.ReceiveEnterHome();
         }
 
         private void Update()
@@ -99,6 +110,25 @@ namespace Inside
             }
         }
 
+        public void DoExit()
+        {
+            _inTransition = true;
+
+            var seq = DOTween.Sequence();
+            seq.Join(canvas.DOScaleY(0f, 0.5f));
+            seq.Join(cam.transform.DOMove(_prevPos, 0.5f));
+            seq.Join(cam.GetComponent<Camera>().DOFieldOfView(_prevFov, 0.5f));
+
+            seq.OnComplete(() =>
+            {
+                GetComponent<BoxCollider>().enabled = true;
+                cam.rot = cam.transform.rotation;
+                this.Delayed(0.2f, () => cam.doMove = true);
+                _isFocused = false;
+                _inTransition = false;
+            });
+            seq.Play();
+        }
         private Tween _highlightColor;
         // public void OnPointerEnter(PointerEventData eventData)
         // {

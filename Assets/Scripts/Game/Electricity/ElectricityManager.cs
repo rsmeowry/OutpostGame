@@ -24,6 +24,14 @@ namespace Game.Electricity
             Instance = this;
         }
 
+        public void BakeNetwork()
+        {
+            foreach (var sub in _substations)
+            {
+                Cover(sub.transform);
+            }
+        }
+
         public ElectricityStatistics GetStatistics()
         {
             var maxProd = 0f;
@@ -126,7 +134,6 @@ namespace Game.Electricity
             var unitMultipliers = " кМГТ";
             var numberWeight = (int) Mathf.Floor(Mathf.Log(number) / Ln1000);
 
-            Debug.Log(numberWeight);
             numberWeight = Mathf.Min(numberWeight, unitMultipliers.Length - 1);
             char? unitWeightSymbol = unitMultipliers[numberWeight];
 

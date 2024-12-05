@@ -13,6 +13,7 @@ using Game.POI.Housing;
 using Game.Production;
 using Game.Production.POI;
 using Game.State;
+using Game.Upgrades;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
@@ -59,6 +60,7 @@ namespace Game.Citizens
             if (loadedFromData)
                 return;
             navMeshAgent = GetComponent<NavMeshAgent>();
+            navMeshAgent.SetDestination(transform.position);
             _animator = GetComponentInChildren<Animator>();
 
             StateMachine = new CitizenStateMachine(this);
@@ -79,6 +81,7 @@ namespace Game.Citizens
         public void Load()
         {
             navMeshAgent = GetComponent<NavMeshAgent>();
+            navMeshAgent.SetDestination(transform.position);
             _animator = GetComponentInChildren<Animator>();
 
             StateMachine = new CitizenStateMachine(this);
@@ -155,7 +158,9 @@ namespace Game.Citizens
 
         public bool InventoryFull()
         {
-            return Inventory.Values.Sum() >= inventoryCapacity;
+            var additionalCapacity =
+                UpgradeTreeManager.Instance.Upgrades.GetValueOrDefault(Upgrades.Upgrades.DeeperPockets, 0) * 5;
+            return Inventory.Values.Sum() >= inventoryCapacity + additionalCapacity;
         }
 
         private bool _attemptingToGoHome;
@@ -211,7 +216,6 @@ namespace Game.Citizens
 
         public void HideSelf()
         {
-            // TODO: something else???
             // GetComponent<Renderer>().enabled = false;
             foreach (var rd in GetComponentsInChildren<Renderer>())
             {

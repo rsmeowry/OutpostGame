@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEngine;
 
 namespace Game.Controllers.States
 {
@@ -35,6 +36,12 @@ namespace Game.Controllers.States
         {
             if(_doTick && CurrentState.DoTick)
                 CurrentState.LateFrameUpdate();
+        }
+
+        public void ShouldClampTo(Vector3 pos)
+        {
+            if (_doTick && CurrentState.DoTick)
+                CurrentState.ShouldClampTo(pos);
         }
     }
 }

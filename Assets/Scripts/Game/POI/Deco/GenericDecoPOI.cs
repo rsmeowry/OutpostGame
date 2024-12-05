@@ -16,7 +16,7 @@ namespace Game.POI.Deco
         public override QueuePosition EntrancePos => entrancePos;
         protected override void LoadForInspect(PanelViewPOI panel)
         {
-            throw new NotImplementedException();
+            
         }
 
         public override SerializedPOIData Serialize()

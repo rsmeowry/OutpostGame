@@ -23,6 +23,7 @@ MonoBehaviour:
   buildingPrefab: {fileID: 6223600191611392832, guid: 04d339f9bd3b85b48a667d584b8f103b, type: 3}
   size: {x: 1, y: 1}
   prominentColor: {r: 0.29803923, g: 0.32156864, b: 0.32941177, a: 1}
+  requiresWater: 0
   requirements:
   - key: stone
     count: 400
@@ -30,3 +31,4 @@ MonoBehaviour:
     count: 400
   - key: concrete
     count: 400
+  requiredUpgrade: enlightenment

@@ -54,13 +54,22 @@ namespace Game.Tasks
             new[] { (ProductRegistry.Honey, 20), (ProductRegistry.CopperOre, 20) },
             ProductRegistry.Steel, 5, 2000
         );
+
+        public static TaskData DisaTask => TaskManager.CreateTaskData(
+            "disa_1",
+            "Диса",
+            "Самый юный биоинженер в кванториуме \"Талант академия\"",
+            "Для выполнения исследования мне нужно 50 шт. обычного меда как катализатор. Прием.",
+            new[] { (ProductRegistry.Honey, 50) },
+            ProductRegistry.Wood, 20, 350
+        );
         
         public static TaskData NextTask(string taskId)
         {
             return taskId switch
             {
                 "begin" => GatherOre,
-                _ => Rng.Choice(new[] { SapsanTask, KozlowTask, RandomTask() }.Where(it => !TaskManager.Instance.completedTasks.Contains(it.taskId)).ToList())
+                _ => Rng.Choice(new[] { SapsanTask, KozlowTask, DonTask, DisaTask, RandomTask() }.Where(it => !TaskManager.Instance.completedTasks.Contains(it.taskId)).ToList())
             };
         }
 

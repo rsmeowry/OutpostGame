@@ -47,6 +47,8 @@ namespace UI.Interior
                 CitizenMoveToWorkSpotState => "почти работает",
                 CitizenWanderState => "гуляет",
                 CitizenWorkState => "работает",
+                CitizenGoHomeState => "идет домой",
+                CitizenSleepState => "спит",
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

@@ -29,3 +29,4 @@ MonoBehaviour:
     count: 50
   - key: iron_bars
     count: 20
+  requiredUpgrade: fluid_handling

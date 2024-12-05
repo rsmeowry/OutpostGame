@@ -8,6 +8,7 @@ using Game.Building;
 using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.POI;
+using Tutorial;
 using UI.POI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -67,11 +68,16 @@ namespace Game.Production.POI
 
         public bool HireAgent(CitizenAgent agent)
         {
+            // TODO: in tutorial this might kidna softlock us when we hire ppl in wrong order
             if (_isFull)
                 return false;
             AssignedAgents.Add(agent);
             _isFull = AssignedAgents.Count >= capacity;
             agent.MarkHiredAt(this);
+            
+            // tutorial
+            TutorialCtl.Instance.ActiveStep?.ReceiveCitizenHired(agent, this);
+            
             return true;
         }
 
@@ -197,6 +203,7 @@ namespace Game.Production.POI
                 Physics.OverlapSphereNonAlloc(transform.position, 25f, results);
                 var firstPost = results.Where(it => it != null && it.gameObject.TryGetComponent(out GatheringPost post))
                     .OrderBy(it => (it.transform.position - transform.position).sqrMagnitude).FirstOrDefault();
+                Debug.Log($"FOUND GATHERING POST: {firstPost}");
                 if (firstPost == null)
                     return PlayerBaseCenter.Instance;
                 return firstPost.GetComponent<GatheringPost>();

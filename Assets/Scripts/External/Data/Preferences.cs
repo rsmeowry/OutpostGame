@@ -44,5 +44,7 @@ namespace External.Data
         public int ShadowDistanceLevel;
         [JsonProperty("disableStylizedShading")]
         public bool DisableToonShading;
+        [JsonProperty("grassBlendLevel")]
+        public int GrassBlendLevel;
     }
 }

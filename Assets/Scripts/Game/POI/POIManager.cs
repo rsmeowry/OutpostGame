@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
+using External.Util;
 using Game.Building;
 using Game.Citizens;
+using Game.Electricity;
 using Game.Production.POI;
 using Game.Storage;
 using Game.Tasks;
@@ -42,9 +44,10 @@ namespace Game.POI
             InitPointsOfInterest();
             
             CitizenManager.Instance.BeginJobs();
+            
+            ElectricityManager.Instance.BakeNetwork();
         }
         
-
         private void InitPointsOfInterest()
         {
             // this is only needed to assign citizens, we are doing it in a different spot

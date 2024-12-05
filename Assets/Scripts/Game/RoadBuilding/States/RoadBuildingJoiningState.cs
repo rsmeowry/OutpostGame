@@ -1,6 +1,7 @@
 ﻿using System;
 using External.Util;
 using Game.Building;
+using Game.Citizens;
 using Game.Controllers;
 using UnityEngine;
 

@@ -16,6 +16,8 @@ namespace Game.Citizens.States
 
         public override IEnumerator EnterState()
         {
+            Agent.wanderAnchor = Vectors.RemapXYToXZ(Random.insideUnitCircle) * 25 +
+                                 Agent.Home.EntrancePos.transform.position;
             Agent.navMeshAgent.isStopped = false;
             Agent.navMeshAgent.enabled = true;
             Agent.navMeshAgent.SetDestination(GetWanderPosition());

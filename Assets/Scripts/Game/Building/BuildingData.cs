@@ -20,6 +20,8 @@ namespace Game.Building
         public bool requiresWater;
 
         public List<ResourceRequirement> requirements;
+
+        public string requiredUpgrade = "";
         
         public StateKey Id => StateKey.FromString(keyId);
     }

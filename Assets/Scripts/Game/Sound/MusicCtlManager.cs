@@ -6,6 +6,7 @@ using Game.Citizens;
 using Game.Controllers;
 using Game.DayNight;
 using Game.State;
+using Inside;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -63,7 +64,7 @@ namespace Game.Sound
             {
                 mood = -Random.Range(1.3f, 2.5f);
                 _isPlayingMusic = true;
-                var isInside = !TownCameraController.Instance.gameObject.activeSelf;
+                var isInside = TownCameraController.Instance == null || !TownCameraController.Instance.gameObject.activeSelf;
                 var isNight = time.Item1 > 18;
                 var track = (isInside, isNight) switch
                 {

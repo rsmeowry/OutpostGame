@@ -96,7 +96,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -1372625422
   m_Radius: 0.3
-  m_Speed: 6
+  m_Speed: 8
   m_Acceleration: 10
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -125,6 +125,7 @@ MonoBehaviour:
   inventoryCapacity: 3
   wanderAnchor: {x: 180, y: 0, z: 110}
   wanderRange: 5
+  Home: {fileID: 0}
   rightArm: {fileID: 2290486856938984087}
   loadedFromData: 0
 --- !u!1001 &2327000404135818583
@@ -191,6 +192,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: bear_beekeeper
       objectReference: {fileID: 0}
+    - target: {fileID: 1630794972795428178, guid: 7ab19537b6f6fb048ab5d307b4a3ca97, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 96dfd3fd2e90ced4cb15d56244fd4b81, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -29,3 +29,4 @@ MonoBehaviour:
     count: 25
   - key: cog
     count: 25
+  requiredUpgrade: basic_electricity

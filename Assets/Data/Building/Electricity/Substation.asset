@@ -31,3 +31,4 @@ MonoBehaviour:
     count: 50
   - key: copper_wires
     count: 50
+  requiredUpgrade: basic_electricity

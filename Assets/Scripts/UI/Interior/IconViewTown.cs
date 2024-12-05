@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using DG.Tweening;
+using External.Util;
 using Game.Controllers;
 using Game.Stocks;
 using Inside;
@@ -41,7 +42,8 @@ namespace UI.Interior
             if (_busy)
                 return;
             _busy = true;
-            ViewSwitchCtl.Instance.StartCoroutine(Transition());
+            ScreenFocus.Instance.DoExit();
+            ViewSwitchCtl.Instance.StartCoroutine(Transition().Callback(() => TooltipCtl.Instance.Hide()));
         }   
 
         private IEnumerator Transition()

@@ -26,6 +26,7 @@ namespace UI.Time
         public void ChangeSpeed(int newSpeed)
         {
             _selectedSpeedBoost = newSpeed;
+            _descText.SetText("Скорость времени: " + (_selectedSpeedBoost == 0 ? "на паузе" : _selectedSpeedBoost.ToString()));
             TimeManager.Instance.ChangeGameSpeed(newSpeed);
             MoveSlider(newSpeed);
         }

@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Threading;
 using External.Util;
 using Game.DayNight;
+using Game.Production.POI;
 using Game.Production.Products;
 using Game.State;
+using Game.Upgrades;
+using Inside;
+using Tutorial;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 namespace Game.Citizens
 {
-    // TODO: preferable add saving citizen offers to save file
     public class CareerManager: MonoBehaviour
     {
         public static CareerManager Instance { get; private set; }
@@ -41,10 +44,13 @@ namespace Game.Citizens
                 GameStateManager.Instance.IncreaseProduct(res.Key, -res.Value);
             }
             GameStateManager.Instance.ChangeCurrency(-offer.CurrencyRequest, "Hired a citizen", true);
-            
-            CitizenManager.Instance.SpawnCitizen(new Vector3(180, 0, 220), offer.CitizenData);
+
+            var pos = PlayerBaseCenter.Instance.EntrancePos.transform.position;
+            CitizenManager.Instance.SpawnCitizen(pos, offer.CitizenData);
             CareerOffers.Remove(offer);
             onOffersUpdated.Invoke();
+            
+            TutorialCtl.Instance.ActiveStep?.ReceiveCitizenInvited();
         }
 
         private bool _busyUpdating;
@@ -89,7 +95,8 @@ namespace Game.Citizens
             }
             
             // TODO: dynamic amount of citizens
-            for (var i = 0; i < 2; i++)
+            var offerCount = UpgradeTreeManager.Instance.Has(Upgrades.Upgrades.AnotherHireSlot) ? 3 : 2;
+            for (var i = 0; i < offerCount; i++)
             {
                 var offer = new CareerOffer
                 {

@@ -25,9 +25,9 @@ namespace Game.Storage
 
         private IEnumerator Start()
         {
-            MiscSavedData.Instance.Load();
             UpgradeTreeManager.Instance.LoadData();
             DayCycleManager.Instance.Load();
+            yield return null; // wait for a single frame
             POIManager.Instance.LoadData();
             yield return GameStateManager.Instance.LoadGameState();
         }

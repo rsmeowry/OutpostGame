@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using DG.Tweening.Plugins;
 using External.Storage;
 using External.Util;
+using Game.Building;
 using Game.POI;
 using Game.POI.Housing;
 using Game.Production;
@@ -100,10 +101,45 @@ namespace Game.Citizens
 
         public void BeginJobs()
         {
+            if (Citizens.All(it => it.Value.PersistentData.Name != "Старпом"))
+            {
+                var pos = PlayerBaseCenter.Instance.EntrancePos.transform.position;
+                var starpom = SpawnCitizen(pos, new PersistentCitizenData
+                {
+                    Profession = CitizenCaste.Beekeeper,
+                    Awards = new(),
+                    Name = "Старпом"
+                });
+                starpom.inventoryCapacity = 4; // cool
+                SpawnCitizen(pos, new PersistentCitizenData()
+                {
+                    Profession = CitizenCaste.Explorer,
+                    Awards = new(),
+                    Name = CitizenNames.RandomFemName()
+                });
+                SpawnCitizen(pos, new PersistentCitizenData()
+                {
+                    Profession = CitizenCaste.Engineer,
+                    Awards = new(),
+                    Name = CitizenNames.RandomMascName()
+                });
+            }
             foreach (var citizenKv in Citizens)
             {
                 var citizen = citizenKv.Value;
-                var dat = _intermediate[citizen.citizenId];
+                if(!_intermediate.TryGetValue(citizen.citizenId, out var dat))
+                    continue; // we probably just spawned them (starting team)
+
+                try
+                {
+                    var home = (HousePOI)POIManager.Instance.LoadedPois[dat.BuildingGuid];
+                    citizen.Home = home;
+                }
+                catch (Exception _)
+                {
+                    citizen.Home = Houses.FirstOrDefault(it => it.Tenants.Count < it.houseSize);
+                }
+                
                 if (dat.BuildingGuid == Guid.Empty)
                 {
                     StartCoroutine(citizen.StateMachine.Init(citizen.WanderState));
@@ -111,14 +147,10 @@ namespace Game.Citizens
                 else
                 {
                     var workPlace = (ICitizenWorkPlace)POIManager.Instance.LoadedPois[dat.BuildingGuid];
-                    var home = (HousePOI)POIManager.Instance.LoadedPois[dat.BuildingGuid];
                     var rcpoi = (ResourceContainingPOI)workPlace;
                     if(rcpoi.AssignedAgents.Count + 1 < rcpoi.capacity)
                         rcpoi.AssignedAgents.Add(citizen);
                     citizen.WorkPlace = workPlace;
-                    citizen.Home = home;
-                    home.Tenants.Add(citizen);
-                    
                     StartCoroutine(citizen.StateMachine.Init(dat.state switch
                     {
                         "carry" => citizen.CarryResourcesState,
@@ -155,12 +187,12 @@ namespace Game.Citizens
                 CitizenCaste.Beekeeper => beekeeperPrefab,
                 CitizenCaste.Engineer => constructorPrefab,
                 _ => throw new ArgumentOutOfRangeException()
-            });
-            citizen.transform.position = position;
+            }, transform);
             citizen.citizenId = citizenIdTracker++;
             citizen.PersistentData = data;
             citizen.Home = Houses.First(it => it.Tenants.Count < it.houseSize);
             citizen.Home.Tenants.Add(citizen);
+            citizen.transform.position = position;
             Citizens[citizen.citizenId] = citizen;
             return citizen;
         }

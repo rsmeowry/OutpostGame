@@ -9,6 +9,8 @@ namespace Game.Production.POI
     {
         private Dictionary<int, int> _ticks = new();
 
+        public override string PoiDesc => data.description;
+
         protected bool ShouldSubtick(CitizenAgent agent, int subtickCount)
         {
             var t = _ticks.Increment(agent.citizenId);

@@ -16,6 +16,7 @@ namespace External.Data
         private void Awake()
         {
             Instance = this;
+            Load();
         }
 
         public void Save()
@@ -32,13 +33,13 @@ namespace External.Data
                     Experience = 0,
                     Achievements = new(),
                     NotesData = "",
-                    UnlockedUpgrades = new List<UnlockedUpgrade>()
+                    UnlockedUpgrades = new List<UnlockedUpgrade>(),
+                    TutorialStep = 0
                 };
                 return;
             }
 
             Data = JsonConvert.DeserializeObject<MiscData>(FileManager.Instance.Storage.ReadFile("misc.json", true));
-            
         }
     }
 
@@ -52,5 +53,7 @@ namespace External.Data
         public string NotesData;
         [JsonProperty]
         public List<UnlockedUpgrade> UnlockedUpgrades;
+        [JsonProperty("tutorialStep")]
+        public int TutorialStep;
     }
 }

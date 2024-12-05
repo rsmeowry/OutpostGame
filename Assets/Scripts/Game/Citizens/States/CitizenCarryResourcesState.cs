@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using External.Util;
+using Game.POI;
 using Game.Production;
 using UnityEngine;
 
@@ -15,11 +16,16 @@ namespace Game.Citizens.States
             
         }
 
+        private PointOfInterest _gatheringPost;
+
         public override IEnumerator EnterState()
         {
+            _gatheringPost = Agent.WorkPlace.GatheringPost;
             if (Agent.ProductDepositer == null)
-                Agent.ProductDepositer = (IProductDepositer) Agent.WorkPlace.GatheringPost;
-            Agent.navMeshAgent.SetDestination(Agent.WorkPlace.GatheringPost.EntrancePos.GetSelfPosition(Agent));
+                Agent.ProductDepositer = (IProductDepositer) _gatheringPost;
+            Debug.Log($"ENTERING STATE: {_gatheringPost}");
+            Agent.navMeshAgent.enabled = true;
+            Agent.navMeshAgent.SetDestination(_gatheringPost.EntrancePos.GetSelfPosition(Agent));
             
             Agent.SetAnimatorBool(Carrying, true);
             Agent.StartCoroutine(Agent.SpawnItem(CitizenManager.Instance.boxPrefab));
@@ -36,15 +42,14 @@ namespace Game.Citizens.States
 
         public override void FrameUpdate()
         {
-            if (Agent.WorkPlace.GatheringPost.EntrancePos.DoesAccept(Agent))
+            if (_gatheringPost.EntrancePos.DoesAccept(Agent))
             {
                 DoTick = false;
                 Agent.SetAnimatorTrigger(DoPlaceBox);
-                // TODO: maybe separate state for depositing resources
                 Agent.Delayed(0.3f + Random.Range(-0.1f, 0.1f), () =>
                 {
                     Agent.ProductDepositer.DepositInventory(Agent.Inventory);
-                    Agent.WorkPlace.GatheringPost.EntrancePos.Dequeue();
+                    _gatheringPost.EntrancePos.Dequeue();
                     DoTick = true;
                     Agent.StartCoroutine(StateMachine.ChangeState(Agent.GoWorkState));
                 });
@@ -53,7 +58,7 @@ namespace Game.Citizens.States
 
         public override void Renavigate()
         {
-            var newPos = Agent.WorkPlace.GatheringPost.EntrancePos.GetSelfPosition(Agent);
+            var newPos = _gatheringPost.EntrancePos.GetSelfPosition(Agent);
             Agent.navMeshAgent.SetDestination(newPos);
         }
     }

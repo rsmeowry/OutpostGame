@@ -26,6 +26,7 @@ namespace Game.Citizens.States
                 switch (s)
                 {
                     case WorkPlaceEnterResult.Accepted:
+                        Agent.navMeshAgent.enabled = true;
                         Agent.navMeshAgent.isStopped = true;
                         Agent.navMeshAgent.enabled = false;
                         break;

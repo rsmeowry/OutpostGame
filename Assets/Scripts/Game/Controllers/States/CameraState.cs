@@ -22,5 +22,10 @@ namespace Game.Controllers.States
         {
             
         }
+
+        public virtual void ShouldClampTo(Vector3 pos)
+        {
+            
+        }
     }
 }

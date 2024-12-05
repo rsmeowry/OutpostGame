@@ -41,14 +41,14 @@ namespace UI.Interior.Stocks
         private void OnEnable()
         {
             GameStateManager.Instance.onProductChanged.AddListener(HandleProductChange);
-            GameStateManager.Instance.currencyIncreaseEvent.AddListener(RecalculatePossibilities);
+            GameStateManager.Instance.onCurrencyChanged.AddListener(RecalculatePossibilities);
             StockManager.Instance.onFluctuate.AddListener(RecalculatePossibilities);
         }
 
         private void OnDisable()
         {
             GameStateManager.Instance.onProductChanged.RemoveListener(HandleProductChange);
-            GameStateManager.Instance.currencyIncreaseEvent.RemoveListener(RecalculatePossibilities);
+            GameStateManager.Instance.onCurrencyChanged.RemoveListener(RecalculatePossibilities);
             StockManager.Instance.onFluctuate.RemoveListener(RecalculatePossibilities);
         }
 

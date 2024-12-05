@@ -1,7 +1,9 @@
 using System;
 using Game.Building;
+using Game.Citizens;
 using Game.Controllers.States;
 using Game.POI;
+using Game.State;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -38,10 +40,14 @@ namespace Game.Controllers
 
         public CameraInteractionFilter interactionFilter;
 
+        private void Awake()
+        {
+            Instance = this;
+        }
+
         private void Start()
         {
             Camera = GetComponentInChildren<Camera>();
-            Instance = this;
             StateMachine = new CameraStateMachine(this);
             FreeMoveState = new CameraFreeMoveState(StateMachine, this);
             FocusedState = new CameraFocusedState(StateMachine, this);
@@ -62,6 +68,11 @@ namespace Game.Controllers
         private void LateUpdate()
         {
             StateMachine.LateFrameUpdate();
+        }
+
+        public void ShouldClampTo(Vector3 position)
+        {
+            StateMachine.ShouldClampTo(position);
         }
     }
 
