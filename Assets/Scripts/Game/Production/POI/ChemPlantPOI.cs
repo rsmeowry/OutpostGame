@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using External.Util;
 using Game.Citizens;
 using Game.Controllers.States;
 using Game.Electricity;
+using Game.POI.Electricity;
 using Game.Production.Products;
 using Game.State;
+using Inside;
 using UI.POI;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Game.Production.POI
 {
@@ -19,17 +23,25 @@ namespace Game.Production.POI
 
         [SerializeField]
         private Light windowLight;
+        [SerializeField]
+        private VisualEffectAsset vfxAsset;
+        [SerializeField]
+        private Transform vfx;
+        private VisualEffect _vfx;
 
         private Material _windowMat;
 
         private static readonly int LiquidColor = Shader.PropertyToID("_LiquidColor");
-        private static readonly int LiquidSpeed = Shader.PropertyToID("_LiquidSpeed");
-
 
         public override void OnBuilt()
         {
-            _windowMat = transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material;
+            _windowMat = transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material;
             _windowMat.SetColor(LiquidColor, Color.black);
+            _vfx = vfx.gameObject.AddComponent<VisualEffect>();
+            _vfx.visualEffectAsset = vfxAsset;
+            _vfx.Stop();
+            
+            ((IElectrical) this).InitElectricity(transform);
         }
 
         protected override void LoadForInspect(PanelViewPOI panel)
@@ -43,14 +55,29 @@ namespace Game.Production.POI
         public override void WorkerTick(CitizenAgent agent)
         {
             if (!ShouldSubtick(agent, 4))
+            {
                 return;
+            }
 
             if (!((IElectricityConsumer)this).IsConnectedAndWorking())
+            {
+                _vfx.Stop();
                 return;
-            
+            }
+
             if (activeRecipe == null)
+            {
+                _vfx.Stop();
                 return;
-            if (!HasAllIngredients()) return;
+            }
+
+            if (!HasAllIngredients())
+            {
+                _vfx.Stop();
+                return;
+            }
+            
+            _vfx.Play();
             
             foreach (var r in activeRecipe.inputs)
             {
@@ -60,7 +87,8 @@ namespace Game.Production.POI
 
             GameStateManager.Instance.ChangeFluids(ProductRegistry.Water, -activeRecipe.waterRequirements);
 
-            agent.Inventory.Increment(StateKey.FromString(activeRecipe.outputItem), activeRecipe.outputCount);
+            var amount = ApplyProductivityBonus(activeRecipe.outputCount, Upgrades.Upgrades.ChemistryProductivity);
+            agent.Inventory.Increment(StateKey.FromString(activeRecipe.outputItem), amount);
 
             var seq = DOTween.Sequence();
             seq.Join(windowLight.DOColor(activeRecipe.productColor, 1f));
@@ -68,9 +96,15 @@ namespace Game.Production.POI
             seq.Join(_windowMat.DOColor(activeRecipe.productColor, LiquidColor, 1f));
             seq.Insert(3f, _windowMat.DOColor(Color.black, LiquidColor, 1f));
             seq.Insert(3f, windowLight.DOIntensity(0f, 3f));
-
             _liquidTween?.Kill();
             _liquidTween = seq.Play();
+        }
+        
+        public override IEnumerator LeaveWorkPlace(CitizenAgent agent)
+        {
+            yield return base.LeaveWorkPlace(agent);
+            if(CitizensInside.Count <= 0)
+                _vfx.Stop();
         }
 
         private bool HasAllIngredients()

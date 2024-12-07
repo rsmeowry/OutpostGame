@@ -8,6 +8,7 @@ using External.Util;
 using Game.Building;
 using Game.Citizens;
 using Game.Electricity;
+using Game.POI.Housing;
 using Game.Production.POI;
 using Game.Storage;
 using Game.Tasks;
@@ -50,7 +51,14 @@ namespace Game.POI
         
         private void InitPointsOfInterest()
         {
-            // this is only needed to assign citizens, we are doing it in a different spot
+        }
+
+        public void RecalculateAllGatheringPosts()
+        {
+            foreach (var poi in LoadedPois.Values.Where(it => it is ResourceContainingPOI))
+            {
+                ((ResourceContainingPOI) poi).RecalculateNearestGatheringPost();
+            }
         }
 
         private void PreloadPointsOfInterest()
@@ -85,6 +93,11 @@ namespace Game.POI
             {
                 var poi = pois.transform.GetChild(i).GetComponent<PointOfInterest>();
                 LoadedPois[Guid.Parse(poi.pointId)] = poi;
+                if (poi.TryGetComponent<HousePOI>(out var house))
+                {
+                    if(house.doNotSerialize)
+                        CitizenManager.Instance.Houses.Add(house);
+                }
             }
         }
 

@@ -40,7 +40,7 @@ namespace Game.POI.Electricity
         public bool IsCovered { get; set; }
         public abstract float MaxProduction { get; }
 
-        public float ProductionTick()
+        public virtual float ProductionTick()
         {
             return MaxProduction;
         }

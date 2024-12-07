@@ -14,7 +14,7 @@ namespace Game.Citizens.States
         public override IEnumerator EnterState()
         {
             Agent.navMeshAgent.isStopped = true;
-            Agent.navMeshAgent.enabled = false;
+            // Agent.navMeshAgent.enabled = false;
             Agent.HideSelf();
             yield break;
         }

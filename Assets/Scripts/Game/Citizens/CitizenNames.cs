@@ -74,7 +74,8 @@ namespace Game.Citizens
             "Гарри",
             "Гарье",
             "Кеннет",
-            "Дон"
+            "Дон",
+            "Роберт",
         };
 
         private static string[] MascLastNames = {
@@ -129,7 +130,6 @@ namespace Game.Citizens
             "Лакин",
             "Кабаев",
             "Соколов",
-            "Оуэнс",
             "Смит",
             "Гарция",
             "Льюис",
@@ -172,6 +172,8 @@ namespace Game.Citizens
             "Сафронов",
             "Ильясов",
             "Дерден",
+            "Поусон",
+            "Гудини",
         };
 
         private static string[] FemLastNames = new[]
@@ -228,7 +230,6 @@ namespace Game.Citizens
             "Лакина",
             "Кабаева",
             "Соколова",
-            "Оуэнс",
             "Смит",
             "Гарция",
             "Льюис",

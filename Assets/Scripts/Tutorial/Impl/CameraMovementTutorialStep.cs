@@ -9,7 +9,7 @@ namespace Tutorial.Impl
         private Vector3 _oldPos;
         [SerializeField]
         private GameObject prefab;
-        private readonly float _requiredAmount = 70f * 70f;
+        private readonly float _requiredAmount = 45f * 45f;
         private float _totalMoved = 0f;
         public override void ReceiveMovementData(Vector3 pos)
         {

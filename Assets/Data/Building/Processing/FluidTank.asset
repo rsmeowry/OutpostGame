@@ -18,14 +18,14 @@ MonoBehaviour:
     \u0434\u043B\u044F \u0442\u043E\u0433\u043E \n\u0447\u0442\u043E\u0431\u044B
     \u0440\u0430\u0441\u0448\u0438\u0440\u0438\u0442\u044C \u0432\u043C\u0435\u0441\u0442\u0438\u043C\u043E\u0441\u0442\u044C
     \u0436\u0438\u0434\u043A\u043E\u0441\u0442\u0438 \u043A\u043E\u043B\u043E\u043D\u0438\u0438"
-  icon: {fileID: 21300000, guid: 3e4a88a57dab00a41804ae68546d485c, type: 3}
+  icon: {fileID: 21300000, guid: db6abd50a2aaea24a86cac9b4c5ce376, type: 3}
   buildingPrefab: {fileID: 4115257963748977058, guid: f6da6be7391fbe347b6b3dd84b5af514, type: 3}
   size: {x: 1, y: 1}
   prominentColor: {r: 0.754717, g: 0.7470644, b: 0.72979707, a: 1}
   requiresWater: 1
   requirements:
   - key: iron_plate
-    count: 30
+    count: 25
   - key: bricks
     count: 5
   requiredUpgrade: fluid_handling

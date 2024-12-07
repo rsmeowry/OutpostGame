@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using External.Network;
 using External.Util;
+using Game.Production.POI;
+using Game.Stocks;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Game.Citizens.Navigation
 {
@@ -11,12 +15,13 @@ namespace Game.Citizens.Navigation
         public Queue<CitizenAgent> QueuedAgents = new();
 
         private Dictionary<int, int> _cachedPositions = new();
+        private Dictionary<int, float> _waitingTime = new();
 
         public Vector3 GetSelfPosition(CitizenAgent self)
         {
             if (!QueuedAgents.Contains(self))
                 Enqueue(self);
-            return transform.position + (-3 * QueuedAgents.ToList().FindIndex(it => it.citizenId == self.citizenId) * transform.forward);
+            return transform.position + -2 * QueuedAgents.ToList().FindIndex(it => it.citizenId == self.citizenId) * transform.forward;
         }
 
         public void Enqueue(CitizenAgent self)
@@ -27,7 +32,25 @@ namespace Game.Citizens.Navigation
 
         public void Dequeue()
         {
-            QueuedAgents.Dequeue();
+            var agent = QueuedAgents.Dequeue();
+            _waitingTime.Remove(agent.citizenId);
+            _cachedPositions.Remove(agent.citizenId);
+            RecacheIndices();
+        }
+
+        public void DequeueIdxd(CitizenAgent agnt)
+        {
+            if (!QueuedAgents.Contains(agnt))
+            {
+                RecacheIndices();
+                return;
+            }
+
+            var list = QueuedAgents.ToList();
+            list.Remove(agnt);
+            QueuedAgents = new Queue<CitizenAgent>(list);
+            _waitingTime.Remove(agnt.citizenId);
+            _cachedPositions.Remove(agnt.citizenId);
             RecacheIndices();
         }
 
@@ -35,7 +58,13 @@ namespace Game.Citizens.Navigation
         {
             if(!_cachedPositions.ContainsKey(self.citizenId))
                 Enqueue(self);
-            return _cachedPositions[self.citizenId] == 0 && (self.navMeshAgent.remainingDistance <= self.navMeshAgent.stoppingDistance);
+            if (!self.navMeshAgent.enabled)
+                self.navMeshAgent.enabled = true;
+            var isNear = self.navMeshAgent.remainingDistance <= self.navMeshAgent.stoppingDistance * 5f;
+            if (isNear && !_waitingTime.ContainsKey(self.citizenId))
+                _waitingTime[self.citizenId] = Time.time; // softlock prevention
+            var justGoIn = Time.time - _waitingTime.GetValueOrDefault(self.citizenId, Time.time) >= WaitingTime(self);
+            return  justGoIn || (_cachedPositions[self.citizenId] == 0 && isNear);
         }
         
         public void OnTriggerEnter(Collider other)
@@ -56,8 +85,16 @@ namespace Game.Citizens.Navigation
 
         private void RecacheIndices()
         {
-            _cachedPositions = QueuedAgents.Select((it, idx) => (it, idx))
+            QueuedAgents = new Queue<CitizenAgent>(QueuedAgents.OrderBy(it => (it.transform.position - transform.position).sqrMagnitude)
+                .ToList());
+            _cachedPositions = QueuedAgents.ToList().Select((it, idx) => (it, idx))
                 .ToDictionary(it => it.it.citizenId, it => it.idx);
+            
+            Debug.Log($"RECACHED");
+            foreach (var kv in _cachedPositions)
+            {
+                Debug.Log($"{kv.Key}: {kv.Value}");
+            }
             
             foreach (var agnt in QueuedAgents)
             {
@@ -70,6 +107,11 @@ namespace Game.Citizens.Navigation
             Gizmos.DrawSphere(transform.position, 0.5f);
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, transform.position - transform.forward * 3f);
+        }
+
+        private float WaitingTime(CitizenAgent agent)
+        {
+            return 15f * (1 + (agent.GetHashCode() % 100) / 100f);
         }
     }
 }

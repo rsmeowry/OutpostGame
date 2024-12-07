@@ -9,7 +9,7 @@ namespace UI.Time
     public class TimeSection: MonoBehaviour
     {
         private TMP_Text _descText;
-        private float[] _sliderPositions = new float[4] { 34.5f, 105f, 175.5f, 246f };
+        private float[] _sliderPositions = new float[3] { 35f, 130f, 225f };
         [SerializeField]
         private RectTransform slider;
 

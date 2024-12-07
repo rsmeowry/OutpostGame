@@ -7,6 +7,8 @@ using DG.Tweening.Plugins;
 using External.Storage;
 using External.Util;
 using Game.Building;
+using Game.Citizens.Navigation;
+using Game.Citizens.States;
 using Game.POI;
 using Game.POI.Housing;
 using Game.Production;
@@ -78,6 +80,7 @@ namespace Game.Citizens
                 };
                 var ctz = Instantiate(prefab, transform);
                 ctz.loadedFromData = true;
+                ctz.transform.position = citizen.position.ToVec3();
                 ctz.Inventory = citizen.Inventory.Select(it => (StateKey.FromString(it.Key), it.Value)).ToDictionary(it => it.Item1, it => it.Value);
                 ctz.citizenId = citizen.citizenId;
                 ctz.inventoryCapacity = citizen.baseInventoryCapacity;
@@ -91,6 +94,7 @@ namespace Game.Citizens
                 ctz.Load();
                 Citizens[ctz.citizenId] = ctz;
                 _intermediate[ctz.citizenId] = citizen;
+                
             }
         }
 
@@ -110,7 +114,7 @@ namespace Game.Citizens
                     Awards = new(),
                     Name = "Старпом"
                 });
-                starpom.inventoryCapacity = 4; // cool
+                starpom.inventoryCapacity = 5; // cool
                 SpawnCitizen(pos, new PersistentCitizenData()
                 {
                     Profession = CitizenCaste.Explorer,
@@ -123,6 +127,12 @@ namespace Game.Citizens
                     Awards = new(),
                     Name = CitizenNames.RandomMascName()
                 });
+                SpawnCitizen(pos, new PersistentCitizenData()
+                {
+                    Profession = CitizenCaste.Creator,
+                    Awards = new(),
+                    Name = CitizenNames.RandomFemName()
+                });
             }
             foreach (var citizenKv in Citizens)
             {
@@ -132,12 +142,14 @@ namespace Game.Citizens
 
                 try
                 {
-                    var home = (HousePOI)POIManager.Instance.LoadedPois[dat.BuildingGuid];
+                    var home = POIManager.Instance.LoadedPois[dat.HouseGuid].GetComponent<HousePOI>();
                     citizen.Home = home;
+                    home.Tenants.Add(citizen);
                 }
                 catch (Exception _)
                 {
                     citizen.Home = Houses.FirstOrDefault(it => it.Tenants.Count < it.houseSize);
+                    citizen.Home!.Tenants.Add(citizen);
                 }
                 
                 if (dat.BuildingGuid == Guid.Empty)
@@ -190,9 +202,13 @@ namespace Game.Citizens
             }, transform);
             citizen.citizenId = citizenIdTracker++;
             citizen.PersistentData = data;
+            var portal = POIManager.Instance.LoadedPois.Values.FirstOrDefault(it => it is PortalPOI);
+            var pos = portal == null
+                ? PlayerBaseCenter.Instance.EntrancePos.transform.position
+                : portal.EntrancePos.transform.position;
+            citizen.transform.position = pos;
             citizen.Home = Houses.First(it => it.Tenants.Count < it.houseSize);
             citizen.Home.Tenants.Add(citizen);
-            citizen.transform.position = position;
             Citizens[citizen.citizenId] = citizen;
             return citizen;
         }

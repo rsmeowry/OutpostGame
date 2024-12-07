@@ -36,14 +36,14 @@ namespace Game.State
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                foreach (var k in ProductRegistry.Instance.AllItems())
-                {
-                    IncreaseProduct(k, 100);
-                }
-                IncreaseCurrency(100);
-            }
+            // if (Input.GetKeyDown(KeyCode.G))
+            // {
+            //     foreach (var k in ProductRegistry.Instance.AllItems())
+            //     {
+            //         IncreaseProduct(k, 100);
+            //     }
+            //     IncreaseCurrency(100);
+            // }
         }
 
         private void Start()

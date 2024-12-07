@@ -50,6 +50,8 @@ namespace External.Storage
         {
             if (localToPlayer)
                 relativePath = PlayerDataManager.Instance.playerName + "/" + relativePath;
+            
+            Debug.Log($"ATTEMPTING TO LOAD {relativePath}");
 
             var path = Path.Combine(FilePath, relativePath);
             if (!File.Exists(path))

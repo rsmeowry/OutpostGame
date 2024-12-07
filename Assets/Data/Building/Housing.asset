@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp:Game.Building:BuildingDatabase
   buildings:
   - {fileID: 11400000, guid: b87755f4a17fe1140b74cad30a85ae6e, type: 2}
+  - {fileID: 11400000, guid: ea7fc53d56ea0864794a1b8b60a048da, type: 2}

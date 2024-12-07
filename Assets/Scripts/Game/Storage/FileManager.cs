@@ -1,4 +1,5 @@
 ﻿using System;
+using External.Data;
 using External.Storage;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ namespace Game.Storage
             Instance = this;
 
             Storage = new LocalStorage();
+
+            Preferences.Instance?.Load();
         }
     }
 }

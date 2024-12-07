@@ -17,16 +17,16 @@ MonoBehaviour:
   description: "\u041A\u0440\u0443\u0442\u0438\u0442\u0441\u044F \u0438 \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u043E
     \u0432\u044B\u0440\u0430\u0431\u0430\u0442\u044B\u0432\u0430\u0435\u0442 \u043D\u0435\u0431\u043E\u043B\u044C\u0448\u043E\u0435
     \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E \u044D\u043B\u0435\u043A\u0442\u0440\u043E\u044D\u043D\u0435\u0440\u0433\u0438\u0438"
-  icon: {fileID: 21300000, guid: 3e4a88a57dab00a41804ae68546d485c, type: 3}
+  icon: {fileID: 21300000, guid: 201545eddf682444d95ff1e04af4fc3a, type: 3}
   buildingPrefab: {fileID: 4146471442671592373, guid: 632461970377d2a4b96961b8f912c093, type: 3}
   size: {x: 1, y: 1}
   prominentColor: {r: 0.8867924, g: 0.73485005, b: 0.3890174, a: 1}
   requiresWater: 0
   requirements:
   - key: wood
-    count: 50
+    count: 40
   - key: stone
-    count: 25
+    count: 20
   - key: cog
-    count: 25
+    count: 10
   requiredUpgrade: basic_electricity

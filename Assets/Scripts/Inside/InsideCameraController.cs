@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using External.Util;
+using Game.Citizens;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -83,7 +84,9 @@ namespace Inside
             }
             foreach (var rd in toUnrenderUnits.GetComponentsInChildren<Renderer>())
             {
-                rd.enabled = true;
+                var agent = rd.GetComponentInParent<CitizenAgent>();
+                if(agent.StateMachine.CurrentState != agent.SleepState)
+                    rd.enabled = true;
             }
         }
 

@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using External.Achievement;
 using External.Util;
 using Game.Building;
 using Game.Citizens;
 using Game.Citizens.Navigation;
+using Game.Electricity;
 using Game.POI;
 using Tutorial;
 using UI.POI;
@@ -29,7 +31,7 @@ namespace Game.Production.POI
 
         public List<CitizenAgent> AssignedAgents = new();
 
-        private List<CitizenAgent> _citizensInside = new();
+        protected List<CitizenAgent> CitizensInside = new();
         private Dictionary<int, int> _citizenPos = new();
         private List<bool> _positions;
         [SerializeField]
@@ -73,6 +75,10 @@ namespace Game.Production.POI
                 return false;
             AssignedAgents.Add(agent);
             _isFull = AssignedAgents.Count >= capacity;
+
+            if (AssignedAgents.Count >= 4)
+                AchievementManager.Instance.GiveAchievement(Achievements.ALotOfWork);
+            
             agent.MarkHiredAt(this);
             
             // tutorial
@@ -112,7 +118,7 @@ namespace Game.Production.POI
 
             if (_awaitingArrival.Contains(agent))
             {
-                _citizensInside.Add(agent);
+                CitizensInside.Add(agent);
                 yield return BeginWork(agent, callback);
                 yield break;
             }
@@ -128,22 +134,25 @@ namespace Game.Production.POI
                 yield break; 
             }
             
-            _citizensInside.Add(agent);
+            CitizensInside.Add(agent);
             
             agent.HideSelf();
-            agent.navMeshAgent.enabled = false;
+            agent.navMeshAgent.isStopped = true;
+            // agent.navMeshAgent.enabled = false;
 
             callback(WorkPlaceEnterResult.Accepted);
         }
 
         public bool IsCurrentlyWorking(CitizenAgent agent)
         {
-            return _citizensInside.Contains(agent);
+            return CitizensInside.Contains(agent);
         }
 
         public virtual void Fire(CitizenAgent agent)
         {
             AssignedAgents.Remove(agent);
+            entrancePos?.DequeueIdxd(agent);
+            agent.ShowSelf();
             _isFull = false;
         }
 
@@ -157,12 +166,12 @@ namespace Game.Production.POI
 
         public virtual IEnumerator LeaveWorkPlace(CitizenAgent agent)
         {
-            if (!_citizensInside.Contains(agent))
+            if (!CitizensInside.Contains(agent))
             {
                 yield break;
             }
 
-            _citizensInside.Remove(agent);
+            CitizensInside.Remove(agent);
             if (citizenWorkingPositions.Count > 0)
             {
                 ReleaseSpot(_citizenPos[agent.citizenId]);
@@ -194,20 +203,26 @@ namespace Game.Production.POI
         public abstract void WorkerTick(CitizenAgent agent);
         public override QueuePosition EntrancePos => entrancePos;
 
-        // TODO: OPTIMIZE THIS BULLSHIT
+        private PointOfInterest _gatheringPost;
+
         public virtual PointOfInterest GatheringPost
         {
             get
             {
-                var results = new Collider[10];
-                Physics.OverlapSphereNonAlloc(transform.position, 25f, results);
-                var firstPost = results.Where(it => it != null && it.gameObject.TryGetComponent(out GatheringPost post))
-                    .OrderBy(it => (it.transform.position - transform.position).sqrMagnitude).FirstOrDefault();
-                Debug.Log($"FOUND GATHERING POST: {firstPost}");
-                if (firstPost == null)
-                    return PlayerBaseCenter.Instance;
-                return firstPost.GetComponent<GatheringPost>();
+                if(_gatheringPost == null)
+                    RecalculateNearestGatheringPost();
+                return _gatheringPost;
             }
+        }
+
+        public void RecalculateNearestGatheringPost()
+        {
+            var loadedPoi = POIManager.Instance.LoadedPois.Values
+                .Where(it => it is GatheringPost)
+                .OrderBy(it => (it.EntrancePos.transform.position - transform.position).sqrMagnitude)
+                .FirstOrDefault();
+            var p = loadedPoi == null ? PlayerBaseCenter.Instance : loadedPoi;
+            _gatheringPost = p;
         }
 
         public override SerializedPOIData Serialize()

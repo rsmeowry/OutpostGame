@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using DG.Tweening;
+using External.Util;
+using Game.Controllers;
 using UI.BottomRow;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,7 +30,9 @@ namespace Inside
 
         public IEnumerator SwitchToLocal()
         {
-            yield return black.DOFade(1f, 0.3f).Play().WaitForCompletion();
+            yield return TownCameraController.Instance.StateMachine.SwitchState(TownCameraController.Instance
+                .FreeMoveState); 
+            
             GC.Collect();
             yield return BottomRowCtl.Instance.HideTopRow();
         }

@@ -11,7 +11,8 @@ namespace Game.Production.POI
         {
             if (ShouldSubtick(agent, 3))
             {
-                agent.Inventory.Increment(ProductRegistry.Honey); 
+                var amount = ApplyProductivityBonus(1, Upgrades.Upgrades.Forestry);
+                agent.Inventory.Increment(ProductRegistry.Honey, amount);
             }
             
             // SoundManager.Instance.PlaySoundAt(SoundBank.Instance.GetSound("citizen.axe"), agent.transform.position);

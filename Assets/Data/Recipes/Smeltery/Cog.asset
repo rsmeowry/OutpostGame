@@ -20,4 +20,4 @@ MonoBehaviour:
     count: 2
   - item: copper_ingot
     count: 2
-  waterRequirements: 5
+  waterRequirements: 0

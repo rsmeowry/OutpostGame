@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using DG.Tweening;
+using Game.Building;
 using Game.Citizens;
 using Game.Production.POI;
+using Game.Sound;
 using TMPro;
 using UI.Util;
 using UnityEngine;
@@ -28,8 +30,16 @@ namespace UI.POI
             _buttonAdd = transform.GetChild(2).GetComponent<Button>();
             _professionName = transform.GetChild(3).GetComponent<TMP_Text>();
             
-            _buttonAdd.onClick.AddListener(() => parent.AssignCitizen(caste));
-            _buttonRemove.onClick.AddListener(() => parent.RemoveCitizen(caste));
+            _buttonAdd.onClick.AddListener(() =>
+            {
+                SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("ui.hire_citizen"), 0.8f);
+                parent.AssignCitizen(caste);
+            });
+            _buttonRemove.onClick.AddListener(() =>
+            {
+                SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("ui.fire_citizen"), 0.8f);
+                parent.RemoveCitizen(caste);
+            });
         }
 
         private Tween _tween;

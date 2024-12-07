@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using External.Data;
+using Game.Sound;
 using Game.State;
+using Game.Tasks;
 using Game.Upgrades;
 using TMPro;
 using UnityEngine;
@@ -48,12 +50,12 @@ namespace UI.Interior.Upgrades
             if (UpgradeTreeManager.Instance.ShouldBeShown(data))
             {
                 hideImage.enabled = false;
-                hideImage.GetComponentInChildren<Image>().enabled = false;
+                hideImage.transform.GetChild(0).GetComponent<Image>().enabled = false;
             }
             else
             {
                 hideImage.enabled = true;
-                hideImage.GetComponentInChildren<Image>().enabled = true;
+                hideImage.transform.GetChild(0).GetComponent<Image>().enabled = true;
             }
 
             var hasUpg = UpgradeTreeManager.Instance.Has(_key);
@@ -67,6 +69,8 @@ namespace UI.Interior.Upgrades
             obtainButton.onClick.AddListener(() =>
             {
                 ((RectTransform)transform).DOShakeAnchorPos(0.1f, 20f).Play();
+                SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("ui.upgrade"), 0.8f);
+                hideImage.transform.GetChild(0).GetComponent<Image>().enabled = false;
                 UpgradeTreeManager.Instance.UnlockUpgrade(data);
             });
         }
@@ -76,7 +80,7 @@ namespace UI.Interior.Upgrades
             if (UpgradeTreeManager.Instance.ShouldBeShown(data))
             {
                 hideImage.enabled = false;
-                hideImage.GetComponentInChildren<Image>().enabled = false;
+                hideImage.transform.GetChild(0).GetComponent<Image>().enabled = false;
                 
                 var count = UpgradeTreeManager.Instance.Upgrades.GetValueOrDefault(_key, 0);
                 var cntTxt = count == 0 ? "" : count.ToString();

@@ -365,6 +365,7 @@ GameObject:
   - component: {fileID: 6791752013491024390}
   - component: {fileID: 3855507767774202042}
   - component: {fileID: 8742993183074908628}
+  - component: {fileID: 6110674599976342190}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Untagged
@@ -487,6 +488,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de53273b7f5d46688c81df0a1b10a456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6110674599976342190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4878065287673466664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b3118f8843c45bd9fffea95553d96ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundEvent: ui.click
+  pitchRange: {x: 1, y: 1}
 --- !u!1 &5647971722715772278
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,7 +640,7 @@ MonoBehaviour:
   electricityStatsPrefab: {fileID: 8113954210026552558, guid: f35b2ca3f1224864a8e50169ab092ad2, type: 3}
   electricityProdPrefab: {fileID: 2894499303370238197, guid: ba6155524f55e534eb6ff669599b9e40, type: 3}
   electricityConsPrefab: {fileID: 5089372215468909808, guid: 840a9662eeb861b4bb6d91c2ac4d8da1, type: 3}
-  recipeSelectorPrefab: {fileID: 5442721486456685982, guid: 37d10c06b5d001a489dfd067fd0d2eae, type: 3}
+  recipeSelectorPrefab: {fileID: 2289985865080316638, guid: 543ee83b804a34e4c835d4a2e80b886b, type: 3}
   liquidStatsPrefab: {fileID: 1290888436961735038, guid: 0f881a318672aef4193776cc36f0d98f, type: 3}
   tenantsViewPrefab: {fileID: 6199426533489540469, guid: c7f8d4d5fc9a3314fb55b4d0093cc69a, type: 3}
   screenshottingPrefab: {fileID: 2284585764497984938, guid: 6697df1b23004dc4492e42a6394fd5f3, type: 3}

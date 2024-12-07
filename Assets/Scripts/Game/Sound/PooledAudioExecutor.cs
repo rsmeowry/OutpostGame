@@ -77,7 +77,10 @@ namespace Game.Sound
 
         public void PlayResourceAt(AudioResource res, Vector3 position)
         {
-            var listener = Camera.main!.transform.position;
+            var mainCam = Camera.main;
+            if (mainCam?.transform.position == null)
+                return;
+            var listener = mainCam.transform.position;
             if ((listener - position).sqrMagnitude > _audioCutoffSqr)
                 return;
 

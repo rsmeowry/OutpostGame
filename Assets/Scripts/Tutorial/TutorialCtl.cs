@@ -110,7 +110,7 @@ namespace Tutorial
                 modal.Hide();
                 this.Delayed(1.5f, () =>
                 {
-                    AchievementManager.Instance.GiveAchievement("Полная готовность!", "Завершите обучение", StateKey.FromString("complete_tutorial"));
+                    AchievementManager.Instance.GiveAchievement(Achievements.Tutorial);
                     Destroy(modal.gameObject);
                 });
                 return;

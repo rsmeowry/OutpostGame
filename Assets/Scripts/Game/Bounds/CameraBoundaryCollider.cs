@@ -8,6 +8,14 @@ namespace Game.Bounds
 {
     public class CameraBoundaryCollider: MonoBehaviour
     {
+        private void Start()
+        {
+            var bx = GetComponent<BoxCollider>();
+            var sz = bx.size;
+            sz.y = 500;
+            bx.size = sz;
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (!other.CompareTag("Camera"))

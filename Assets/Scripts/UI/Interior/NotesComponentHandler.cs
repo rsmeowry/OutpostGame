@@ -1,8 +1,10 @@
 ﻿using System;
 using DG.Tweening;
 using External.Data;
+using Game.Sound;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace UI.Interior
 {
@@ -32,6 +34,7 @@ namespace UI.Interior
                 _shaker?.Kill();
                 rect.pivot = staticPivot;
                 _shaker = rect.DOShakeAnchorPos(0.1f, strength: shakeIntensity).Play();
+                SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("ui.keyboard"), 0.6f, Random.Range(0.8f, 1.2f));
             });
         }
     }

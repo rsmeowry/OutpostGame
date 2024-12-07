@@ -5,6 +5,7 @@ using Game.Production.Products;
 using Game.Sound;
 using Game.State;
 using Game.Stocks;
+using Game.Tasks;
 using Game.Upgrades;
 using UI.Util;
 using UnityEngine;
@@ -26,9 +27,7 @@ namespace UI.Interior.Stocks
         private string _productName;
 
         private bool _hasExpFromSelling;
-
-        private Lazy<AudioClip> clip = new();
-
+        
         private void Start()
         {
             UpgradeTreeManager.Instance.Has(Game.Upgrades.Upgrades.ExpFromSelling);
@@ -64,7 +63,7 @@ namespace UI.Interior.Stocks
         private void RecalculatePossibilities()
         {
             var market = StockManager.Instance.Markets[0];
-            var receipt = market.Sell(parent.Item, sellAmount);
+            var receipt = market.Sell(parent.Item, _itemCount > 0 ? _itemCount : sellAmount);
             _estimatedProfit = receipt.TotalProfit;
             _self.interactable = sellAmount == -1 ? _itemCount > 0 : _itemCount >= sellAmount;
         }
@@ -81,8 +80,7 @@ namespace UI.Interior.Stocks
                 MiscSavedData.Instance.Data.Experience += 100;
             market.DoSell(receipt);
             
-            SoundManager.Instance.PlaySound2D(clip.Value, 0.5f);
-            
+            SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("shop.purchase"), 0.5f);
             GameStateManager.Instance.ChangeCurrency(receipt.TotalProfit,
                 $"Sold {receipt.SoldCount} items of type {receipt.Item.Formatted()}",
                 receipt.SoldCount >= 50);

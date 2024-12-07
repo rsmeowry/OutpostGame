@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Deco
   m_EditorClassIdentifier: Assembly-CSharp:Game.Building:BuildingDatabase
   buildings:
-  - {fileID: 11400000, guid: 7cea0bac8bb639f4790e8bedffe32256, type: 2}
-  - {fileID: 11400000, guid: 7cea0bac8bb639f4790e8bedffe32256, type: 2}
+  - {fileID: 11400000, guid: cb31f58d7931c24419ad0642fc2db871, type: 2}
+  - {fileID: 11400000, guid: a204e0b806e5b3c41b13a49e8b149ca8, type: 2}
   - {fileID: 11400000, guid: 7cea0bac8bb639f4790e8bedffe32256, type: 2}

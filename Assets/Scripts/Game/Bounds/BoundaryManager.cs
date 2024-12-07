@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Game.Tick;
+using UnityEngine;
 
 namespace Game.Bounds
 {

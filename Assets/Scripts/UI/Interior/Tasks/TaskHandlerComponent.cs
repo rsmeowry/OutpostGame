@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Game.Production.Products;
+using Game.Sound;
 using Game.State;
 using Game.Tasks;
 using TMPro;
@@ -60,6 +61,7 @@ namespace UI.Interior.Tasks
             sendButton.onClick.AddListener(() =>
             {
                 TaskManager.Instance.CompleteTask();
+                SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("ui.mouse_click"), 0.8f);
                 var window = transform.parent.parent.GetComponent<PCWindowDisplay>();
                 window.ShowLoading("GALACTION - Поиск заданий", window.taskPrefab, _ => { });
             });

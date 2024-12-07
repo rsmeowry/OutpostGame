@@ -10,10 +10,13 @@ namespace External.Data
         public static Preferences Instance { get; private set; }
         public SerializedPreferences Prefs { get; private set; }
 
-        public void Awake()
+        private void Awake()
         {
             Instance = this;
-            
+        }
+
+        public void Load()
+        {
             ReadSaved();
         }
 
@@ -24,15 +27,26 @@ namespace External.Data
                 Prefs = new SerializedPreferences()
                 {
                     ShadowDistanceLevel = 5,
+                    GrassBlendLevel = 5,
+                    MusicVolume = 10,
+                    SoundVolume = 10f,
+                    LastPlayerName = "Джон",
+                    ResWidth = Screen.currentResolution.width,
+                    ResHeight = Screen.currentResolution.height
                 };
                 return;
             }
 
             Prefs = JsonConvert.DeserializeObject<SerializedPreferences>(FileManager.Instance.Storage.ReadFile("prefs.json"));
         }
+
+        public void Save()
+        {
+            FileManager.Instance.Storage.SaveString("prefs.json", JsonConvert.SerializeObject(Prefs));
+        }
     }
 
-    public struct SerializedPreferences
+    public class SerializedPreferences
     {
         [JsonProperty("noSkybox")]
         public bool NoSkybox;
@@ -45,6 +59,16 @@ namespace External.Data
         [JsonProperty("disableStylizedShading")]
         public bool DisableToonShading;
         [JsonProperty("grassBlendLevel")]
-        public int GrassBlendLevel;
+        public int GrassBlendLevel = 5;
+        [JsonProperty("musicVolume")]
+        public float MusicVolume = 8;
+        [JsonProperty("soundVolume")]
+        public float SoundVolume = 8;
+        [JsonProperty("lastPlayerName")]
+        public string LastPlayerName = "Джон";
+        [JsonProperty("resWidth")]
+        public int ResWidth = 1920;
+        [JsonProperty("resHeight")]
+        public int ResHeight = 1080;
     }
 }

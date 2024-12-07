@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Game.Production.Products;
+using Game.Sound;
 using Game.State;
 using Game.Stocks;
 using TMPro;
@@ -56,6 +57,7 @@ namespace UI.Interior.Stocks
         public void OnPointerClick(PointerEventData eventData)
         {
             TooltipCtl.Instance.Hide();
+            SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("ui.mouse_click"), 0.8f);
             window.ShowLoading($"GALACTION - '{_itemName}'", nextPrefab.gameObject, obj => obj.GetComponent<StocksGraphRenderer>().Item = Item);
         }
     }

@@ -1,6 +1,8 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using UI.POI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI {
     public class UIManager: MonoBehaviour
@@ -9,11 +11,20 @@ namespace UI {
 
         public PanelViewPOI prefabInspectPoi;
 
+        [SerializeField]
+        private Image black;
+
         public void Awake()
         {
             Instance = this;
         }
-        
+
+        private void Start()
+        {
+            black.color = Color.black;
+            black.DOFade(0f, 1f).Play();
+        }
+
         private bool _openingView;
         private bool _closingView;
         private Tween _panelTween;
@@ -41,6 +52,12 @@ namespace UI {
             _panelTween?.Kill();
             if (_activePanel == null)
                 return;
+            var lc = transform.GetChild(transform.childCount - 1);
+            if(lc.name.Contains("Recipe"))
+                lc.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).OnComplete(() =>
+                {
+                    Destroy(lc.gameObject);
+                }).Play();
             var rect = (RectTransform) _activePanel.transform;
             rect.DOScale(Vector3.zero, 0.4f).SetEase(Ease.InBack).OnComplete(() =>
             {
@@ -48,6 +65,7 @@ namespace UI {
                 Destroy(_activePanel.gameObject);
                 _activePanel = null;
             }).Play();
+            
         }
     }
 }

@@ -30,7 +30,8 @@ namespace Game.Controllers.States
         public override IEnumerator EnterState()
         {
             BottomRowCtl.Instance.StartCoroutine(BottomRowCtl.Instance.HideTopRow());
-            yield return DoFocus();
+            CameraController.StartCoroutine(DoFocus());
+            yield break;
         }
 
         private float _animTime = 0.8f;

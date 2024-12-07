@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Game.Production;
+using UI.POI;
 using UnityEngine;
 
 namespace Game.Citizens.States
@@ -28,13 +29,14 @@ namespace Game.Citizens.States
                     case WorkPlaceEnterResult.Accepted:
                         Agent.navMeshAgent.enabled = true;
                         Agent.navMeshAgent.isStopped = true;
-                        Agent.navMeshAgent.enabled = false;
+                        // Agent.navMeshAgent.enabled = false;
                         break;
                     case WorkPlaceEnterResult.Declined:
                         Agent.navMeshAgent.enabled = true;
                         Agent.Order(Agent.WanderState);
                         break;
                     case WorkPlaceEnterResult.NeedToMoveToSpot:
+                        Agent.navMeshAgent.enabled = true;
                         Agent.StartCoroutine(StateMachine.ChangeState(Agent.MoveToWorkSpotState));
                         break;
                     default:

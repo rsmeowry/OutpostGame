@@ -1,7 +1,12 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using Game.Building;
+using Game.Production.Products;
+using Game.State;
 using Tutorial;
 using UI.BottomRow;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Game.Controllers.States
 {
@@ -104,9 +109,9 @@ namespace Game.Controllers.States
             _nextPos += CameraController.transform.forward * axisVert + CameraController.transform.right * axisHorizontal;
 
             if (Input.GetKey(KeyCode.Q))
-                _nextRot *= Quaternion.Euler(1.5f * CameraController.rotationSpeed * Vector3.up);
-            else if(Input.GetKey(KeyCode.E))
                 _nextRot *= Quaternion.Euler(1.5f * -CameraController.rotationSpeed * Vector3.up);
+            else if(Input.GetKey(KeyCode.E))
+                _nextRot *= Quaternion.Euler(1.5f * CameraController.rotationSpeed * Vector3.up);
 
             if (Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus))
                 _nextZoom += new Vector3(0f, CameraController.zoomSpeed, -CameraController.zoomSpeed);

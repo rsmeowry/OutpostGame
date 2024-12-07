@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Game.Network;
 using Game.Storage;
 using Game.Upgrades;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Tutorial;
 using UnityEngine;
 
 namespace External.Data
@@ -16,6 +18,7 @@ namespace External.Data
         private void Awake()
         {
             Instance = this;
+            // TutorialCtl
             Load();
         }
 
@@ -43,17 +46,17 @@ namespace External.Data
         }
     }
 
-    public struct MiscData
+    public class MiscData
     {
         [JsonProperty("exp")]
-        public int Experience;
+        public int Experience = 0;
         [JsonProperty("achievements")]
-        public List<string> Achievements;
+        public List<string> Achievements = new();
         [JsonProperty("notes")]
-        public string NotesData;
+        public string NotesData = "";
         [JsonProperty]
-        public List<UnlockedUpgrade> UnlockedUpgrades;
+        public List<UnlockedUpgrade> UnlockedUpgrades = new();
         [JsonProperty("tutorialStep")]
-        public int TutorialStep;
+        public int TutorialStep = 0;
     }
 }

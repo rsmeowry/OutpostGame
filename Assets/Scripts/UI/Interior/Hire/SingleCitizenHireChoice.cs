@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Game.Citizens;
 using Game.Production.Products;
+using Game.Sound;
 using Game.State;
 using TMPro;
 using UI.Util;
@@ -150,6 +151,7 @@ namespace UI.Interior.Hire
                     ToastManager.Instance.ShowToast("Недостаточно жилых мест! Постройте дом");
                     return;
                 }
+                SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("ui.invite_citizen"), 0.8f);
                 hireButton.interactable = false;
                 CareerManager.Instance.Hire(Offer);
             });

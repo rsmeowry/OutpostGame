@@ -17,8 +17,8 @@ MonoBehaviour:
   description: "\u0414\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E \u043C\u0430\u043B\u0435\u043D\u044C\u043A\u0438\u0439
     \u0434\u043E\u043C. \u0412 \u043D\u0435\u043C \u043F\u043E\u043C\u0435\u0441\u0442\u044F\u0442\u0441\u044F
     \u0442\u0440\u0438 \u043C\u0435\u0434\u0432\u0435\u0434\u044F"
-  icon: {fileID: 21300000, guid: ea8b5628170430b44b8cbb793f4de792, type: 3}
-  buildingPrefab: {fileID: 82418600452480196, guid: 5474df0d4b2bc0842a16eccaf1254cae, type: 3}
+  icon: {fileID: 21300000, guid: aadadc81e37fc1c40af65fd156adeca5, type: 3}
+  buildingPrefab: {fileID: 2300748327789878520, guid: 5474df0d4b2bc0842a16eccaf1254cae, type: 3}
   size: {x: 1, y: 1}
   prominentColor: {r: 0.5377358, g: 0.46115378, b: 0.23589353, a: 1}
   requiresWater: 0

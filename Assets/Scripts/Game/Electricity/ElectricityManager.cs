@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Game.POI.Electricity;
+using Game.Upgrades;
 using UnityEngine;
 
 namespace Game.Electricity
@@ -41,9 +42,11 @@ namespace Game.Electricity
                 maxCons += cons.MaxConsumption;
             }
 
+            var modifier =
+                UpgradeTreeManager.Instance.Upgrades.GetValueOrDefault(Upgrades.Upgrades.EnergyEfficiency);
             foreach (var prod in _producers)
             {
-                maxProd += prod.MaxProduction;
+                maxProd += prod.MaxProduction * (1 + modifier * 0.1f);
             }
 
             return new ElectricityStatistics
@@ -85,10 +88,12 @@ namespace Game.Electricity
         {
             if (Time.time - _lastTick >= 1)
             {
+                var modifier =
+                    1 + UpgradeTreeManager.Instance.Upgrades.GetValueOrDefault(Upgrades.Upgrades.EnergyEfficiency) * 0.1f;
                 _availablePower = 0f;
                 foreach (var prod in _producers)
                 {
-                    _availablePower += prod.ProductionTick();
+                    _availablePower += prod.ProductionTick() * modifier;
                 }
 
                 _lastTick = Time.time;

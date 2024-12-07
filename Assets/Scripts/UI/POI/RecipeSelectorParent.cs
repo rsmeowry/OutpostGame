@@ -16,7 +16,7 @@ namespace UI.POI
 
         public void Start()
         {
-            var choiceContainer = transform.GetChild(1);
+            var choiceContainer = transform;
             foreach (var rec in RecipeContainer.PossibleRecipes)
             {
                 var single = Instantiate(singlePrefab, choiceContainer);

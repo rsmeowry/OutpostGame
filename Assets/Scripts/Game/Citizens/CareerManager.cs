@@ -23,7 +23,7 @@ namespace Game.Citizens
 
         public UnityEvent onOffersUpdated = new();
 
-        private float[] resourceModifier = new[] { 0.5f, 0.8f, 1f, 1.5f, 2.5f, 2.6f, 3f, 3.1f, 4.5f, 6f, 8f, 9f, 11f, 12f, 12.1f, 12.4f, 11f, 15f, 20f, 30f, 35f, 40f, 50f };
+        private readonly float[] _resourceModifier = { 0.5f, 0.8f, 0.9f, 0.9f, 0.9f, 0.9f, 0.9f, 0.9f, 1f, 1f, 1f, 1f, 1f, 1f, 1.5f, 2.5f, 2.6f, 3f, 3.1f, 4.5f, 6f, 8f, 9f, 11f, 12f, 12.1f, 12.4f, 11f, 15f, 20f, 30f, 35f, 40f, 50f };
 
         private void Awake()
         {
@@ -61,37 +61,88 @@ namespace Game.Citizens
             _busyUpdating = true;
             CareerOffers.Clear();
             
-            var resModifier = DayCycleManager.Instance.days > resourceModifier.Length
+            var resModifier = DayCycleManager.Instance.days > _resourceModifier.Length
                 ? 120f
-                : resourceModifier[DayCycleManager.Instance.days];
+                : _resourceModifier[DayCycleManager.Instance.days];
             var possibleResources = new List<StateKey>();
             var minResourceCount = 1;
             var maxResourceCount = 1;
-            possibleResources.AddRange(new[] { ProductRegistry.Stone, ProductRegistry.CopperOre, ProductRegistry.Honey, ProductRegistry.Wood, ProductRegistry.IronOre });
-            if (DayCycleManager.Instance.days > 1)
+
+            var citizenCount = CitizenManager.Instance.Citizens.Count;
+            if (citizenCount < 9)
             {
-                // if we are on day 2+
+                possibleResources.AddRange(new[] { ProductRegistry.Honey, ProductRegistry.Wood});
+
+                if (DayCycleManager.Instance.days > 1)
+                {
+                    possibleResources.AddRange(new[] { ProductRegistry.Stone, ProductRegistry.CopperOre, ProductRegistry.IronOre });
+                }
+                
+                var offrCount = UpgradeTreeManager.Instance.Has(Upgrades.Upgrades.AnotherHireSlot) ? 3 : 2;
+                for (var i = 0; i < offrCount; i++)
+                {
+                    var offer = new CareerOffer
+                    {
+                        CitizenData = new PersistentCitizenData
+                        {
+                            Awards = new List<string>(),
+                            Name = Rng.Bool() ? CitizenNames.RandomFemName() : CitizenNames.RandomMascName(),
+                            Profession = CitizenNames.RandomCaste()
+                        },
+                        CurrencyRequest = Mathf.RoundToInt(Random.Range(35, 70) * resModifier)
+                    };
+                    var projectedResources = Random.Range(minResourceCount, maxResourceCount);
+                    var res = new Dictionary<StateKey, int>();
+                    for (var j = 0; j < projectedResources; j++)
+                    {
+                        res[Rng.Choice(possibleResources)] = Mathf.RoundToInt(Random.Range(6, 24) * resModifier);
+                    }
+
+                    offer.ResourceRequest = res;
+                    CareerOffers.Add(offer);
+                }
+            
+                onOffersUpdated.Invoke();
+                _busyUpdating = false;
+                return;
+            }
+
+            var citizenCountCoeff = Mathf.Sqrt(0.03f * citizenCount);
+            resModifier *= citizenCountCoeff;
+            
+            possibleResources.AddRange(new[] { ProductRegistry.Stone, ProductRegistry.CopperOre, ProductRegistry.Honey, ProductRegistry.Wood, ProductRegistry.IronOre });
+            if (DayCycleManager.Instance.days > 7)
+            {
+                // if we are on day 4+
                 possibleResources.AddRange(new[] { ProductRegistry.IronPlate, ProductRegistry.Bricks, ProductRegistry.CopperIngot });
             }
 
-            if (DayCycleManager.Instance.days > 2)
+            if (DayCycleManager.Instance.days > 8)
             {
-                // if we are on day 3+
+                // if we are on day 5+
                 possibleResources.AddRange(new[] { ProductRegistry.IronPlate, ProductRegistry.Bricks, ProductRegistry.CopperIngot, ProductRegistry.CopperWires });
+            }
+
+            if (DayCycleManager.Instance.days > 11)
+            {
                 maxResourceCount = 2;
             }
 
-            if (DayCycleManager.Instance.days > 3)
+            if (DayCycleManager.Instance.days > 15)
             {
-                // day 4+
+                // day 6+
                 possibleResources.AddRange(new[] { ProductRegistry.Cog, ProductRegistry.IronBars });
             }
 
-            if (DayCycleManager.Instance.days > 4)
+            if (DayCycleManager.Instance.days > 20)
             {
-                // day 5+
-                possibleResources.AddRange(new[] { ProductRegistry.Steel, ProductRegistry.Concrete });
                 minResourceCount = 2;
+            }
+
+            if (DayCycleManager.Instance.days > 23)
+            {
+                // day 11+
+                possibleResources.AddRange(new[] { ProductRegistry.Steel, ProductRegistry.Concrete });
             }
             
             // TODO: dynamic amount of citizens
@@ -100,19 +151,19 @@ namespace Game.Citizens
             {
                 var offer = new CareerOffer
                 {
-                    CitizenData = new PersistentCitizenData()
+                    CitizenData = new PersistentCitizenData
                     {
                         Awards = new List<string>(),
                         Name = Rng.Bool() ? CitizenNames.RandomFemName() : CitizenNames.RandomMascName(),
                         Profession = CitizenNames.RandomCaste()
                     },
-                    CurrencyRequest = Mathf.RoundToInt(Random.Range(50, 80) * resModifier)
+                    CurrencyRequest = Mathf.RoundToInt(Random.Range(35, 70) * resModifier)
                 };
                 var projectedResources = Random.Range(minResourceCount, maxResourceCount);
                 var res = new Dictionary<StateKey, int>();
                 for (var j = 0; j < projectedResources; j++)
                 {
-                    res[Rng.Choice(possibleResources)] = Mathf.RoundToInt(Random.Range(10, 30) * resModifier);
+                    res[Rng.Choice(possibleResources)] = Mathf.RoundToInt(Random.Range(6, 24) * resModifier);
                 }
 
                 offer.ResourceRequest = res;

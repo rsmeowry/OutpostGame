@@ -2,6 +2,7 @@
 using External.Util;
 using Game.Bounds;
 using Game.Building;
+using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.POI.Deco;
 using UI.POI;
@@ -11,10 +12,10 @@ namespace Game.POI.Exploration
 {
     public class ViewpointPOI: PointOfInterest
     {
-        public override string PoiDesc => "Расширяет границы карты";
+        public override string PoiDesc => data.description;
 
         public override QueuePosition EntrancePos => null;
-
+        
         public override void OnBuilt()
         {
             BoundaryManager.Instance.ExpandBoundaries(transform.position);
@@ -22,7 +23,6 @@ namespace Game.POI.Exploration
 
         protected override void LoadForInspect(PanelViewPOI panel)
         {
-            
         }
 
         public override SerializedPOIData Serialize()

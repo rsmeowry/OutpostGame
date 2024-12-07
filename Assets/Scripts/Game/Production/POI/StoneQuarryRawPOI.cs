@@ -3,6 +3,7 @@ using External.Util;
 using Game.Citizens;
 using Game.Production.Products;
 using Game.Sound;
+using Game.Tasks;
 using UI.POI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,7 +16,8 @@ namespace Game.Production.POI
         {
             if (ShouldSubtick(agent, 3))
             {
-                agent.Inventory.Increment(ProductRegistry.Stone); 
+                var amount = ApplyProductivityBonus(1, Upgrades.Upgrades.Geology);
+                agent.Inventory.Increment(ProductRegistry.Stone, amount);
             }
             SoundManager.Instance.PlaySoundAt(SoundBank.Instance.GetSound("citizen.pickaxe"), agent.transform.position, 0.1f, Random.Range(0.8f, 1.2f));
         }

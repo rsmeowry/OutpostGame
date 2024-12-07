@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DG.Tweening;
 using Game.Electricity;
 using Game.POI;
 using Game.POI.Housing;
@@ -114,16 +115,18 @@ namespace UI.POI
         {
             var req = Instantiate(electricityConsPrefab, transform);
             req.transform.SetSiblingIndex(transform.childCount - 2);
-
+            
             req.Consumer = poi.GetComponent<IElectricityConsumer>();
         }
 
         public void AddRecipeSelector()
         {
-            var rec = Instantiate(recipeSelectorPrefab, transform);
-            rec.transform.SetSiblingIndex(transform.childCount - 2);
+            var rec = Instantiate(recipeSelectorPrefab, transform.parent);
+            // rec.transform.SetSiblingIndex(transform.childCount - 2);
             
             rec.RecipeContainer = poi.GetComponent<IRecipeContainer>();
+            rec.transform.localScale = Vector3.zero;
+            rec.transform.DOScale(Vector3.one, 0.35f).SetEase(Ease.OutBack).Play();
         }
 
         public void AddLiquidStats()

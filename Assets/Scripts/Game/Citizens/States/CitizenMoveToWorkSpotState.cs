@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Game.POI;
 using UnityEngine;
 
 namespace Game.Citizens.States

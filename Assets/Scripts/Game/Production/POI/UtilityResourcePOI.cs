@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using External.Util;
 using Game.Citizens;
+using Game.State;
+using Game.Upgrades;
+using UnityEngine;
 
 namespace Game.Production.POI
 {
@@ -10,6 +13,15 @@ namespace Game.Production.POI
         private Dictionary<int, int> _ticks = new();
 
         public override string PoiDesc => data.description;
+
+        protected int ApplyProductivityBonus(int baseAmount, StateKey upgradeKey)
+        {
+            var amount = UpgradeTreeManager.Instance.Upgrades.GetValueOrDefault(upgradeKey, 0) * 25;
+            var modifier = amount / 100f;
+            var guaranteed = baseAmount * Mathf.FloorToInt(modifier);
+            var additionalBonus = Random.Range(0f, 1f) < modifier ? baseAmount : 0;
+            return baseAmount + guaranteed + additionalBonus;
+        }
 
         protected bool ShouldSubtick(CitizenAgent agent, int subtickCount)
         {

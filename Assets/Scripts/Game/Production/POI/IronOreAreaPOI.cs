@@ -15,7 +15,8 @@ namespace Game.Production.POI
         {
             if (ShouldSubtick(agent, 4))
             {
-                agent.Inventory.Increment(ProductRegistry.IronOre);
+                var amount = ApplyProductivityBonus(1, Upgrades.Upgrades.Geology);
+                agent.Inventory.Increment(ProductRegistry.IronOre, amount);
             }
 
             SoundManager.Instance.PlaySoundAt(SoundBank.Instance.GetSound("citizen.pickaxe"), agent.transform.position,

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using External.Util;
+using Game.Controllers.States;
 using Game.DayNight;
 using Game.Network;
 using Game.News;
@@ -14,6 +15,7 @@ using Game.Storage;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
 namespace Game.Stocks
@@ -55,7 +57,6 @@ namespace Game.Stocks
                 if (shouldSoar)
                 {
                     var soarAmount = 1 + Random.Range(0.7f, 1.9f);
-                    Debug.Log("TRIGGERING MARKET SOAR");
                     ImpendingDoom(new MarketSoar
                     {
                         Item = randomItem,
@@ -65,7 +66,6 @@ namespace Game.Stocks
                 else
                 {
                     var crashAmount = 1 + Random.Range(0.6f, 0.9f);
-                    Debug.Log("TRIGGERING MARKET CRASH");
                     ImpendingDoom(new MarketCrash
                     {
                         Item = randomItem,
@@ -349,8 +349,8 @@ namespace Game.Stocks
                     Offers[k].BuyPrice = v.SellPrice * 1.5f;
                 }
 
-                Offers[k].BuyPrice = Mathf.Min(buyCap, v.BuyPrice);
-                Offers[k].SellPrice = Mathf.Min(sellCap, v.SellPrice);
+                Offers[k].BuyPrice = Mathf.Clamp(v.BuyPrice, Offers[k].SellPrice * 0.25f, buyCap);
+                Offers[k].SellPrice = Mathf.Clamp(v.SellPrice,  Offers[k].BuyPrice * 0.25f, sellCap);
             }
         }
 

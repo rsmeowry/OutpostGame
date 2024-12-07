@@ -83,6 +83,8 @@ namespace Game.POI
         {
             if (eventData.button != PointerEventData.InputButton.Left)
                 return;
+            if (TownCameraController.Instance.StateMachine.CurrentState != TownCameraController.Instance.FreeMoveState)
+                return;
             // var list = new List<RaycastResult>();
             // EventSystem.current.RaycastAll(eventData, list);
             StartCoroutine(DoClick());

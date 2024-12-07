@@ -2,6 +2,7 @@
 using External.Util;
 using Game.POI;
 using Game.Production;
+using Game.Tasks;
 using UnityEngine;
 
 namespace Game.Citizens.States
@@ -17,13 +18,13 @@ namespace Game.Citizens.States
         }
 
         private PointOfInterest _gatheringPost;
-
+        private float _enterTime;
         public override IEnumerator EnterState()
         {
+            _enterTime = Time.time;
             _gatheringPost = Agent.WorkPlace.GatheringPost;
             if (Agent.ProductDepositer == null)
                 Agent.ProductDepositer = (IProductDepositer) _gatheringPost;
-            Debug.Log($"ENTERING STATE: {_gatheringPost}");
             Agent.navMeshAgent.enabled = true;
             Agent.navMeshAgent.SetDestination(_gatheringPost.EntrancePos.GetSelfPosition(Agent));
             
@@ -42,7 +43,7 @@ namespace Game.Citizens.States
 
         public override void FrameUpdate()
         {
-            if (_gatheringPost.EntrancePos.DoesAccept(Agent))
+            if (_gatheringPost.EntrancePos.DoesAccept(Agent) || Time.time - _enterTime > 50f)
             {
                 DoTick = false;
                 Agent.SetAnimatorTrigger(DoPlaceBox);

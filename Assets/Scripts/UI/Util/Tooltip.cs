@@ -14,8 +14,6 @@ namespace UI.Util
         public TMP_Text header;
         [SerializeField]
         public TMP_Text body;
-        [SerializeField]
-        private int characterWrapLimit = 80;
         
         private LayoutElement _layout;
         private Image _img;

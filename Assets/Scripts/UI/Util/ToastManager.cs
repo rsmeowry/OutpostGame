@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using External.Util;
+using Game.Citizens.Navigation;
+using Game.Sound;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace UI.Util
 {
@@ -46,6 +49,9 @@ namespace UI.Util
             if (_toastCount > 4)
                 return;
             _toastCount++;
+            
+            SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("ui.notification"), 0.6f, Random.Range(0.8f, 1.2f));
+
             
             var parentToast = Instantiate(toastPrefab, transform);
             StartCoroutine(SingleToastRoutine((RectTransform)parentToast.transform.GetChild(0), text, duration));

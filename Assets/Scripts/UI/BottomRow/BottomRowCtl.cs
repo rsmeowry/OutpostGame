@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using DG.Tweening;
+using External.Util;
 using UnityEngine;
 
 namespace UI.BottomRow
@@ -25,7 +26,7 @@ namespace UI.BottomRow
 
         public IEnumerator HideTopRow()
         {
-            yield return _self.DOAnchorPosY(-320f, .25f).SetEase(Ease.OutExpo).Play().WaitForCompletion();
+            yield return _self.DOAnchorPosY(-320f, .25f).SetEase(Ease.OutExpo).Play().OnComplete(CloseTabInstant).WaitForCompletion();
         }
 
         public IEnumerator ShowTopRow()
@@ -64,10 +65,14 @@ namespace UI.BottomRow
         {
             if (_busy)
                 return;
-            activeTab.rectTransform.rotation = Quaternion.Euler(Vector3.zero);
-            activeTab.rectTransform.localScale = Vector3.one;
+            foreach (var ch in transform.GetChild(0).EnumerateChildren())
+            {
+                ((RectTransform) ch).rotation = Quaternion.Euler(Vector3.zero);
+                ((RectTransform) ch).localScale = Vector3.one;
+            }
             activeTab = null;
-            Destroy(_btmRow.GetChild(0).gameObject);
+            if(_btmRow.childCount > 0)
+                Destroy(_btmRow.GetChild(0).gameObject);
         }
 
         public IEnumerator CloseTab(bool goFull = false)

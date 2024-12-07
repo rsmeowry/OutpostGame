@@ -43,7 +43,7 @@ Material:
     - _QueueOffset: 0
     - _ScrollSpeed: 2
     m_Colors:
-    - _LiquidColor: {r: 2.447723, g: 0.47338033, b: 0.47338033, a: 0}
+    - _LiquidColor: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &4372391848284216133

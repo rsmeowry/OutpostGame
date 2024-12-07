@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using External.Util;
 using UnityEngine;
 
 namespace Game.Sound
@@ -16,7 +17,7 @@ namespace Game.Sound
         public override void QueueCrossfade(AudioClip toClip)
         {
             base.QueueCrossfade(toClip);
-            Invoke(nameof(FadeOut), toClip.length - 3);
+            this.Delayed(toClip.length - 3, FadeOut, true);
         }
 
         public void FadeOut()

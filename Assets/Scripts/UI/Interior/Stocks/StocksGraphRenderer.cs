@@ -69,7 +69,6 @@ namespace UI.Interior.Stocks
             data.Reverse();
             var buyData = data.TakeLast(10).Select(it => it.BuyPrice).ToList();
             var sellData = data.TakeLast(10).Select(it => it.SellPrice).ToList();
-            Debug.Log("REBUILDING LINES");
             RebuildLines(rendererBuy, buyData, "Покупка");
             RebuildLines(rendererSell, sellData, "Продажа");
 

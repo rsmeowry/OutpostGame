@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using External.Data;
+using Game.DayNight;
 using Game.POI;
 using Game.State;
 using Game.Storage;
+using Game.Upgrades;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -24,7 +27,7 @@ namespace Game.Tasks
             Instance = this;
         }
 
-        public static TaskData CreateTaskData(string id, string giver, string giverBg, string desc, (StateKey, int)[] requiredItems, StateKey reward, int rewardCount, int experience)
+        public static TaskData CreateTaskData(string id, string giver, string giverBg, string desc, (StateKey, int)[] requiredItems, StateKey reward, int rewardCount, int experience, bool useExpBoost = true)
         {
             return new TaskData()
             {
@@ -39,11 +42,11 @@ namespace Game.Tasks
                     item = reward,
                     itemCount = rewardCount
                 },
-                experienceReward = experience
+                experienceReward = useExpBoost ? Mathf.RoundToInt(experience * (1 + UpgradeTreeManager.Instance.Upgrades.GetValueOrDefault(Upgrades.Upgrades.IncreasedExperience) * 0.25f)) : experience
             };
         }
         
-        public static TaskData CreateTaskData(string id, string giver, string giverBg, string desc, (StateKey, int)[] requiredItems, int currencyReward, int experience)
+        public static TaskData CreateTaskData(string id, string giver, string giverBg, string desc, (StateKey, int)[] requiredItems, int currencyReward, int experience, bool useExpBoost = true)
         {
             return new TaskData
             {
@@ -56,13 +59,12 @@ namespace Game.Tasks
                 {
                     currency = currencyReward
                 },
-                experienceReward = experience
+                experienceReward = useExpBoost ? Mathf.RoundToInt(experience * (1 + UpgradeTreeManager.Instance.Upgrades.GetValueOrDefault(Upgrades.Upgrades.IncreasedExperience) * 0.25f)) : experience
             };
         }
 
         public void CompleteTask()
         {
-            completedTasks.Add(CurrentTask.taskId);
             if (CurrentTask.reward.currency != -1)
             {
                 GameStateManager.Instance.ChangeCurrency(CurrentTask.reward.currency, "Task completed", true);
@@ -76,6 +78,8 @@ namespace Game.Tasks
             {
                 GameStateManager.Instance.IncreaseProduct(req.Key, -req.Value);
             }
+
+            MiscSavedData.Instance.Data.Experience += CurrentTask.experienceReward;
             
             completedTasks.Add(CurrentTask.taskId);
             CurrentTask = Tasks.NextTask(CurrentTask.taskId);
@@ -88,7 +92,7 @@ namespace Game.Tasks
                 SaveData();
                 return;
             }
-
+            
             var fmt = new BinaryFormatter();
             using var stream = FileManager.Instance.Storage.ReadFileBytes("tasks.dat", true);
             var db = (SerializedTaskInformation) fmt.Deserialize(stream.BaseStream);

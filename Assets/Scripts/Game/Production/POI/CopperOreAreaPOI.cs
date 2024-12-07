@@ -15,7 +15,8 @@ namespace Game.Production.POI
         {
             if (ShouldSubtick(agent, 4))
             {
-                agent.Inventory.Increment(ProductRegistry.IronOre);
+                var amount = ApplyProductivityBonus(1, Upgrades.Upgrades.Geology);
+                agent.Inventory.Increment(ProductRegistry.CopperOre, amount);
             }
 
             SoundManager.Instance.PlaySoundAt(SoundBank.Instance.GetSound("citizen.pickaxe"), agent.transform.position,
@@ -24,7 +25,7 @@ namespace Game.Production.POI
 
         protected override void LoadForInspect(PanelViewPOI panel)
         {
-            var productData = ProductRegistry.Instance.GetProductData(ProductRegistry.IronOre);
+            var productData = ProductRegistry.Instance.GetProductData(ProductRegistry.CopperOre);
             panel.AddResourceProduction(productData.name, productData.icon, "1шт/4с");
             base.LoadForInspect(panel);
         }

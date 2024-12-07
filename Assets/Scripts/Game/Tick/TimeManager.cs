@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Game.Tick
@@ -19,6 +20,13 @@ namespace Game.Tick
         
         public void ChangeGameSpeed(int newSpeed)
         {
+            if (gameSpeed != 0 && newSpeed == 0)
+            {
+                Physics.simulationMode = SimulationMode.Script;
+            } else if (gameSpeed == 0 && newSpeed != 0)
+            {
+                Physics.simulationMode = SimulationMode.FixedUpdate;
+            }
             gameSpeed = newSpeed;
             Time.timeScale = gameSpeed;
         }
@@ -35,5 +43,12 @@ namespace Game.Tick
             Time.timeScale = 1f;
         }
 
+        private void Update()
+        {
+            if (gameSpeed == 0)
+            {
+                Physics.Simulate(Time.fixedUnscaledDeltaTime);
+            }
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine;
 
 namespace External.Util
 {
@@ -19,5 +21,13 @@ namespace External.Util
             return obj;
         }
         #endif
+
+        public static IEnumerable<Transform> EnumerateChildren(this Transform tf)
+        {
+            for (var i = 0; i < tf.childCount; i++)
+            {
+                yield return tf.GetChild(i);
+            }
+        }
     }
 }

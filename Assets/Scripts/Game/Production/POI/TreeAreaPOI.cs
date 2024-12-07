@@ -16,7 +16,8 @@ namespace Game.Production.POI
         {
             if (ShouldSubtick(agent, 2))
             {
-                agent.Inventory.Increment(ProductRegistry.Wood); 
+                var amount = ApplyProductivityBonus(1, Upgrades.Upgrades.ChoppingEfficiency);
+                agent.Inventory.Increment(ProductRegistry.Wood, amount);
             }
             SoundManager.Instance.PlaySoundAt(SoundBank.Instance.GetSound("citizen.axe"), agent.transform.position);
         }

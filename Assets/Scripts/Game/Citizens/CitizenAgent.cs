@@ -8,13 +8,16 @@ using DG.Tweening;
 using External.Util;
 using Game.Citizens.States;
 using Game.DayNight;
+using Game.News;
 using Game.POI;
+using Game.POI.Deco;
 using Game.POI.Housing;
 using Game.Production;
 using Game.Production.POI;
 using Game.State;
 using Game.Upgrades;
 using Newtonsoft.Json;
+using UI.POI;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -96,6 +99,7 @@ namespace Game.Citizens
 
         public StoredCitizenData Serialize()
         {
+            Debug.Log($"SERIALIZING CITIZEN: {Home} {Home.pointId} {Guid.Parse(Home.pointId)}");
             return new StoredCitizenData
             {
                 baseInventoryCapacity = inventoryCapacity,
@@ -142,6 +146,7 @@ namespace Game.Citizens
             StartCoroutine(StateMachine.ChangeState(newState));
         }
 
+        public static readonly float BASE_SPEED = 7f;
         private void Update()
         {
             StateMachine.FrameUpdate();
@@ -164,10 +169,18 @@ namespace Game.Citizens
         }
 
         private bool _attemptingToGoHome;
+        private float _fixedTickCounter;
         private void FixedUpdate()
         {
             StateMachine.PhysicsUpdate();
-            
+
+            _fixedTickCounter += Time.fixedDeltaTime;
+            if (_fixedTickCounter > 5f)
+            {
+                // recalculate buffs
+                _fixedTickCounter = 0f;
+                navMeshAgent.speed = BASE_SPEED * (1 + 0.25f * GlobalBuffs.artStations.Count);
+            }
         }
 
         public bool IsUnoccupied()
@@ -175,11 +188,12 @@ namespace Game.Citizens
             return WorkPlace == null;
         }
 
-        public void Free()
+        public void Free(bool doWander = true)
         {
-            WorkPlace.Fire(this);
+            WorkPlace?.Fire(this);
             WorkPlace = null;
-            StartCoroutine(StateMachine.ChangeState(WanderState));
+            if(doWander)
+                StartCoroutine(StateMachine.ChangeState(WanderState));
         }
 
         public void MarkHiredAt(ICitizenWorkPlace workPlace)

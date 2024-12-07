@@ -19,16 +19,14 @@ MonoBehaviour:
     \u043F\u0435\u0440\u0435\u0434\u0430\u0435\u0442 \u044D\u043B\u0435\u043A\u0442\u0440\u0438\u0447\u0435\u0441\u0442\u0432\u043E
     \u0438\u0437 \u044D\u043B\u0435\u043A\u0442\u0440\u0438\u0447\u0435\u0441\u043A\u043E\u0439
     \u0441\u0438\u0441\u0442\u0435\u0441\u044B"
-  icon: {fileID: 21300000, guid: 3e4a88a57dab00a41804ae68546d485c, type: 3}
+  icon: {fileID: 21300000, guid: 56776cda4e5732345a1d35f61aac8b4d, type: 3}
   buildingPrefab: {fileID: 7635834318294786028, guid: c33707bda193e0b4ab53a98374e7e16c, type: 3}
   size: {x: 1, y: 1}
   prominentColor: {r: 0.43596476, g: 0.7640736, b: 0.9528302, a: 1}
   requiresWater: 0
   requirements:
-  - key: iron_bars
-    count: 30
   - key: bricks
-    count: 50
+    count: 40
   - key: copper_wires
-    count: 50
+    count: 40
   requiredUpgrade: basic_electricity

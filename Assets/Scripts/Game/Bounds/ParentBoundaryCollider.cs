@@ -7,6 +7,14 @@ namespace Game.Bounds
 {
     public class ParentBoundaryCollider: MonoBehaviour
     {
+        private void Start()
+        {
+            var bx = GetComponent<BoxCollider>();
+            var sz = bx.size;
+            sz.y = 500;
+            bx.size = sz;
+        }
+
         private bool _isInside = true;
         private void OnTriggerEnter(Collider other)
         {

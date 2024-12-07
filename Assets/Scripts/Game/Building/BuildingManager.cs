@@ -6,12 +6,15 @@ using DG.Tweening;
 using External.Util;
 using Game.Controllers;
 using Game.POI;
+using Game.Production.POI;
+using Game.Sound;
 using Game.State;
 using Newtonsoft.Json;
 using Tutorial;
 using UI.POI;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace Game.Building
 {
@@ -49,6 +52,9 @@ namespace Game.Building
 
         [SerializeField]
         private LayerMask waterLayer;
+
+        [SerializeField]
+        private GameObject electricityGridPlanePrefab;
         
         private Grid _grid;
 
@@ -105,8 +111,9 @@ namespace Game.Building
                 _buildingMaterials[rd.transform] = new Material(rd.material);
                 rd.material = holographicMaterial;
             }
-            Instantiate(gridPlanePrefab, currentBuilding);
-            
+            Instantiate(data.keyId == "substation" ? electricityGridPlanePrefab : gridPlanePrefab, currentBuilding);
+
+            _collisionState = CollisionState.Unchecked;
             CheckPlaceableConditions();
         }
 
@@ -134,32 +141,42 @@ namespace Game.Building
                 DoCheckCollisions(newCellSpot);
             }
         }
-        
+
+        private CollisionState _collisionState = CollisionState.Unchecked;
         private void DoCheckCollisions(Vector3Int cellSpot)
         {
-            var hadCollisionsBefore = _hasCollisions;
-            var extraConditions = false;
-            if (currentBuilding.TryGetComponent<IBuildingWithConditions>(out var cond))
-                extraConditions = !cond.CanBePlacedAt(_grid.CellToWorld(cellSpot));
-            _hasCollisions = extraConditions || HasCollisions(cellSpot) || HasWaterCollisions(cellSpot);
+            if (currentBuilding.GetChild(0).GetChild(0).TryGetComponent<IBuildingWithConditions>(out var cond) &&
+                !cond.CanBePlacedAt(_grid.CellToWorld(cellSpot)))
+            {
+                _hasCollisions = true;
+            }
+            else
+            {
+                _hasCollisions = HasCollisions(cellSpot) || HasWaterCollisions(cellSpot);
+            }
+
             try
             {
-                if (hadCollisionsBefore && !_hasCollisions)
+                if (_collisionState != CollisionState.NoCollision && !_hasCollisions)
                 {
                     // dont have collisions anymore, restore materials
                     var buildRd = currentBuilding.GetChild(0).GetChild(0).GetComponentInChildren<Renderer>();
                     buildRd.material.SetColor(HoloColor, canPlaceColor);
                     var childCount = currentBuilding.childCount;
                     var gridRd = currentBuilding.GetChild(1).GetComponent<Renderer>();
-                    gridRd.material.SetColor(GridColor, canPlaceColor);
+                    if(currentBuildingData.keyId != "substation")
+                        gridRd.material.SetColor(GridColor, canPlaceColor);
+                    _collisionState = CollisionState.NoCollision;
                 }
-                else if (!hadCollisionsBefore && _hasCollisions)
+                else if (_collisionState != CollisionState.HadCollision && _hasCollisions)
                 {
                     // we got a collision! change materials
                     var buildRd = currentBuilding.GetChild(0).GetChild(0).GetComponentInChildren<Renderer>();
                     buildRd.material.SetColor(HoloColor, cantPlaceColor);
                     var gridRd = currentBuilding.GetChild(1).GetComponent<Renderer>();
-                    gridRd.material.SetColor(GridColor, cantPlaceColor);
+                    if(currentBuildingData.keyId != "substation")
+                        gridRd.material.SetColor(GridColor, canPlaceColor);
+                    _collisionState = CollisionState.HadCollision;
                 }
             }
             catch (UnityException _)
@@ -175,7 +192,6 @@ namespace Game.Building
             currentBuilding = Instantiate(currentBuildingData.buildingPrefab, transform).transform;
             currentBuilding.transform.position = position;
             var pivot = currentBuilding.GetChild(0);
-            Debug.Log($"Doing rotation {rotation.Formatted()}");
             pivot.rotation = Quaternion.Euler(rotation);
 
             var buildingItself = currentBuilding.GetChild(0).GetChild(0);
@@ -266,7 +282,9 @@ namespace Game.Building
             {
                 GameStateManager.Instance.IncreaseProduct(StateKey.FromString(req.key), -req.count);
             }
-
+            
+            // play the sound
+            SoundManager.Instance.PlaySoundAt(SoundBank.Instance.GetSound("building.build"), currentBuilding.transform.position, 1f, Random.Range(0.8f, 1.2f));
             
             yield return currentBuilding.DOScale(originalScale, 0.5f).SetEase(Ease.OutBack).SetDelay(1.5f).OnStart(() =>
             {
@@ -295,13 +313,22 @@ namespace Game.Building
                     poi.OnBuilt();
                     
                     TutorialCtl.Instance.ActiveStep?.ReceiveBuildingBuilt(currentBuildingData);
+
+                    if (poi is GatheringPost)
+                    {
+                        POIManager.Instance.RecalculateAllGatheringPosts();
+                    }
                 }
+
                 particles.Stop();
                 Destroy(particles.gameObject, 1.5f);
                 buildingItself.SetParent(targetBuildingContainer.transform);
                 
                 var lPos = buildingItself.localPosition;
-                lPos.y = Mathf.Max(-3f, lPos.y);
+                var hit = new RaycastHit[1];
+                Physics.RaycastNonAlloc(lPos + Vector3.up * 100, Vector3.down, hit, 150, terrainLayer);
+                var y = hit[0].point.y;
+                lPos.y = Mathf.Max(-3f, y);
                 buildingItself.localPosition = lPos;
 
                 Destroy(currentBuilding.gameObject);
@@ -401,12 +428,14 @@ namespace Game.Building
 
         private bool IsWater(Vector3 worldPos)
         {
+            Debug.Log($"RAYCASTING WORLD {worldPos}");
             var wp = worldPos;
             wp.y = 20f;
             wp += new Vector3(5, 0, 5);
             // centering it
             var hits = new RaycastHit[4];
             Physics.RaycastNonAlloc(wp, Vector3.down, hits, 23f);
+            Debug.Log($"HITS: {hits.Select(it => it.collider == null ? "null" : it.collider.name).ToCommaSeparatedString()}");
             return hits.Any(it => it.collider && it.collider.CompareTag("Water")) && !hits.Any(it => it.collider && it.collider.name.Contains("Terrain"));
         }
 
@@ -531,6 +560,13 @@ namespace Game.Building
                 StartCoroutine(TownCameraController.Instance.StateMachine.SwitchState(TownCameraController.Instance.FreeMoveState));
             }
         }
+    }
+
+    internal enum CollisionState
+    {
+        HadCollision,
+        NoCollision,
+        Unchecked
     }
 
     [Serializable]
