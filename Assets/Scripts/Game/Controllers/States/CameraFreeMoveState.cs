@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using External.Data;
 using Game.Building;
+using Game.Player;
 using Game.Production.Products;
 using Game.State;
+using Menu;
 using Tutorial;
 using UI.BottomRow;
 using UnityEngine;
@@ -47,6 +50,15 @@ namespace Game.Controllers.States
             MouseMovement();
             KeyboardMovement();
             CommitMovement();
+            // if (Input.GetKeyDown(KeyCode.G))
+            // {
+            //     foreach (var res in ProductRegistry.Instance.AllItems())
+            //     {
+            //         GameStateManager.Instance.IncreaseProduct(res, 500);
+            //     }
+            //     GameStateManager.Instance.IncreaseCurrency(5000);
+            //     MiscSavedData.Instance.Data.Experience += 10000;
+            // }
         }
 
         private void MouseMovement()

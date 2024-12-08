@@ -16,9 +16,11 @@ namespace Game.Citizens.States
 
         public override IEnumerator EnterState()
         {
-            yield return new WaitForSeconds(0.2f);
+            Debug.Log("ATTEMPTING TO BEGIN WORK", Agent);
+            // yield return new WaitForSeconds(0.2f);
             if (Agent.WorkPlace == null)
             { 
+                Debug.Log("WORKPLACE NULL!", Agent);
                 yield return StateMachine.ChangeState(Agent.WanderState);
                 yield break;
             }
@@ -27,15 +29,18 @@ namespace Game.Citizens.States
                 switch (s)
                 {
                     case WorkPlaceEnterResult.Accepted:
+                        Debug.Log("ACCEPTED AT WORK", Agent);
                         Agent.navMeshAgent.enabled = true;
                         Agent.navMeshAgent.isStopped = true;
                         // Agent.navMeshAgent.enabled = false;
                         break;
                     case WorkPlaceEnterResult.Declined:
+                        Debug.Log("MOVED TO DECLINED", Agent);
                         Agent.navMeshAgent.enabled = true;
-                        Agent.Order(Agent.WanderState);
+                        Agent.Free();
                         break;
                     case WorkPlaceEnterResult.NeedToMoveToSpot:
+                        Debug.Log("MOVING TO SPOT", Agent);
                         Agent.navMeshAgent.enabled = true;
                         Agent.StartCoroutine(StateMachine.ChangeState(Agent.MoveToWorkSpotState));
                         break;

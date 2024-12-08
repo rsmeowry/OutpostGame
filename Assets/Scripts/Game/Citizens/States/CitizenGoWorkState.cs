@@ -29,11 +29,14 @@ namespace Game.Citizens.States
         private float _enterTime;
         public override void FrameUpdate()
         {
-            if (Agent.WorkPlace.EntrancePos.DoesAccept(Agent) || Time.time - _enterTime > 60f)
+            if (Agent.WorkPlace == null)
             {
-                Agent.WorkPlace.EntrancePos.Dequeue();
-                Agent.StartCoroutine(StateMachine.ChangeState(Agent.WorkState));
+                return;
             }
+            
+            if (!Agent.WorkPlace.EntrancePos.DoesAccept(Agent) && !(Time.time - _enterTime > 60f)) return;
+            Agent.WorkPlace.EntrancePos.Dequeue();
+            Agent.StartCoroutine(StateMachine.ChangeState(Agent.WorkState));
         }
 
         public override void Renavigate()

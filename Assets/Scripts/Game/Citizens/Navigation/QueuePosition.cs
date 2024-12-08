@@ -90,12 +90,6 @@ namespace Game.Citizens.Navigation
             _cachedPositions = QueuedAgents.ToList().Select((it, idx) => (it, idx))
                 .ToDictionary(it => it.it.citizenId, it => it.idx);
             
-            Debug.Log($"RECACHED");
-            foreach (var kv in _cachedPositions)
-            {
-                Debug.Log($"{kv.Key}: {kv.Value}");
-            }
-            
             foreach (var agnt in QueuedAgents)
             {
                 agnt.Renavigate();

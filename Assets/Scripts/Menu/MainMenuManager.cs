@@ -5,6 +5,7 @@ using DG.Tweening;
 using External.Data;
 using External.Util;
 using Game.Player;
+using Game.Sound;
 using Tutorial.Impl;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -61,20 +62,21 @@ namespace Menu
             _as = GetComponent<AudioSource>();
             _as.volume = 0f;
             _as.DOFade(0.3f, 2f).Play();
-            
             playButton.onClick.AddListener(() =>
             {
                 StartCoroutine(ChangeScene());
             });
             quitButton.onClick.AddListener(Application.Quit);
             faqButton.onClick.AddListener(() => SwitchTab(faqPrefab));
+            
             settingsButton.onClick.AddListener(() => SwitchTab(settingsPrefab));
+            
 
             var bear = Instantiate(Rng.Choice(bearPrefabs), bearContainer);
             bear.AddComponent<Animator>().runtimeAnimatorController = animator;
             
-            soundMixer.SetFloat("SoundVolume", Mathf.Log10(Mathf.Max(Preferences.Instance.Prefs.SoundVolume, 0.0001f)) * 20f);
-            soundMixer.SetFloat("MusicVolume", Mathf.Log10(Mathf.Max(Preferences.Instance.Prefs.MusicVolume, 0.0001f)) * 20f);
+            soundMixer.SetFloat("SoundVolume", Mathf.Log10(Preferences.Instance.Prefs.SoundVolume) * 20f);
+            soundMixer.SetFloat("MusicVolume", Mathf.Log10(Preferences.Instance.Prefs.MusicVolume) * 20f);
             Screen.SetResolution(Preferences.Instance.Prefs.ResWidth, Preferences.Instance.Prefs.ResHeight, Screen.fullScreenMode);
 
             PlayerDataManager.Instance.playerName = Preferences.Instance.Prefs.LastPlayerName;

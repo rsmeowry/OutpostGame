@@ -1225,7 +1225,7 @@
     "m_ObjectId": "1ad77931697f44d0aecbe7cb39ed44de",
     "m_Title": "Grid Itself",
     "m_Position": {
-        "x": -1324.0,
+        "x": -1323.9998779296875,
         "y": -1127.0
     }
 }
@@ -2812,7 +2812,7 @@
     "m_ObjectId": "767a7ddd1b084510a7c773bff4f2e3ef",
     "m_Title": "Fade",
     "m_Position": {
-        "x": -555.0,
+        "x": -554.9998779296875,
         "y": 92.0
     }
 }

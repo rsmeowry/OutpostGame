@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using External.Data;
+using Game.Building;
 using Game.Player;
+using Game.Production.POI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -28,11 +30,14 @@ namespace Menu
 
         private void Start()
         {
-            soundVolume.value = Mathf.RoundToInt(Preferences.Instance.Prefs.SoundVolume * 10f);
-            musicVolume.value = Mathf.RoundToInt(Preferences.Instance.Prefs.MusicVolume * 10f);
+            soundVolume.value = Preferences.Instance.Prefs.SoundVolume;
+            musicVolume.value = Preferences.Instance.Prefs.MusicVolume;
             playerName.text = Preferences.Instance.Prefs.LastPlayerName;
-            soundMixer.SetFloat("SoundVolume", Mathf.Log10(Mathf.Max(Preferences.Instance.Prefs.SoundVolume, 0.0001f)) * 20f);
-            soundMixer.SetFloat("MusicVolume", Mathf.Log10(Mathf.Max(Preferences.Instance.Prefs.MusicVolume, 0.0001f)) * 20f);
+            Debug.Log($"SETTING NEW VOLUME {Preferences.Instance.Prefs.SoundVolume}");
+            soundMixer.SetFloat("SoundVolume", Mathf.Log10(Preferences.Instance.Prefs.SoundVolume) * 20f);
+            soundMixer.SetFloat("MusicVolume", Mathf.Log10(Preferences.Instance.Prefs.MusicVolume) * 20f);
+            
+            Preferences.Instance.Save();
             
             Screen.SetResolution(Preferences.Instance.Prefs.ResWidth, Preferences.Instance.Prefs.ResHeight, Screen.fullScreenMode);
 
@@ -65,22 +70,24 @@ namespace Menu
                 Preferences.Instance.Prefs.ResWidth = filteredRes[v].width;
                 Preferences.Instance.Prefs.ResHeight = filteredRes[v].height;
                 Preferences.Instance.Save();
+                
             });
             
             soundVolume.onValueChanged.AddListener(v =>
             {
-                Preferences.Instance.Prefs.SoundVolume = v / 10f;
-                soundMixer.SetFloat("SoundVolume", Mathf.Log10(Mathf.Max(v / 10f, 0.0001f)) * 20f);
+                Preferences.Instance.Prefs.SoundVolume = v;
+                soundMixer.SetFloat("SoundVolume", Mathf.Log10(v) * 20f);
             });
             musicVolume.onValueChanged.AddListener(v =>
             {
-                Preferences.Instance.Prefs.MusicVolume = v / 10f;
-                soundMixer.SetFloat("MusicVolume", Mathf.Log10(Mathf.Max(v / 10f, 0.0001f)) * 20f);
+                Preferences.Instance.Prefs.MusicVolume = v;
+                soundMixer.SetFloat("MusicVolume", Mathf.Log10(v) * 20f);
             });
             playerName.onValueChanged.AddListener(v =>
             {
-                Preferences.Instance.Prefs.LastPlayerName = v;
-                PlayerDataManager.Instance.playerName = v;
+                var filtered = v.Replace(" ", "_").Replace("\"", "").Replace("'", "").Replace("\\", "").Replace("(", " ").Replace(")", " ");
+                Preferences.Instance.Prefs.LastPlayerName = filtered;
+                PlayerDataManager.Instance.playerName = filtered;
             });
         }
 

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using External.Util;
 using Game.DayNight;
+using Game.POI;
+using Game.POI.Housing;
 using Game.Production.POI;
 using Game.Production.Products;
 using Game.State;
@@ -23,7 +26,7 @@ namespace Game.Citizens
 
         public UnityEvent onOffersUpdated = new();
 
-        private readonly float[] _resourceModifier = { 0.5f, 0.8f, 0.9f, 0.9f, 0.9f, 0.9f, 0.9f, 0.9f, 1f, 1f, 1f, 1f, 1f, 1f, 1.5f, 2.5f, 2.6f, 3f, 3.1f, 4.5f, 6f, 8f, 9f, 11f, 12f, 12.1f, 12.4f, 11f, 15f, 20f, 30f, 35f, 40f, 50f };
+        private readonly float[] _resourceModifier = { 0.5f, 0.8f, 0.9f, 0.9f, 0.9f, 1f, 1f, 1f, 1.2f, 1.5f, 2.5f, 2.6f, 3f, 3.1f, 4.5f, 6f, 8f, 9f, 11f, 12f, 12.1f, 12.4f, 11f, 15f, 20f, 30f, 35f, 40f, 50f };
 
         private void Awake()
         {
@@ -45,7 +48,8 @@ namespace Game.Citizens
             }
             GameStateManager.Instance.ChangeCurrency(-offer.CurrencyRequest, "Hired a citizen", true);
 
-            var pos = PlayerBaseCenter.Instance.EntrancePos.transform.position;
+            var portal = POIManager.Instance.LoadedPois.Values.FirstOrDefault(it => it is PortalPOI);
+            var pos = portal == null ? PlayerBaseCenter.Instance.EntrancePos.transform.position : portal.EntrancePos.transform.position;
             CitizenManager.Instance.SpawnCitizen(pos, offer.CitizenData);
             CareerOffers.Remove(offer);
             onOffersUpdated.Invoke();

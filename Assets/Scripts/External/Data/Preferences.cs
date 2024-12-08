@@ -28,8 +28,8 @@ namespace External.Data
                 {
                     ShadowDistanceLevel = 5,
                     GrassBlendLevel = 5,
-                    MusicVolume = 10,
-                    SoundVolume = 10f,
+                    MusicVolume = 0.5f,
+                    SoundVolume = 0.5f,
                     LastPlayerName = "Джон",
                     ResWidth = Screen.currentResolution.width,
                     ResHeight = Screen.currentResolution.height
@@ -61,9 +61,9 @@ namespace External.Data
         [JsonProperty("grassBlendLevel")]
         public int GrassBlendLevel = 5;
         [JsonProperty("musicVolume")]
-        public float MusicVolume = 8;
+        public float MusicVolume = 0.5f;
         [JsonProperty("soundVolume")]
-        public float SoundVolume = 8;
+        public float SoundVolume = 0.5f;
         [JsonProperty("lastPlayerName")]
         public string LastPlayerName = "Джон";
         [JsonProperty("resWidth")]

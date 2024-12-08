@@ -6,7 +6,9 @@ using DG.Tweening;
 using External.Util;
 using Game.Controllers;
 using Game.POI;
+using Game.POI.Deco;
 using Game.Production.POI;
+using Game.Production.Products;
 using Game.Sound;
 using Game.State;
 using Newtonsoft.Json;
@@ -196,6 +198,7 @@ namespace Game.Building
 
             var buildingItself = currentBuilding.GetChild(0).GetChild(0);
             var gridPos = _grid.WorldToCell(currentBuilding.position);
+            gridPos.y = 0;
             var rSize = RotatedSize();
             BuiltObjects[gridPos] = new BuiltObject
             {
@@ -276,6 +279,7 @@ namespace Game.Building
             currentBuilding.localScale = new Vector3(originalScale.x, 0f, originalScale.z);
 
             var gridPos = _grid.WorldToCell(currentBuilding.position);
+            gridPos.y = 0;
             
             // take the resources
             foreach (var req in currentBuildingData.requirements)
@@ -441,7 +445,7 @@ namespace Game.Building
 
         private bool HasCollisions(Vector3 snappedPos)
         {
-            var pos = new Vector3Int((int) snappedPos.x, (int) snappedPos.y, (int) snappedPos.z);
+            var pos = new Vector3Int((int) snappedPos.x, 0, (int) snappedPos.z);
 
             // size is (x: 3; y: 2)
             // we check:

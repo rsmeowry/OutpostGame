@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1536929942630885937}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 10, y: 0, z: 10}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clickedSound: {fileID: 0}
-  data: {fileID: 11400000, guid: 7cf0b815bbff5234ab308e51954e8ca8, type: 2}
+  data: {fileID: 11400000, guid: 4b19b50544da5564cbdd9281a2e5515b, type: 2}
   doNotSerialize: 0
   cameraZoomAmt: 30
   focusPos: {fileID: 2234860957193852134}
@@ -202,7 +202,7 @@ Transform:
   m_GameObject: {fileID: 7082920283219790699}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 15, y: 0, z: 15}
+  m_LocalPosition: {x: 5, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

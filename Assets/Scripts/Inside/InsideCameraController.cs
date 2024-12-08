@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
+using External.Achievement;
 using External.Util;
 using Game.Citizens;
+using Game.POI.Exploration;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -88,6 +90,7 @@ namespace Inside
                 if(agent.StateMachine.CurrentState != agent.SleepState)
                     rd.enabled = true;
             }
+            
         }
 
         private void LateUpdate()

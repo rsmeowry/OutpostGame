@@ -1,10 +1,12 @@
 ﻿using System;
+using External.Achievement;
 using External.Util;
 using Game.Bounds;
 using Game.Building;
 using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.POI.Deco;
+using Game.POI.Produce;
 using UI.POI;
 using UnityEngine;
 
@@ -19,6 +21,7 @@ namespace Game.POI.Exploration
         public override void OnBuilt()
         {
             BoundaryManager.Instance.ExpandBoundaries(transform.position);
+            AchievementManager.Instance.GiveAchievement(Achievements.Viewpoint);
         }
 
         protected override void LoadForInspect(PanelViewPOI panel)

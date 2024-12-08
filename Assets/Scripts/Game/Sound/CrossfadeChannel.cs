@@ -2,6 +2,7 @@
 using System.Collections;
 using DG.Tweening;
 using External.Util;
+using Game.Citizens;
 using UnityEngine;
 
 namespace Game.Sound
@@ -9,11 +10,14 @@ namespace Game.Sound
     public abstract class CrossfadeChannel: MonoBehaviour
     {
         protected AudioSource Base;
+
+        protected virtual float MaxVolume => 1f;
         
         public virtual void Awake()
         {
             Base = GetComponent<AudioSource>();
             Base.loop = true;
+            Base.volume = MaxVolume;
         }
 
         private Coroutine _previousCrossfade;
@@ -37,7 +41,7 @@ namespace Game.Sound
                 Base.clip = toClip;
                 Base.volume = 0f;
                 Base.Play();
-                yield return Base.DOFade(1f, 3f).Play().WaitForCompletion();
+                yield return Base.DOFade(MaxVolume, 3f).Play().WaitForCompletion();
                 yield break;
             }
             var fadeOutSource = gameObject.AddComponent<AudioSource>();
@@ -58,7 +62,7 @@ namespace Game.Sound
 
             var seq = DOTween.Sequence();
             seq.Join(fadeOutSource.DOFade(0f, 3f));
-            seq.Join(Base.DOFade(1f, 3f));
+            seq.Join(Base.DOFade(MaxVolume, 3f));
             yield return seq.Play().WaitForCompletion();
             Destroy(fadeOutSource);
         }

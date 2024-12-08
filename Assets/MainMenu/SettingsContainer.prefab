@@ -1184,6 +1184,7 @@ GameObject:
   m_Component:
   - component: {fileID: 247214046817083472}
   - component: {fileID: 2621341415644613916}
+  - component: {fileID: 162314152325457724}
   m_Layer: 5
   m_Name: Slider
   m_TagString: Untagged
@@ -1257,13 +1258,26 @@ MonoBehaviour:
   m_FillRect: {fileID: 1833033366520197060}
   m_HandleRect: {fileID: 8408130529046634721}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 10
-  m_WholeNumbers: 1
-  m_Value: 10
+  m_MinValue: 0.001
+  m_MaxValue: 1
+  m_WholeNumbers: 0
+  m_Value: 0.5
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &162314152325457724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2820651952123474898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10b1d5f7dcd086047b3899420590c70c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stepSize: 0.1
 --- !u!1 &2935058754946923840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1586,6 +1600,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7995199317198381422}
   - component: {fileID: 7243505446042987502}
+  - component: {fileID: 5203766644188203448}
   m_Layer: 5
   m_Name: Slider
   m_TagString: Untagged
@@ -1659,13 +1674,26 @@ MonoBehaviour:
   m_FillRect: {fileID: 1345059253302017596}
   m_HandleRect: {fileID: 8391611413447655359}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 10
-  m_WholeNumbers: 1
-  m_Value: 10
+  m_MinValue: 0.001
+  m_MaxValue: 1
+  m_WholeNumbers: 0
+  m_Value: 0.5
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5203766644188203448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4097927148981101569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10b1d5f7dcd086047b3899420590c70c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stepSize: 0.1
 --- !u!1 &4327622630110279962
 GameObject:
   m_ObjectHideFlags: 0

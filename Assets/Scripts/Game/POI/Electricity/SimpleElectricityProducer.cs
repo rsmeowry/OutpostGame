@@ -2,6 +2,7 @@
 using External.Util;
 using Game.Building;
 using Game.Citizens.Navigation;
+using Game.DayNight;
 using Game.Electricity;
 using Game.POI.Deco;
 using UI.POI;

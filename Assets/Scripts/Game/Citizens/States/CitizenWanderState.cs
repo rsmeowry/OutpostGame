@@ -21,7 +21,7 @@ namespace Game.Citizens.States
                                  Agent.Home.EntrancePos.transform.position;
             Agent.navMeshAgent.isStopped = false;
             Agent.navMeshAgent.SetDestination(GetWanderPosition());
-            Agent.Free(false);
+            // Agent.Free(false);
             yield break;
         }
 

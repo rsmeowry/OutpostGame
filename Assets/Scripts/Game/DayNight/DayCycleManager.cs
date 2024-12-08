@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using External.Network;
 using External.Util;
+using Game.Citizens;
 using Game.Citizens.States;
 using Game.Storage;
 using UnityEngine;
@@ -138,10 +139,10 @@ namespace Game.DayNight
 
         public void Load()
         {
-            if (!FileManager.Instance.Storage.FileExists("env.dat"))
+            if (!FileManager.Instance.Storage.FileExists("env.dat", true))
                 return;
 
-            var str = FileManager.Instance.Storage.ReadFileBytes("env.dat");
+            var str = FileManager.Instance.Storage.ReadFileBytes("env.dat", true);
             var fmt = new BinaryFormatter();
             var data = (StoredEnvData) fmt.Deserialize(str.BaseStream);
             _secondsTime = data.secondsTime;

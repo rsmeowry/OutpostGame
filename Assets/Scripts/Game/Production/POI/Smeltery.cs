@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using External.Achievement;
 using External.Util;
 using Game.Building;
 using Game.Citizens;
@@ -41,6 +42,8 @@ namespace Game.Production.POI
             _vfx.Stop();
             
             ((IElectrical) this).InitElectricity(transform);
+            
+            AchievementManager.Instance.GiveAchievement(Achievements.Smeltery);
         }
 
         protected override void LoadForInspect(PanelViewPOI panel)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using External.Util;
 using Game.Citizens;
+using Game.POI.Deco;
 using Game.State;
 using UI.Interior.Stocks;
 using UnityEngine;
@@ -42,7 +43,7 @@ namespace Game.Production.Products
         public static StateKey Wood = Reg("wood", new ProductData(5, 2, 1500));
         
         // fluids
-        public static StateKey Water = new StateKey("water");
+        public static StateKey Water = new("water");
         
         private void Start()
         {

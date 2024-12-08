@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using External.Achievement;
 using External.Util;
 using Game.Electricity;
+using Game.POI.Deco;
 using Game.Production.Products;
 using Game.State;
 using UI.POI;
@@ -34,6 +36,7 @@ namespace Game.POI.Produce
         public override void OnBuilt()
         {
             base.OnBuilt();
+            AchievementManager.Instance.GiveAchievement(Achievements.Pump);
             ((IElectrical) this).InitElectricity(transform);
         }
 

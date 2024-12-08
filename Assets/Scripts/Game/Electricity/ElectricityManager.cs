@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using External.Achievement;
 using Game.POI.Electricity;
 using Game.Upgrades;
 using UnityEngine;
@@ -121,11 +122,18 @@ namespace Game.Electricity
                 if (hit.TryGetComponent<IElectrical>(out var ele))
                 {
                     ele.IsCovered = true;
-                    
+
                     if (hit.TryGetComponent<IElectricityConsumer>(out var cons))
+                    {
                         _consumers.Add(cons);
+                    }
+
                     if (hit.TryGetComponent<IElectricityProducer>(out var prod))
+                    {
+                        if(prod is BasicWindmill)
+                            AchievementManager.Instance.GiveAchievement(Achievements.Electricity);
                         _producers.Add(prod);
+                    }
                 }
             }
         }

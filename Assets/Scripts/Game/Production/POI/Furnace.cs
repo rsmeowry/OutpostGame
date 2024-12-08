@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using External.Achievement;
 using External.Util;
 using Game.Bounds;
 using Game.Citizens;
 using Game.Electricity;
+using Game.POI.Electricity;
 using Game.Production.Products;
 using Game.Sound;
 using Game.State;
@@ -39,6 +41,7 @@ namespace Game.Production.POI
             _vfx = vfx.gameObject.AddComponent<VisualEffect>();
             _vfx.visualEffectAsset = vfxAsset;
             _vfx.Stop();
+            AchievementManager.Instance.GiveAchievement(Achievements.Furnace);
         }
 
         protected override void LoadForInspect(PanelViewPOI panel)

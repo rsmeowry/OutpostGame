@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using External.Achievement;
 using External.Data;
 using Game.Production.Products;
 using Game.Sound;
@@ -79,6 +80,9 @@ namespace UI.Interior.Stocks
             if (_hasExpFromSelling && cnt > 50)
                 MiscSavedData.Instance.Data.Experience += 100;
             market.DoSell(receipt);
+            
+            if(receipt.TotalProfit > 10_000)
+                AchievementManager.Instance.GiveAchievement(Achievements.MoneyGained);
             
             SoundManager.Instance.PlaySound2D(SoundBank.Instance.GetSound("shop.purchase"), 0.5f);
             GameStateManager.Instance.ChangeCurrency(receipt.TotalProfit,

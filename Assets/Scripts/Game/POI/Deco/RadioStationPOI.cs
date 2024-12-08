@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using External.Achievement;
 using Game.Citizens;
 using Game.Citizens.Navigation;
 using Game.Electricity;
@@ -9,6 +10,13 @@ namespace Game.POI.Deco
 {
     public class RadioStationPOI: UtilityResourcePOI, IElectricityConsumer
     {
+        public override void OnBuilt()
+        {
+            base.OnBuilt();
+            ((IElectrical) this).InitElectricity(transform);
+            AchievementManager.Instance.GiveAchievement(Achievements.RadioStation);
+        }
+
         public override void WorkerTick(CitizenAgent agent)
         {
             if (!ShouldSubtick(agent, 4))

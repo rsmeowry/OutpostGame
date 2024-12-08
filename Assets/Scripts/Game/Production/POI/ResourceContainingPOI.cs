@@ -8,6 +8,7 @@ using External.Util;
 using Game.Building;
 using Game.Citizens;
 using Game.Citizens.Navigation;
+using Game.Controllers.States;
 using Game.Electricity;
 using Game.POI;
 using Tutorial;
@@ -32,39 +33,24 @@ namespace Game.Production.POI
         public List<CitizenAgent> AssignedAgents = new();
 
         protected List<CitizenAgent> CitizensInside = new();
-        private Dictionary<int, int> _citizenPos = new();
-        private List<bool> _positions;
         [SerializeField]
         private GameObject tool;
 
-        private void Awake()
-        {
-            _positions = new List<bool>(new bool[capacity]);
-        }
+        private Dictionary<int, Transform> _citizenWorkPos;
 
         public virtual void PreAnimation(CitizenAgent agent)
         {
             
         }
-        
-        private int FindSpot()
+
+        private void RecalculateSpots()
         {
-            for (int i = 0; i < _positions.Count; i++)
+            if (citizenWorkingPositions.Count <= 0)
+                return;
+            _citizenWorkPos = new Dictionary<int, Transform>();
+            for (var i = 0; i < AssignedAgents.Count; i++)
             {
-                if (!_positions[i])
-                {
-                    _positions[i] = true;
-                    return i; 
-                }
-            }
-            return -1;
-        }
-        
-        private void ReleaseSpot(int positionIndex)
-        {
-            if (positionIndex >= 0 && positionIndex < _positions.Count)
-            {
-                _positions[positionIndex] = false;
+                _citizenWorkPos[AssignedAgents[i].citizenId] = citizenWorkingPositions[i];
             }
         }
 
@@ -73,7 +59,9 @@ namespace Game.Production.POI
             // TODO: in tutorial this might kidna softlock us when we hire ppl in wrong order
             if (_isFull)
                 return false;
+            Debug.Log("HIRING");
             AssignedAgents.Add(agent);
+            RecalculateSpots();
             _isFull = AssignedAgents.Count >= capacity;
 
             if (AssignedAgents.Count >= 4)
@@ -91,9 +79,9 @@ namespace Game.Production.POI
         {
             _awaitingArrival.Remove(agent);
             
-            var spot = _citizenPos[agent.citizenId];
-            agent.transform.position = citizenWorkingPositions[spot].position;
-            agent.transform.DORotateQuaternion(citizenWorkingPositions[spot].rotation, 0.5f).SetEase(Ease.Linear).Play();
+            var spot = _citizenWorkPos[agent.citizenId];
+            agent.transform.position = spot.position;
+            agent.transform.DORotateQuaternion(spot.rotation, 0.5f).SetEase(Ease.Linear).Play();
             
             PreAnimation(agent);
             if (tool != null)
@@ -125,9 +113,6 @@ namespace Game.Production.POI
             
             if (citizenWorkingPositions.Count > 0)
             {
-                var spot = FindSpot();
-                _citizenPos[agent.citizenId] = spot;
-                
                 _awaitingArrival.Add(agent);
 
                 callback(WorkPlaceEnterResult.NeedToMoveToSpot);
@@ -151,6 +136,7 @@ namespace Game.Production.POI
         public virtual void Fire(CitizenAgent agent)
         {
             AssignedAgents.Remove(agent);
+            RecalculateSpots();
             entrancePos?.DequeueIdxd(agent);
             agent.ShowSelf();
             _isFull = false;
@@ -158,10 +144,8 @@ namespace Game.Production.POI
 
         public Vector3 DesignatedWorkingSpot(CitizenAgent agent)
         {
-            if (citizenWorkingPositions.Count < 0 || !_citizenPos.ContainsKey(agent.citizenId))
-                return Vector3.zero;
-
-            return citizenWorkingPositions[_citizenPos[agent.citizenId]].position;
+            RecalculateSpots();
+            return _citizenWorkPos.TryGetValue(agent.citizenId, out var po) ? po.position : transform.position;
         }
 
         public virtual IEnumerator LeaveWorkPlace(CitizenAgent agent)
@@ -174,8 +158,6 @@ namespace Game.Production.POI
             CitizensInside.Remove(agent);
             if (citizenWorkingPositions.Count > 0)
             {
-                ReleaseSpot(_citizenPos[agent.citizenId]);
-                
                 // tool disappear animation
                 StartCoroutine(agent.RemoveItem());
                 

@@ -1,4 +1,5 @@
 ﻿using System;
+using External.Achievement;
 using Game.Production.Products;
 using Game.Sound;
 using Game.State;
@@ -63,6 +64,9 @@ namespace UI.Interior.Stocks
             GameStateManager.Instance.ChangeCurrency(-receipt.TotalCost,
                 $"Bought {receipt.BoughtCount} items of type {receipt.Item.Formatted()}",
                 receipt.BoughtCount >= 50);
+            
+            if(StockManager.Instance.Markets[0].Offers[parent.Item].BuyPrice > 100)
+                AchievementManager.Instance.GiveAchievement(Achievements.MoneySpent);
             
             SoundManager.Instance.PlaySound2D(_clip, 0.5f);
             

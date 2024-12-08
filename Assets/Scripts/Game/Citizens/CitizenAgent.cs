@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using DG.Tweening;
 using External.Util;
+using Game.Building;
 using Game.Citizens.States;
 using Game.DayNight;
 using Game.News;
@@ -99,7 +100,6 @@ namespace Game.Citizens
 
         public StoredCitizenData Serialize()
         {
-            Debug.Log($"SERIALIZING CITIZEN: {Home} {Home.pointId} {Guid.Parse(Home.pointId)}");
             return new StoredCitizenData
             {
                 baseInventoryCapacity = inventoryCapacity,
@@ -190,6 +190,7 @@ namespace Game.Citizens
 
         public void Free(bool doWander = true)
         {
+            WorkPlace?.GatheringPost?.EntrancePos?.DequeueIdxd(this);
             WorkPlace?.Fire(this);
             WorkPlace = null;
             if(doWander)

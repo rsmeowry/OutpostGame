@@ -8,6 +8,7 @@ namespace External.Achievement
         public static readonly StateKey ALotOfWork = new StateKey("alot_of_work");
         public static readonly StateKey Viewpoint = new StateKey("i_can_see");
         public static readonly StateKey Pump = new StateKey("water");
+        public static readonly StateKey RadioStation = new StateKey("radio_station");
         public static readonly StateKey Electricity = new StateKey("it_hurts");
         public static readonly StateKey Furnace = new StateKey("furnace");
         public static readonly StateKey Smeltery = new StateKey("smeltery");

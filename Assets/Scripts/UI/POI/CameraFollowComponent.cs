@@ -34,7 +34,7 @@ namespace UI.POI
         {
             var newAngle = newVal * 180f;
             var euler = _cameraTf.rotation.eulerAngles;
-            _targetRotation = new Vector3(-15f, newAngle, euler.z);
+            _targetRotation = new Vector3(-15f, newAngle, 0f);
         }
 
         private void LateUpdate()

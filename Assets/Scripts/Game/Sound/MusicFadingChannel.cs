@@ -8,6 +8,8 @@ namespace Game.Sound
     {
         public static MusicFadingChannel Instance { get; private set; }
 
+        protected override float MaxVolume => 0.25f;
+
         public override void Awake()
         {
             base.Awake();

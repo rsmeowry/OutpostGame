@@ -1,5 +1,7 @@
 ﻿using System;
 using DG.Tweening;
+using Game.Controllers.States;
+using Game.Sound;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
